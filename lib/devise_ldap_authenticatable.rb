@@ -20,5 +20,4 @@ end
 Devise.add_module(:ldap_authenticatable,
                   :strategy   => true,
                   :controller => :sessions,
-                  :model  => 'devise_ldap_authenticatable/model',
-                  :routes => :ldap_authenticatable)
+                  :model  => 'devise_ldap_authenticatable/model')

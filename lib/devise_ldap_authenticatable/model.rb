@@ -25,18 +25,18 @@ module Devise
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        Devise::LdapAdapter.valid_credentials?(self.login, password)
+        Devise::LdapAdapter.valid_credentials?(self.ldap_login, password)
       end
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={})
-          return unless attributes[:login].present?
-          conditions = attributes.slice(:login)
+          return unless attributes[:ldap_login].present?
+          conditions = attributes.slice(:ldap_login)
 
-          unless conditions[:login] && conditions[:login].include?('@') 
-            conditions[:login] = "#{conditions[:login]}"
+          unless conditions[:ldap_login] && conditions[:ldap_login].include?('@') 
+            conditions[:ldap_login] = "#{conditions[:ldap_login]}"
           end
 
           resource = find_for_ldap_authentication(conditions) || new(conditions)
