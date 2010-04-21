@@ -17,19 +17,18 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "MIT-LICENSE",
-     "README.md",
-     "Rakefile",
-     "VERSION",
-     "devise_ldap_authenticatable.gemspec",
-     "lib/devise_ldap_authenticatable.rb",
-     "lib/devise_ldap_authenticatable/ldap_adapter.rb",
-     "lib/devise_ldap_authenticatable/model.rb",
-     "lib/devise_ldap_authenticatable/routes.rb",
-     "lib/devise_ldap_authenticatable/schema.rb",
-     "lib/devise_ldap_authenticatable/strategy.rb",
-     "rails/init.rb",
-     "test/devise_ldap_authenticatable_test.rb",
-     "test/test_helper.rb"
+    "README.md",
+    "Rakefile",
+    "VERSION",
+    "devise_ldap_authenticatable.gemspec",
+    "lib/devise_ldap_authenticatable.rb",
+    "lib/devise_ldap_authenticatable/ldap_adapter.rb",
+    "lib/devise_ldap_authenticatable/model.rb",
+    "lib/devise_ldap_authenticatable/schema.rb",
+    "lib/devise_ldap_authenticatable/strategy.rb",
+    "rails/init.rb",
+    "test/devise_ldap_authenticatable_test.rb",
+    "test/test_helper.rb"
   ]
   s.homepage = %q{http://github.com/cschiewek/devise_ldap_authenticatable}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -38,11 +37,9 @@ Gem::Specification.new do |s|
   s.summary = %q{Devise LDAP authentication module}
   s.test_files = [
     "test/devise_ldap_authenticatable_test.rb",
-     "test/test_helper.rb"
+    "test/test_helper.rb"
   ]
 
   s.add_dependency(%q<devise>, ["> 1.0.4"])
   s.add_dependency(%q<net-ldap>, ["> 0.1.1"])
-  end
 end
-
