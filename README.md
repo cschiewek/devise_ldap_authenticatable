@@ -1,20 +1,18 @@
-Devise - LDAP Authenticatable - Based on Devise-Imapable
+Devise LDAP Authenticatable - Based on Devise-Imapable
 =================
 
-Devise-Imapable is a imap based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
+Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
-If you are building applications for use within your organisation which require authentication and don't have access to a LDAP server, using imap can be a great alternative.
+If you are building applications for use within your organisation which require authentication and you want to use LDAP, this plugin is for you.
 
 Installation
 ------------
 
-**Please note that Devise-Imapable only works with Devise 1.0.5 at the moment, changes for 1.0.6 will be made soon**
+**Please note that Devise LDAP Authenticatable only works with Devise 1.0.6 and Rails 2.3.5 at the moment
 
 Currently this can only be installed as a plugin.
 
-    script/plugin install git@github.com:joshk/devise_imapable.git
-
-*Now in gem form, install notes coming soon*
+    script/plugin install git@github.com:cschiewek/devise_ldap_authenticatable.git
 
 
 **And don't forget to add [Devise](http://github.com/plataformatec/devise)!**
@@ -31,19 +29,19 @@ or in bundler
 Setup
 -----
 
-Once devise-imapable is installed, all you need to do is setup the user model which includes a small addition to the model itself and to the schema.
+Once ldap_authenticatable is installed, all you need to do is setup the user model which includes a small addition to the model itself and to the schema.
 
 First the schema :
 
     create_table :users do |t|
 
-      t.imapable
+      t.ldap_authenticatable
 
     end
 
 and indexes (optional) :
 
-    add_index :users, :email, :unique => true
+    add_index :ldap_login, :unique => true
 
 and don’t forget to migrate :
 
@@ -53,21 +51,21 @@ then finally the model :
 
     class User < ActiveRecord::Base
 
-      devise :rememberable, :trackable, :timeoutable, :imapable
+      devise :ldap_authenticatable, :rememberable, :trackable, :timeoutable
 
       # Setup accessible (or protected) attributes for your model
-      attr_accessible :email, :password, :remember_me
+      attr_accessible :ldap_login, :password, :remember_me
 
       ...
     end
 
-I recommend using :rememberable, :trackable, :timeoutable along with :imapable as it gives a full feature set for logins.
+I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
 
 
 Usage
 -----
 
-Devise-Imapable works in replacement of Authenticatable, allowing for user name (or email) and password authentication. The standard sign\_in routes and views work out of the box as these are just reused from devise. I recommend you run :
+Devise LDAP Authenticatable works in replacement of Authenticatable, allowing for LDAP authentication via simple bind. The standard sign\_in routes and views work out of the box as these are just reused from devise. I recommend you run :
 
     script/generate devise_views
 
@@ -80,26 +78,24 @@ so you can customize your login pages.
 This devise plugin has not been tested with Authenticatable enabled at the same time. This is meant as a drop in replacement for Authenticatable allowing for a semi single sign on approach.
 
 
-Advanced Configuration
+Configuration
 ----------------------
 
 In initializer  `config/initializers/devise.rb` :
 
     Devise.setup do |config|
       # ...
-      config.imap_server = 'bigcorporation.com'
-      config.default_email_suffix = 'friendly-corporation.com'
+      config.ldap_host = 'ldap.mydomain.com'
+      config.ldap_port = 389
       # ...
     end
-
-Imap servers usually allow a user to login using their full email address or just the identifier part, eg: josh.kalderimis and josh.kalderimis@gmail.com will both work. It is recommend that you set the default\_email\_suffix so the login is kept consistent and the users email is correctly stored in the User model.
 
 So remember ...
 ---------------
 
 - don't use Authenticatable
 
-- add imap\_server and default\_email\_suffix settings in the devise initializer
+- add ldap\_host and ldap\_port settings in the devise initializer
 
 - generate the devise views and make them pretty
 
@@ -114,24 +110,8 @@ References
 TODO
 ----
 
-- add notes about gem
-
-- email validation
-
-- add update\_with\_password to the model, similar to Authenticatable
-
-- assert Authenticatable is not being used
-
-- assert imap\_server is present, and warn if default\_email\_suffix isn't present
-
-- tests, tests, tests
-
-- allow for setups which require profile information before creating a user
-
-- investigate how well this works with other devise modules like http\_authenticatable, token\_authenticatable lockable, confirmable, and activatable
-
-
+LOTS
 
 Released under the MIT license
 
-Copyright (c) 2010 Josh Kalderimis,
+Copyright (c) 2010 Curtis Schiewek

@@ -1,4 +1,4 @@
-require 'devise_imapable/strategy'
+require 'devise_ldap_authenticatable/strategy'
 
 module Devise
   module Models
