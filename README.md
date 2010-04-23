@@ -3,40 +3,29 @@ Devise LDAP Authenticatable - Based on Devise-Imapable
 
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
-If you are building applications for use within your organisation which require authentication and you want to use LDAP, this plugin is for you.
+If you are building applications for use within your organization which require authentication and you want to use LDAP, this plugin is for you.
+
+Requirements
+------------
+
+Rails 2.3.5
+Devise 1.0.6
+Net-LDAP 0.1.1 (You must use the net-ldap gem, NOT the ruby-net-ldap gem.)
 
 Installation
 ------------
 
-**Please note that Devise LDAP Authenticatable only works with Devise 1.0.6 and Rails 2.3.5 at the moment
-
-Currently this can only be installed as a plugin.
-
-    script/plugin install git@github.com:cschiewek/devise_ldap_authenticatable.git
-
-
-**And don't forget to add [Devise](http://github.com/plataformatec/devise)!**
-
-either in config/environment.rb:
-
-    config.gem 'devise'
-
-or in bundler
-
-    gem 'devise'
-
+script/plugin install git@github.com:cschiewek/devise\_ldap\_authenticatable.git
 
 Setup
 -----
 
-Once ldap_authenticatable is installed, all you need to do is setup the user model which includes a small addition to the model itself and to the schema.
+Once devise\_ldap\_authenticatable is installed, all you need to do is setup the user model which includes a small addition to the model itself and to the schema.
 
 First the schema :
 
     create_table :users do |t|
-
       t.ldap_authenticatable
-
     end
 
 and indexes (optional) :
@@ -50,17 +39,14 @@ and don’t forget to migrate :
 then finally the model :
 
     class User < ActiveRecord::Base
-
       devise :ldap_authenticatable, :rememberable, :trackable, :timeoutable
 
       # Setup accessible (or protected) attributes for your model
       attr_accessible :ldap_login, :password, :remember_me
-
       ...
     end
 
 I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
-
 
 Usage
 -----
@@ -110,7 +96,9 @@ References
 TODO
 ----
 
-LOTS
+- Add support for SSL/TLS
+- Add support for defining DN format to make logins cleaner
+- Tests
 
 Released under the MIT license
 
