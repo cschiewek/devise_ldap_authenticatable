@@ -21,7 +21,7 @@ module Devise
       if ldap.bind
         true
       else
-        errors.add_to_base(ldap.get_operation_result.message)
+        # errors.add_to_base(ldap.get_operation_result.message)
         false
       end
     end
