@@ -8,9 +8,13 @@ If you are building applications for use within your organization which require 
 Requirements
 ------------
 
-Rails 2.3.5
-Devise 1.0.6
-Net-LDAP 0.1.1 (You must use the net-ldap gem, NOT the ruby-net-ldap gem.)
+- Rails 2.3.5
+- Devise 1.0.6
+- Net-LDAP 0.1.1 
+
+**_Please Note_**
+
+You must use the net-ldap gem and _NOT_ the ruby-net-ldap gem.  
 
 Installation
 ------------
@@ -30,7 +34,7 @@ First the schema :
 
 and indexes (optional) :
 
-    add_index :ldap_login, :unique => true
+    add_index :login, :unique => true
 
 and don’t forget to migrate :
 
@@ -42,7 +46,7 @@ then finally the model :
       devise :ldap_authenticatable, :rememberable, :trackable, :timeoutable
 
       # Setup accessible (or protected) attributes for your model
-      attr_accessible :ldap_login, :password, :remember_me
+      attr_accessible :login, :password, :remember_me
       ...
     end
 
@@ -59,7 +63,7 @@ so you can customize your login pages.
 
 ------------------------------------------------------------
 
-**please note**
+**_Please Note_**
 
 This devise plugin has not been tested with Authenticatable enabled at the same time. This is meant as a drop in replacement for Authenticatable allowing for a semi single sign on approach.
 
@@ -70,20 +74,14 @@ Configuration
 In initializer  `config/initializers/devise.rb` :
 
     Devise.setup do |config|
-      # ...
+      # Required
+	  config
       config.ldap_host = 'ldap.mydomain.com'
       config.ldap_port = 389
-      # ...
+	
+	  # Optional
+	  config.ldap_ssl = true
     end
-
-So remember ...
----------------
-
-- don't use Authenticatable
-
-- add ldap\_host and ldap\_port settings in the devise initializer
-
-- generate the devise views and make them pretty
 
 
 References
@@ -96,7 +94,6 @@ References
 TODO
 ----
 
-- Add support for SSL/TLS
 - Add support for defining DN format to make logins cleaner
 - Tests
 

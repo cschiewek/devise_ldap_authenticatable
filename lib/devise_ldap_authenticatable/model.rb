@@ -32,11 +32,11 @@ module Devise
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={})
-          return unless attributes[:ldap_login].present?
-          conditions = attributes.slice(:ldap_login)
+          return unless attributes[:login].present?
+          conditions = attributes.slice(:login)
 
-          unless conditions[:ldap_login] && conditions[:ldap_login].include?('@') 
-            conditions[:ldap_login] = "#{conditions[:ldap_login]}"
+          unless conditions[:login] && conditions[:login].include?('@') 
+            conditions[:login] = "#{conditions[:login]}"
           end
 
           resource = find_for_ldap_authentication(conditions) || new(conditions)

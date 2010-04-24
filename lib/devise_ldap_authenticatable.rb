@@ -13,6 +13,10 @@ module Devise
   # port
   mattr_accessor :ldap_port
   @@ldap_port = nil
+  
+  # Use SSL
+  mattr_accessor :ldap_ssl
+  @@ldap_ssl = false
 end
 
 # Add ldap_authenticatable strategy to defaults.

@@ -27,8 +27,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "devise_ldap_authenticatable"
-    gemspec.summary = "Devise LDAP authentication module"
-    gemspec.description = "LDAP module for Devise"
+    gemspec.summary = "LDAP authentication module for Devise"
+    gemspec.description = "LDAP authentication module for Devise"
     gemspec.email = "curtis.schiewek@gmail.com"
     gemspec.homepage = "http://github.com/cschiewek/devise_ldap_authenticatable"
     gemspec.authors = ["Curtis Schiewek"]
