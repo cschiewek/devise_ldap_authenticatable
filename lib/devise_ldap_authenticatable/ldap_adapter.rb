@@ -7,6 +7,7 @@ module Devise
   module LdapAdapter
 
     def self.valid_credentials?(login, password)
+      login = ::Devise.ldap_login_attribute+'='+login+','+::Devise.ldap_base_dn      
       @encryption = ::Devise.ldap_ssl ? :simple_tls : nil
       ldap = Net::LDAP.new(:encryption => @encryption)
       ldap.host = ::Devise.ldap_host

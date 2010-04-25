@@ -89,6 +89,8 @@ In initializer  `config/initializers/devise.rb` :
       # Required
       config.ldap_host = 'ldap.mydomain.com'
       config.ldap_port = 389
+	  config.ldap_base_dn = 'ou=People,dc=local'
+	  config.ldap_login_attribute = 'uid'
 	
 	  # Optional, these will default to false or nil if not set
 	  config.ldap_ssl = true
@@ -97,10 +99,26 @@ In initializer  `config/initializers/devise.rb` :
 
 * ldap\_host
 	* The host of your LDAP server
+	
 * ldap\_port
-	* The port your LDAP service is listening on.  No default are set.
+	* The port your LDAP service is listening on.
+	
+* ldap\_base_dn
+	* The DN that is appended to the login before the LDAP bind is performed.
+	
+* ldap\_login_attribute
+	* The attribute that is prepended to the login and the base dn to form the
+	  full DN that is used for the bind.
+	* Example:
+		* config.ldap\_base_dn = 'ou=People,dc=local'
+		* config.ldap\_login_attribute = 'uid'
+		* So when trying to login with 'admin' for example, 'admin' would be
+		  the value stored in login field, but the actual DN used for the bind
+		  would be 'uid=admin,ou=People,dc=local'
+		
 * ldap\_ssl
 	* Enables SSL (ldaps) encryption.  START_TLS encryption will be added when the net-ldap gem adds support for it.
+
 * ldap\_create\_user
 	* If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
       If set to false, you will have to create the user record before they will be allowed to login.
