@@ -67,11 +67,12 @@ I recommend using :rememberable, :trackable, :timeoutable as it gives a full fea
 Usage
 -----
 
-Devise LDAP Authenticatable works in replacement of Authenticatable, allowing for LDAP authentication via simple bind. The standard sign\_in routes and views work out of the box as these are just reused from devise. I recommend you run :
+Devise LDAP Authenticatable works in replacement of Authenticatable, 
+but because we have to change the authentication\_keys, you'll need to run:
 
     script/generate devise_views
 
-so you can customize your login pages.
+and customize your login pages to use :login, instead of :email.
 
 ------------------------------------------------------------
 
