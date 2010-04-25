@@ -19,7 +19,11 @@ You must use the net-ldap gem and _NOT_ the ruby-net-ldap gem.
 Installation
 ------------
 
-script/plugin install git@github.com:cschiewek/devise\_ldap\_authenticatable.git
+	gem install devise_ldap_authenticatable
+
+and
+	
+	config.gem 'devise_ldap_authenticatable'
 
 Setup
 -----
