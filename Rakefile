@@ -33,7 +33,7 @@ begin
     gemspec.homepage = "http://github.com/cschiewek/devise_ldap_authenticatable"
     gemspec.authors = ["Curtis Schiewek"]
     gemspec.add_runtime_dependency "devise", "> 1.0.4"
-    gemspec.add_runtime_dependency "net-ldap", "> 0.1.1"
+    gemspec.add_runtime_dependency "net-ldap", ">= 0.0.0"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
