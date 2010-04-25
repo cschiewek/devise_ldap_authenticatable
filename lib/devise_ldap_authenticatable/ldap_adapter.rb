@@ -7,13 +7,6 @@ module Devise
   module LdapAdapter
 
     def self.valid_credentials?(login, password)
-      debugger
-      #ldap = Net::LDAP.new( :host => ::Devise.ldap_host, :port => ::Devise.ldap_port )
-      #if ldap.bind( :method => :simple, :username => login, :password => password )
-      #  true
-      #else
-      #  false
-      #end
       @encryption = ::Devise.ldap_ssl ? :simple_tls : nil
       ldap = Net::LDAP.new(:encryption => @encryption)
       ldap.host = ::Devise.ldap_host

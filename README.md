@@ -29,7 +29,7 @@ Once devise\_ldap\_authenticatable is installed, all you need to do is setup the
 First the schema :
 
     create_table :users do |t|
-      t.ldap_authenticatable
+      t.ldap_authenticatable, :null => false
     end
 
 and indexes (optional) :
@@ -40,7 +40,7 @@ and don’t forget to migrate :
 
     rake db:migrate.
 
-then finally the model :
+then the model :
 
     class User < ActiveRecord::Base
       devise :ldap_authenticatable, :rememberable, :trackable, :timeoutable
@@ -49,6 +49,14 @@ then finally the model :
       attr_accessible :login, :password, :remember_me
       ...
     end
+
+and finally change the authentication key in the devise initializer :
+
+	Devise.setup do |config|
+	  ...
+	  config.authentication_keys = [ :login ]
+	  ...
+	end
 
 I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
 

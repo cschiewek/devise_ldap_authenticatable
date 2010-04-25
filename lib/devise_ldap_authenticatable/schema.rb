@@ -1,5 +1,4 @@
 Devise::Schema.class_eval do
-
     # Creates login
     #
     # == Options
