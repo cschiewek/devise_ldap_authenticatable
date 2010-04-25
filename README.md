@@ -83,13 +83,18 @@ In initializer  `config/initializers/devise.rb` :
 
     Devise.setup do |config|
       # Required
-	  config
       config.ldap_host = 'ldap.mydomain.com'
       config.ldap_port = 389
 	
 	  # Optional
 	  config.ldap_ssl = true
+	  config.ldap_create_user = true
     end
+
+The "ldap\_create\_user" determines whether or not Devise will add valid LDAP 
+users to the devise table.  If set to true, any valid LDAP user will be allowed
+to login.  If set to false, you'll have add the users to the devise table before
+they can login. 
 
 
 References

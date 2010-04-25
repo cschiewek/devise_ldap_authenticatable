@@ -17,6 +17,10 @@ module Devise
   # Use SSL
   mattr_accessor :ldap_ssl
   @@ldap_ssl = false
+  
+  # Add valid users to database
+  mattr_accessor :ldap_create_user
+  @ldap_create_user = false
 end
 
 # Add ldap_authenticatable strategy to defaults.
