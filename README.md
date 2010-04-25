@@ -86,15 +86,20 @@ In initializer  `config/initializers/devise.rb` :
       config.ldap_host = 'ldap.mydomain.com'
       config.ldap_port = 389
 	
-	  # Optional
+	  # Optional, these will default to false or nil if not set
 	  config.ldap_ssl = true
 	  config.ldap_create_user = true
     end
 
-The "ldap\_create\_user" determines whether or not Devise will add valid LDAP 
-users to the devise table.  If set to true, any valid LDAP user will be allowed
-to login.  If set to false, you'll have add the users to the devise table before
-they can login. 
+* ldap\_host\_ 
+** The host of your LDAP server
+* ldap\_port\_
+** The port your LDAP service is listening on.  No default are set.
+* ldap\_ssl\_
+** Enables SSL (ldaps) encryption.  START_TLS encryption will be added when the net-ldap gem adds support for it.
+* ldap\_create\_user
+** If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
+   If set to false, you will have to create the user record before they will be allowed to login.
 
 
 References
