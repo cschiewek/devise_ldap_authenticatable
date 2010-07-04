@@ -25,18 +25,18 @@ module Devise
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        Devise::LdapAdapter.valid_credentials?(self.login, password)
+        Devise::LdapAdapter.valid_credentials?(self.email, password)
       end
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={})
-          return unless attributes[:login].present? 
-          conditions = attributes.slice(:login)
+          return unless attributes[:email].present? 
+          conditions = attributes.slice(:email)
 
-          unless conditions[:login]
-            conditions[:login] = "#{conditions[:login]}"
+          unless conditions[:email]
+            conditions[:email] = "#{conditions[:email]}"
           end
 
           resource = find_for_ldap_authentication(conditions)
@@ -60,7 +60,9 @@ module Devise
         #   end
         #
         def find_for_ldap_authentication(conditions)
-          find(:first, :conditions => conditions)
+          # find(:first, :conditions => conditions)
+          ## Rails 3 query language since find(:first) will be deprecated
+          scoped.where(conditions).first
         end
       end
     end

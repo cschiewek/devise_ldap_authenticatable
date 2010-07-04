@@ -1,10 +1,10 @@
-require 'devise/strategies/base'
+require 'devise/strategies/authenticatable'
 
 module Devise
   module Strategies
     # Strategy for signing in a user based on his login and password using LDAP.
     # Redirects to sign_in page if it's not authenticated
-    class LdapAuthenticatable < Base
+    class LdapAuthenticatable < Authenticatable
       def valid?
         valid_controller? && valid_params? && mapping.to.respond_to?(:authenticate_with_ldap)
       end
@@ -23,7 +23,7 @@ module Devise
       protected
 
         def valid_controller?
-          params[:controller] == 'sessions'
+          params[:controller] == 'devise/sessions'
         end
 
         def valid_params?
