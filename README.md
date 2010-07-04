@@ -1,3 +1,5 @@
+My changes to the plugin are in the [Rails 3 Branch](http://github.com/dpmcnevin/devise_ldap_authenticatable/tree/rails3)
+
 Devise LDAP Authenticatable - Based on Devise-Imapable
 =================
 
