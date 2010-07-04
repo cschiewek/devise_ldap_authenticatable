@@ -8,13 +8,9 @@ If you are building applications for use within your organization which require 
 Requirements
 ------------
 
-- Rails 2.3.5
-- Devise 1.0.6
-- Net-LDAP 0.1.1 
-
-**_Please Note_**
-
-You must use the net-ldap gem and _NOT_ the ruby-net-ldap gem.  
+- Rails 3.0.0.beta4
+- Devise 1.1.rc2
+- ruby-net-ldap 0.0.4
 
 Installation
 ------------
