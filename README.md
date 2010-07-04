@@ -22,7 +22,7 @@ Installation
 In the Gemfile for your application:
 
     gem "devise", "1.1.rc2"
-    gem "devise_ldap_authenticatable", :git => "git@github.com:dpmcnevin/devise_ldap_authenticatable.git", :branch => "rails3"
+    gem "devise_ldap_authenticatable", :git => "git://github.com/dpmcnevin/devise_ldap_authenticatable", :branch => "rails3"
 
 Setup
 -----
