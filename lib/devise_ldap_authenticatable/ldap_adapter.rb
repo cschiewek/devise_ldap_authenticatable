@@ -7,8 +7,9 @@ module Devise
   module LdapAdapter
     
     def self.valid_credentials?(login, password_plaintext)
-      ldap = LdapConnect.new.ldap
-      ldap.auth "#{ldap.attribute}=#{login},#{ldap.base}", password_plaintext
+      resource = LdapConnect.new
+      ldap = resource.ldap
+      ldap.auth "#{resource.attribute}=#{login},#{ldap.base}", password_plaintext
       ldap.bind # will return false if authentication is NOT successful
     end
 
@@ -25,7 +26,7 @@ module Devise
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
-        @ldap.base = ldap_config["attribute"]
+        @attribute = ldap_config["attribute"]
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
       end
 
@@ -33,7 +34,7 @@ module Devise
       def clear_users!(base = @ldap.base)
         raise "You should ONLY do this on the test enviornment! It will clear out all of the users in the LDAP server" if Rails.env != "test"
         if @ldap.bind
-          @ldap.search(:filter => "#{@ldap.attribute}=*", :base => base) do |entry|
+          @ldap.search(:filter => "#{@attribute}=*", :base => base) do |entry|
             @ldap.delete(:dn => entry.dn)
           end
         end
