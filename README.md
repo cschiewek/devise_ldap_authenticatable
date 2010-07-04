@@ -71,6 +71,7 @@ References
 TODO
 ----
 
+- Password editing from the recovery process
 - Add configurable support for fields other than email (originally the plugin used login)
 - Better compatibility with Rails 2 & 3, if possible.
 - Add support for defining DN format to make logins cleaner
