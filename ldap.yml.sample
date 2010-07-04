@@ -1,0 +1,27 @@
+development:
+  host: localhost
+  port: 389
+  attribute: cn
+  base: ou=people,dc=yourdomain,dc=com
+  admin_user: cn=admin,dc=yourdomain,dc=com
+  admin_password: admin_password
+  ssl: false
+
+test:
+  host: localhost
+  port: 3389
+  attribute: cn
+  base: ou=people,dc=yourdomain,dc=com
+  admin_user: cn=admin,dc=yourdomain,dc=com
+  admin_password: admin_password
+  ssl: false
+
+production:
+  host: localhost
+  port: 636
+  attribute: cn
+  base: ou=people,dc=yourdomain,dc=com
+  admin_user: cn=admin,dc=yourdomain,dc=com
+  admin_password: admin_password
+  ssl: true
+
