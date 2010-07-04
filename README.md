@@ -19,13 +19,13 @@ Installation
 
 In the Gemfile for your application:
 
-  gem "devise", "1.1.rc2"
-  gem "devise_ldap_authenticatable", :git => "git@github.com:dpmcnevin/devise_ldap_authenticatable.git", :branch => "rails3"
+    gem "devise", "1.1.rc2"
+    gem "devise_ldap_authenticatable", :git => "git@github.com:dpmcnevin/devise_ldap_authenticatable.git", :branch => "rails3"
 
 Setup
 -----
 
-Copy the ldap.yml.sample to #{Rails.root}/config/ldap.yml and edit it with the settings for your LDAP server
+Copy the ldap.yml.sample to `#{Rails.root}/config/ldap.yml` and edit it with the settings for your LDAP server
 
 I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
 
@@ -76,4 +76,4 @@ TODO
 
 Released under the MIT license
 
-Copyright (c) 2010 Curtis Schiewek
+Copyright (c) 2010 Curtis Schiewek, Daniel McNevin
