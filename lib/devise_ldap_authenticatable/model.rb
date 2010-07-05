@@ -40,11 +40,15 @@ module Devise
           end
 
           resource = find_for_ldap_authentication(conditions)
-          resource = new(conditions) if (resource.nil? and ::Devise.ldap_create_user)
+          resource = new(conditions.merge({:password => "placeholder"})) if (resource.nil? and ::Devise.ldap_create_user)
            
           if resource.try(:valid_ldap_authentication?, attributes[:password])
-             resource.new_record? ? create(conditions) : resource
+            resource.new_record? ? resource.save : resource
           end
+          
+          debugger
+                    
+          return resource
         end
 
       protected
