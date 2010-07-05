@@ -45,9 +45,7 @@ module Devise
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             resource.new_record? ? resource.save : resource
           end
-          
-          debugger
-                    
+                              
           return resource
         end
 
