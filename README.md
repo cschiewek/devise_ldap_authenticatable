@@ -12,6 +12,7 @@ This is a fork of http://github.com/cschiewek/devise_ldap_authenticatable intend
 Requirements
 ------------
 
+- An LDAP server (tested on OpenLDAP)
 - Rails 3.0.0.beta4
 - Devise 1.1.rc2
 - ruby-net-ldap 0.0.4
@@ -27,9 +28,17 @@ In the Gemfile for your application:
 Setup
 -----
 
-Copy the ldap.yml.sample to `#{Rails.root}/config/ldap.yml` and edit it with the settings for your LDAP server
+Run the rails generator
 
-I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
+    rails generate devise_ldap_authenticatable:install
+
+This will install the sample.yml, update the devise.rb initializer, and update your user model. There are some options you can pass to it:
+
+    [--user-model=USER_MODEL]  # Model to update
+                               # Default: user
+    [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
+                               # Default: true
+
 
 Usage
 -----
@@ -48,17 +57,13 @@ Configuration
 
 In initializer  `config/initializers/devise.rb` :
 
-    Devise.setup do |config|
-	    config.ldap_create_user = true
-    end
-
 * ldap\_create\_user
 	* If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
       If set to false, you will have to create the user record before they will be allowed to login.
 
-**_Please Note_**
+* ldap\_config
+	* Where to find the LDAP config file. Commented out to use the default, change if needed.
 
-Originally the LDAP settings were made in the initializer, but I have moved them to a .yml file for multiple environment support.
 
 References
 ----------

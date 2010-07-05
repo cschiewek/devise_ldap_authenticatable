@@ -10,6 +10,9 @@ module Devise
   # Add valid users to database
   mattr_accessor :ldap_create_user
   @@ldap_create_user = false
+  
+  mattr_accessor :ldap_config
+  # @@ldap_config = "#{Rails.root}/config/ldap.yml"
 end
 
 # Add ldap_authenticatable strategy to defaults.
