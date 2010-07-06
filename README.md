@@ -64,6 +64,8 @@ In initializer  `config/initializers/devise.rb` :
 * ldap\_config
 	* Where to find the LDAP config file. Commented out to use the default, change if needed.
 
+* ldap\_update\_password
+  * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
 
 References
 ----------

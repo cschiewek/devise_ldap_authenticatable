@@ -12,6 +12,11 @@ module Devise
       ldap.auth "#{resource.attribute}=#{login},#{ldap.base}", password_plaintext
       ldap.bind # will return false if authentication is NOT successful
     end
+    
+    def self.update_password(login, plaintext_password)
+      resource = LdapConnect.new
+      resource.update_ldap(login, :userpassword => Net::LDAP::Password.generate(:sha, plaintext_password)) if plaintext_password.present? 
+    end
 
     class LdapConnect
 
@@ -30,6 +35,26 @@ module Devise
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
       end
 
+      def dn(login)
+        "#{@attribute}=#{login},#{@ldap.base}"
+      end
+
+      def update_ldap(login,ops)
+        operations = []
+        if ops.is_a? Hash
+          ops.each do |key,value|
+            operations << [:replace,key,value]
+          end
+        elsif ops.is_a? Array
+          operations = ops
+        end
+
+        ldap = LdapConnect.new(:admin => true).ldap
+        ldap.bind
+        
+        ldap.modify(:dn => dn(login), :operations => operations)
+      end
+      
       ## This is for testing, It will clear all users out of the LDAP database. Useful to put in before hooks in rspec, cucumber, etc..
       def clear_users!(base = @ldap.base)
         raise "You should ONLY do this on the test enviornment! It will clear out all of the users in the LDAP server" if Rails.env != "test"

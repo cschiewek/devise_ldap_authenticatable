@@ -13,6 +13,9 @@ module Devise
   
   mattr_accessor :ldap_config
   # @@ldap_config = "#{Rails.root}/config/ldap.yml"
+  
+  mattr_accessor :ldap_update_password
+  @@ldap_update_password = true
 end
 
 # Add ldap_authenticatable strategy to defaults.

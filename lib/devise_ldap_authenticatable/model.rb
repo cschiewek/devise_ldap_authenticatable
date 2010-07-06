@@ -10,21 +10,34 @@ module Devise
     #    User.find(1).valid_password?('password123')         # returns true/false
     #
     module LdapAuthenticatable
-      def self.included(base)
-        base.class_eval do
-          extend ClassMethods
+      extend ActiveSupport::Concern
 
-          attr_accessor :password
+      included do
+        attr_reader :password, :current_password
+        attr_accessor :password_confirmation
+      end
+
+      def password=(new_password)
+        @password = new_password
+        
+        
+        
+        if @password.present?
+          # self.password_salt = self.class.encryptor_class.salt
+          # self.encrypted_password = password_digest(@password)
+          Devise::LdapAdapter.update_password(self.email, password) if ::Devise.ldap_update_password
+          # self.encrypted_password = @password
         end
       end
 
       # Set password to nil
       def clean_up_passwords
-        self.password = nil
+       # self.password = nil
       end
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
+        
         Devise::LdapAdapter.valid_credentials?(self.email, password)
       end
 
@@ -40,13 +53,17 @@ module Devise
           end
 
           resource = find_for_ldap_authentication(conditions)
-          resource = new(conditions.merge({:password => "placeholder"})) if (resource.nil? and ::Devise.ldap_create_user)
+          
+          if (resource.blank? and ::Devise.ldap_create_user)
+            resource = new(conditions.merge({:password => attributes[:password]}))
+          end
            
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             resource.new_record? ? resource.save : resource
+          else
+            nil
           end
-                              
-          return resource
+
         end
 
       protected

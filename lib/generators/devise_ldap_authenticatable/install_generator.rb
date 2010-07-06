@@ -23,6 +23,7 @@ module DeviseLdapAuthenticatable
       <<-eof
   # ==> LDAP Configuration 
   # config.ldap_create_user = false
+  # config.ldap_update_password = true
   # config.ldap_config = "\#{Rails.root}/config/ldap.yml"
     
       eof
