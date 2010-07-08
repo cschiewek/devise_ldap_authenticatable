@@ -1,13 +1,11 @@
-My changes to the plugin are in the [Rails 3 Branch](http://github.com/dpmcnevin/devise_ldap_authenticatable/tree/rails3)
-
-Devise LDAP Authenticatable - Based on Devise-Imapable
+Devise LDAP Authenticatable
 =================
 
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
 If you are building applications for use within your organization which require authentication and you want to use LDAP, this plugin is for you.
 
-This is a fork of http://github.com/cschiewek/devise_ldap_authenticatable intended to be used with a Rails 3 application as a gem.
+For a screencast with an example application, please visit: [http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html](http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html)
 
 Requirements
 ------------
@@ -20,10 +18,14 @@ Requirements
 Installation
 ------------
 
+**_Please Note_**
+
+This will *only* work for Rails 3 applications.
+
 In the Gemfile for your application:
 
     gem "devise", "1.1.rc2"
-    gem "devise_ldap_authenticatable", :git => "git://github.com/dpmcnevin/devise_ldap_authenticatable", :branch => "rails3"
+    gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git", :branch => "rails3"
 
 Setup
 -----
@@ -67,6 +69,15 @@ In initializer  `config/initializers/devise.rb` :
 * ldap\_update\_password
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
 
+Testing
+-------
+
+This has been tested using the following setup:
+
+* Mac OSX 10.6
+* OpenLDAP 2.4.11
+* REE 1.8.7 (2010.02)
+
 References
 ----------
 
@@ -78,7 +89,6 @@ References
 TODO
 ----
 
-- Password editing from the recovery process
 - Add configurable support for fields other than email (originally the plugin used login)
 - Better compatibility with Rails 2 & 3, if possible.
 - Add support for defining DN format to make logins cleaner
