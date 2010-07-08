@@ -1,7 +1,7 @@
 RailsApp::Application.routes.draw do |map|
   devise_for :users
   
-  resources :post
+  resources :posts
 
   root :to => "posts#index"
 

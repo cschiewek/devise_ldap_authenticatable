@@ -2,3 +2,4 @@
 log
 *.sqlite3
 openldap-data
+test/rails_app/tmp
