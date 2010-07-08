@@ -18,7 +18,7 @@ class UserTest < ActiveSupport::TestCase
     should "description" do
       assert_equal(@user.email, "example.user@test.com")
       should_have_password @user, "secret"
-      should_not_have_password @user, "wrong", "binds when using the wrong password"
+      should_not_have_password @user, "wrong_secret", "binds when using the wrong_secret password"
     end
   end
   
@@ -29,16 +29,15 @@ class UserTest < ActiveSupport::TestCase
 
     should "change password" do
       should_have_password @user, "secret"
-      @user.password = "changed"
-      @user.save
+      @user.update_attributes(:password => "changed")
       should_have_password @user, "changed", "password was not changed properly on the LDAP sevrer"
     end
     
     should "not allow to change password if setting is false" do
       should_have_password @user, "secret"
       ::Devise.ldap_update_password = false
-      @user.update_attributes(:password => "wrong")
-      should_not_have_password @user, "wrong"
+      @user.update_attributes(:password => "wrong_secret")
+      should_not_have_password @user, "wrong_secret"
       should_have_password @user, "secret"
     end
   end
@@ -66,13 +65,13 @@ class UserTest < ActiveSupport::TestCase
         assert_contains(User.all.collect(&:email), "example.user@test.com", "user not in database")
       end
 
-      should "not create a user in the database if the password is wrong" do
-        @user = User.authenticate_with_ldap(:email => "example.user", :password => "wrong")
+      should "not create a user in the database if the password is wrong_secret" do
+        @user = User.authenticate_with_ldap(:email => "example.user", :password => "wrong_secret")
         assert(User.all.blank?, "There's users in the database")
       end
       
       should "create a user if the user is not in LDAP" do
-        @user = User.authenticate_with_ldap(:email => "wrong.user@test.com", :password => "wrong")
+        @user = User.authenticate_with_ldap(:email => "wrong_secret.user@test.com", :password => "wrong_secret")
         assert(User.all.blank?, "There's users in the database")
       end
     end
