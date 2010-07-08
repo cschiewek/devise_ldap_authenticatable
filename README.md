@@ -78,6 +78,8 @@ This has been tested using the following setup:
 * OpenLDAP 2.4.11
 * REE 1.8.7 (2010.02)
 
+All unit and functional tests are part of a sample rails application under test/rails_app and requires a working LDAP sever. There are config files and setup instructions under test/ldap
+
 References
 ----------
 
@@ -90,9 +92,12 @@ TODO
 ----
 
 - Add configurable support for fields other than email (originally the plugin used login)
-- Better compatibility with Rails 2 & 3, if possible.
 - Add support for defining DN format to make logins cleaner
-- Tests
+- Check to see if LDAP server requires password change, locked, length, etc.. any other password policies.
+- Add error messages to errors hash on object
+- Support other LDAP servers (AD, OID, etc..)
+- Tests for generators
+- cucumber integration tests
 
 Released under the MIT license
 
