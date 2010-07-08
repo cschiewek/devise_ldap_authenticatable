@@ -1,0 +1,21 @@
+dn: dc=test,dc=com
+objectClass: dcObject
+objectClass: organizationalUnit
+dc: test
+ou: Test
+
+dn: ou=people,dc=test,dc=com
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=test,dc=com
+objectClass: organizationalUnit
+ou: groups
+
+dn: cn=example.user@test.com,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+sn: User
+mail: example.user@test.com
+cn: example.user@test.com
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =
