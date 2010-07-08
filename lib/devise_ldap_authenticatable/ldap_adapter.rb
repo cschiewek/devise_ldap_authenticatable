@@ -55,15 +55,15 @@ module Devise
         ldap.modify(:dn => dn(login), :operations => operations)
       end
       
-      ## This is for testing, It will clear all users out of the LDAP database. Useful to put in before hooks in rspec, cucumber, etc..
-      def clear_users!(base = @ldap.base)
-        raise "You should ONLY do this on the test enviornment! It will clear out all of the users in the LDAP server" if Rails.env != "test"
-        if @ldap.bind
-          @ldap.search(:filter => "#{@attribute}=*", :base => base) do |entry|
-            @ldap.delete(:dn => entry.dn)
-          end
-        end
-      end
+      # ## This is for testing, It will clear all users out of the LDAP database. Useful to put in before hooks in rspec, cucumber, etc..
+      # def clear_users!(base = @ldap.base)
+      #   raise "You should ONLY do this on the test enviornment! It will clear out all of the users in the LDAP server" if Rails.env != "test"
+      #   if @ldap.bind
+      #     @ldap.search(:filter => "#{@attribute}=*", :base => base) do |entry|
+      #       @ldap.delete(:dn => entry.dn)
+      #     end
+      #   end
+      # end
 
     end
 

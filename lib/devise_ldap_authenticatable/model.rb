@@ -20,24 +20,17 @@ module Devise
       def password=(new_password)
         @password = new_password
         
-        
-        
         if @password.present?
-          # self.password_salt = self.class.encryptor_class.salt
-          # self.encrypted_password = password_digest(@password)
           Devise::LdapAdapter.update_password(self.email, password) if ::Devise.ldap_update_password
-          # self.encrypted_password = @password
         end
       end
 
-      # Set password to nil
       def clean_up_passwords
        # self.password = nil
       end
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        
         Devise::LdapAdapter.valid_credentials?(self.email, password)
       end
 
@@ -66,23 +59,12 @@ module Devise
 
         end
 
-      protected
+        protected
 
-        # Find first record based on conditions given (ie by the sign in form).
-        # Overwrite to add customized conditions, create a join, or maybe use a
-        # namedscope to filter records while authenticating.
-        # Example:
-        #
-        #   def self.find_for_imap_authentication(conditions={})
-        #     conditions[:active] = true
-        #     find(:first, :conditions => conditions)
-        #   end
-        #
         def find_for_ldap_authentication(conditions)
-          # find(:first, :conditions => conditions)
-          ## Rails 3 query language since find(:first) will be deprecated
           scoped.where(conditions).first
         end
+        
       end
     end
   end
