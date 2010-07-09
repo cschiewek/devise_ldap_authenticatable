@@ -89,14 +89,7 @@ References
 TODO
 ----
 
-- Add configurable support for fields other than email (originally the plugin used login)
-- Add support for defining DN format to make logins cleaner
-- Check to see if LDAP server requires password change, locked, length, etc.. any other password policies.
-- Add error messages to errors hash on object
-- Support other LDAP servers (AD, OID, etc..)
-- Tests for generators
-- cucumber integration tests
-- Allow support for LDAP and Database logins together, maybe.
+View on [Pivotal Tracker](http://www.pivotaltracker.com/projects/97318).
 
 Released under the MIT license
 
