@@ -1,5 +1,5 @@
 Devise LDAP Authenticatable
-=================
+===========================
 
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
@@ -47,15 +47,13 @@ Usage
 
 Devise LDAP Authenticatable works in replacement of Database Authenticatable
 
-------------------------------------------------------------
-
 **_Please Note_**
 
 This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
 
 
 Configuration
-----------------------
+-------------
 
 In initializer  `config/initializers/devise.rb` :
 
@@ -98,6 +96,7 @@ TODO
 - Support other LDAP servers (AD, OID, etc..)
 - Tests for generators
 - cucumber integration tests
+- Allow support for LDAP and Database logins together, maybe.
 
 Released under the MIT license
 
