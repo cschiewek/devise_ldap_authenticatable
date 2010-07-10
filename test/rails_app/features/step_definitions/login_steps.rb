@@ -1,6 +1,7 @@
 Given /^the following logins:$/ do |logins|
-  debugger
-  User.create(:email => logins, :password => password)
+  logins.hashes.each do |user|
+    User.create(:email => user["email"], :password => user["password"])
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) login$/ do |pos|

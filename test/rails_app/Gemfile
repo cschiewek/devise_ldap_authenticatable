@@ -10,10 +10,11 @@ group :test do
   gem "ruby-debug"
   gem "mocha"
   gem "shoulda"
-  # gem "rspec-rails", "2.0.0.beta.15"
   gem 'factory_girl_rails'
   gem "cucumber-rails"
+  gem "database_cleaner"
   gem "capybara"
+  gem "launchy"
   gem "autotest-rails"
   gem "ZenTest"
   gem "redgreen"

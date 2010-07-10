@@ -6,8 +6,8 @@ class PostsController < ApplicationController
     render :text => "posts#index"
   end
   
-  def show
-    render :text => "posts#show"
+  def new
+    render :text => "posts#new"
   end
 
 end

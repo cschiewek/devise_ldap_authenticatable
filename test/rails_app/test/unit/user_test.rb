@@ -15,10 +15,11 @@ class UserTest < ActiveSupport::TestCase
       @user = Factory(:user)
     end
 
-    should "description" do
+    should "check for password validation" do
       assert_equal(@user.email, "example.user@test.com")
       should_have_password @user, "secret"
-      should_not_have_password @user, "wrong_secret", "binds when using the wrong_secret password"
+      should_not_have_password @user, "wrong_secret"
+      should_not_have_password @user, "Secret"
     end
   end
   
