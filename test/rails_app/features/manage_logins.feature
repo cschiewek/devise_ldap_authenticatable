@@ -1,8 +1,8 @@
 Feature: Manage logins
-  In order to login with LDAP
-  [stakeholder]
-  wants [behaviour]
-  
+  In order to login with Devise LDAP Authenticatable
+  As a user
+  I want to login with LDAP
+
   Background:
     Given the following logins:
       | email                 | password |
