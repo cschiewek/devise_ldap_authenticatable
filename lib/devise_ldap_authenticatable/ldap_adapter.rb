@@ -9,8 +9,18 @@ module Devise
     def self.valid_credentials?(login, password_plaintext)
       resource = LdapConnect.new
       ldap = resource.ldap
-      ldap.auth "#{resource.attribute}=#{login},#{ldap.base}", password_plaintext
-      ldap.bind # will return false if authentication is NOT successful
+      
+      user_dn = "#{resource.attribute}=#{login},#{ldap.base}"
+      
+      ## Check login
+      ldap.auth user_dn, password_plaintext
+      
+      if ::Devise.ldap_check_group_membership
+        return (ldap.bind && resource.in_required_groups?(user_dn)) 
+      else
+        return ldap.bind
+      end
+      
     end
     
     def self.update_password(login, plaintext_password)
@@ -20,7 +30,7 @@ module Devise
 
     class LdapConnect
 
-      attr_reader :ldap, :base, :attribute
+      attr_reader :ldap, :base, :attribute, :required_groups
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]
@@ -30,13 +40,30 @@ module Devise
         @ldap = Net::LDAP.new(ldap_options)
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
-        @ldap.base = ldap_config["base"]
+        @ldap.base = ldap_config["user_base"]
         @attribute = ldap_config["attribute"]
+        @required_groups = ldap_config["required_groups"]
+        @group_base = ldap_config["group_base"]
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
       end
 
       def dn(login)
         "#{@attribute}=#{login},#{@ldap.base}"
+      end
+
+      def in_required_groups?(user_dn)
+        ## login as admin to check for groups
+        ldap = LdapConnect.new(:admin => true).ldap
+        
+        if ldap.bind
+          for group in @required_groups
+            ldap.search(:filter => group, :base => @group_base) do |entry|
+              return true if entry.uniqueMember.include? user_dn
+            end
+          end
+        end
+        
+        return false
       end
 
       def update_ldap(login,ops)
@@ -50,6 +77,8 @@ module Devise
         end
 
         ldap = LdapConnect.new(:admin => true).ldap
+        
+        ## FIXME exception checking
         ldap.bind
         
         ldap.modify(:dn => dn(login), :operations => operations)

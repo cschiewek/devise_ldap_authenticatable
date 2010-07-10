@@ -1,6 +1,9 @@
 Factory.define :user do |f|
   f.email "example.user@test.com"
   f.password "secret"
-  # f.encrypted_password "user_password"
-  # f.password_salt  "12345"
+end
+
+Factory.define :admin, :class => "user" do |f|
+  f.email "example.admin@test.com"
+  f.password "admin_secret"
 end

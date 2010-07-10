@@ -14,8 +14,15 @@ test:
   host: localhost
   port: 3389
   attribute: cn
-  base: ou=people,dc=test,dc=com
+  user_base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: secret
   ssl: false
-
+  
+  ## Authorization
+  group_base: ou=groups,dc=test,dc=com
+  required_groups: 
+    - cn=admins
+    # - cn=users
+  require_attribute:
+    authorizationRole: blogUser

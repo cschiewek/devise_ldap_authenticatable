@@ -2,11 +2,11 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
 
-  def should_have_password(user, password, message = "Password is invalid")
+  def should_be_validated(user, password, message = "Password is invalid")
     assert(user.valid_ldap_authentication?(password), message)
   end
   
-  def should_not_have_password(user, password, message = "Password is not properly set")
+  def should_not_be_validated(user, password, message = "Password is not properly set")
      assert(!user.valid_ldap_authentication?(password), message)
   end
 
@@ -17,9 +17,9 @@ class UserTest < ActiveSupport::TestCase
 
     should "check for password validation" do
       assert_equal(@user.email, "example.user@test.com")
-      should_have_password @user, "secret"
-      should_not_have_password @user, "wrong_secret"
-      should_not_have_password @user, "Secret"
+      should_be_validated @user, "secret"
+      should_not_be_validated @user, "wrong_secret"
+      should_not_be_validated @user, "Secret"
     end
   end
   
@@ -29,17 +29,17 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "change password" do
-      should_have_password @user, "secret"
+      should_be_validated @user, "secret"
       @user.update_attributes(:password => "changed")
-      should_have_password @user, "changed", "password was not changed properly on the LDAP sevrer"
+      should_be_validated @user, "changed", "password was not changed properly on the LDAP sevrer"
     end
     
     should "not allow to change password if setting is false" do
-      should_have_password @user, "secret"
+      should_be_validated @user, "secret"
       ::Devise.ldap_update_password = false
       @user.update_attributes(:password => "wrong_secret")
-      should_not_have_password @user, "wrong_secret"
-      should_have_password @user, "secret"
+      should_not_be_validated @user, "wrong_secret"
+      should_be_validated @user, "secret"
     end
   end
   
@@ -78,6 +78,24 @@ class UserTest < ActiveSupport::TestCase
     end
     
   end
+  
+  context "use groups for authorization" do
+    setup do
+      @admin = Factory(:admin)
+      @user = Factory(:user)
+      ::Devise.ldap_check_group_membership = true
+    end
+
+    should "admin should be allowed in" do
+      should_be_validated @admin, "admin_secret"
+      # assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
+    end
+    
+    should "user should not be allowed in" do
+      should_not_be_validated @user, "secret"
+    end
+  end
+  
   
 
 end
