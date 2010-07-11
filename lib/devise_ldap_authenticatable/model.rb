@@ -41,6 +41,10 @@ module Devise
           return false
         end
       end
+      
+      def ldap_groups
+         Devise::LdapAdapter.get_groups(self.email)
+      end
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the

@@ -88,7 +88,10 @@ class UserTest < ActiveSupport::TestCase
 
     should "admin should be allowed in" do
       should_be_validated @admin, "admin_secret"
-      # assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
+    end
+    
+    should "admin should have the proper groups set" do
+      assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
     end
     
     should "user should not be allowed in" do

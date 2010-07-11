@@ -7,37 +7,30 @@ module Devise
   module LdapAdapter
     
     def self.valid_credentials?(login, password_plaintext)
-      resource = LdapConnect.new
-      ldap = resource.ldap
-      
-      user_dn = "#{resource.attribute}=#{login},#{ldap.base}"
-      
-      ## Check login
-      ldap.auth user_dn, password_plaintext
-      
-      if ::Devise.ldap_check_group_membership
-        return (ldap.bind && resource.in_required_groups?(user_dn)) 
-      else
-        return ldap.bind
-      end
-      
+      resource = LdapConnect.new(:login => login, :password => password_plaintext)
+      resource.authorized?
     end
     
-    def self.update_password(login, plaintext_password)
-      resource = LdapConnect.new
-      resource.update_ldap(login, :userpassword => Net::LDAP::Password.generate(:sha, plaintext_password)) if plaintext_password.present? 
+    def self.update_password(login, new_password)
+      resource = LdapConnect.new(:login => login, :new_password => new_password)
+      resource.change_password! if new_password.present? 
+    end
+    
+    def self.get_groups(login)
+      ldap = LdapConnect.new(:login => login)
+      ldap.user_groups
     end
 
     class LdapConnect
 
-      attr_reader :ldap, :base, :attribute, :required_groups
+      attr_reader :ldap, :base, :attribute, :required_groups, :login, :password, :new_password
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]
-        ldap_options = params
+        # ldap_options = params
         ldap_options[:encryption] = :simple_tls if ldap_config["ssl"]
 
-        @ldap = Net::LDAP.new(ldap_options)
+        @ldap = Net::LDAP.new # (ldap_options)
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["user_base"]
@@ -45,28 +38,64 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @group_base = ldap_config["group_base"]
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
-      end
-
-      def dn(login)
-        "#{@attribute}=#{login},#{@ldap.base}"
-      end
-
-      def in_required_groups?(user_dn)
-        ## login as admin to check for groups
-        ldap = LdapConnect.new(:admin => true).ldap
         
-        if ldap.bind
-          for group in @required_groups
-            ldap.search(:filter => group, :base => @group_base) do |entry|
-              return true if entry.uniqueMember.include? user_dn
-            end
+        @login = params[:login]
+        @password = params[:password]
+        @new_password = params[:new_password]
+      end
+
+      def dn
+        "#{@attribute}=#{@login},#{@ldap.base}"
+      end
+
+      def authenticate!
+        @ldap.auth(dn, @password)
+        @ldap.bind
+      end
+
+      def authenticated?
+        authenticate!
+      end
+      
+      def authorized?
+        if ::Devise.ldap_check_group_membership
+          authenticated? && in_required_groups?
+        else
+          authenticated?
+        end
+      end
+      
+      def change_password!
+        update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
+      end
+
+      def in_required_groups?        
+        admin_ldap = LdapConnect.admin
+        admin_ldap.bind
+        
+        for group in @required_groups
+          admin_ldap.search(:filter => group, :base => @group_base) do |entry|
+            return true if entry.uniqueMember.include? dn
           end
         end
         
         return false
       end
-
-      def update_ldap(login,ops)
+      
+      def user_groups
+        admin_ldap = LdapConnect.admin
+        admin_ldap.bind
+        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+      end
+      
+      private
+      
+      def self.admin
+        LdapConnect.new(:admin => true).ldap
+      end
+      
+      def update_ldap(ops)
         operations = []
         if ops.is_a? Hash
           ops.each do |key,value|
@@ -76,12 +105,10 @@ module Devise
           operations = ops
         end
 
-        ldap = LdapConnect.new(:admin => true).ldap
+        admin_ldap = LdapConnect.admin
+        admin_ldap.bind
         
-        ## FIXME exception checking
-        ldap.bind
-        
-        ldap.modify(:dn => dn(login), :operations => operations)
+        admin_ldap.modify(:dn => dn, :operations => operations)
       end
       
       # ## This is for testing, It will clear all users out of the LDAP database. Useful to put in before hooks in rspec, cucumber, etc..

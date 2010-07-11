@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   # If you have other dependencies, add them here
   # s.add_dependency "authlogic", "~> 2.1.5"
   s.add_dependency "devise", "~> 1.1.rc2"
-  s.add_dependency "ruby-net-ldap", "~> 0.0.4"
+  s.add_dependency "net-ldap", "~> 0.1.1"
 
   # If you need to check in files that aren't .rb files, add them here
   s.files        = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
