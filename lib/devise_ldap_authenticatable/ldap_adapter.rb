@@ -23,7 +23,7 @@ module Devise
 
     class LdapConnect
 
-      attr_reader :ldap, :base, :attribute, :required_groups, :login, :password, :new_password
+      attr_reader :ldap #, :base, :attribute, :required_groups, :login, :password, :new_password
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]

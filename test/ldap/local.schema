@@ -1,0 +1,6 @@
+attributetype ( 1.1.2.2.5 NAME  'authorizationRole' SUP name )
+
+objectclass ( 1.1.2.2.1 NAME 'authorizations'
+        DESC 'mixin authorizations'
+        AUXILIARY
+        MAY authorizationRole )

@@ -15,20 +15,24 @@ ou: groups
 # example.user@test.com, people, test.com
 dn: cn=example.user@test.com,ou=people,dc=test,dc=com
 objectClass: inetOrgPerson
+objectClass: authorizations
 sn: User
 mail: example.user@test.com
 cn: example.user@test.com
+authorizationRole: blogUser
 userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
  =
 
 # example.admin@test.com, people, test.com
 dn: cn=example.admin@test.com,ou=people,dc=test,dc=com
 objectClass: inetOrgPerson
+objectClass: authorizations
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
 sn: Admin
 cn: example.admin@test.com
+authorizationRole: blogAdmin
 userPassword:: e1NIQX0wcUNXaERISGFwWmc3ekJxZWRRanBzNW1EUDA9
 
 # users, groups, test.com

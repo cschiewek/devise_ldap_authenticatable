@@ -23,6 +23,5 @@ test:
   group_base: ou=groups,dc=test,dc=com
   required_groups: 
     - cn=admins
-    # - cn=users
   require_attribute:
     authorizationRole: blogUser
