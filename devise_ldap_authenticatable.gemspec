@@ -4,9 +4,9 @@ Gem::Specification.new do |s|
   s.name        = "devise_ldap_authenticatable"
   s.version     = DeviseLdapAuthenticatable::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Daneil McNevin"]
+  s.authors     = ["Daniel McNevin", "Curtis Schiewek" ]
   s.email       = ["dpmcnevin@gmail.com"]
-  s.homepage    = "http://github.com/dpmcnevin/devise_ldap_authenticatable"
+  s.homepage    = "http://github.com/cschiewek/devise_ldap_authenticatable/tree/rails3"
   s.summary     = "LDAP Authentication for Devise"
   s.description = "LDAP Authentication for Devise"
 
@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "devise_ldap_authenticatable"
 
   # If you have other dependencies, add them here
-  # s.add_dependency "authlogic", "~> 2.1.5"
   s.add_dependency "devise", "~> 1.1.rc2"
   s.add_dependency "ruby-net-ldap", "~> 0.0.4"
 

@@ -25,7 +25,7 @@ This will *only* work for Rails 3 applications.
 In the Gemfile for your application:
 
     gem "devise", "1.1.rc2"
-    gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git", :branch => "rails3"
+    gem "devise_ldap_authenticatable", "0.3.4"
 
 Setup
 -----
