@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = ">= 1.3.6"
 
-  # lol - required for validation
   s.rubyforge_project         = "devise_ldap_authenticatable"
 
   # If you have other dependencies, add them here
@@ -20,13 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ruby-net-ldap", "~> 0.0.4"
 
   # If you need to check in files that aren't .rb files, add them here
-  s.files        = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
+  s.files        = Dir["{lib}/**/*", "bin/*", "LICENSE", "*.md"]
   s.require_path = 'lib'
 
-  # If you need an executable, add it here
-  # s.executables = ["newgem"]
-
-  # If you have C extensions, uncomment this line
-  # s.extensions = "ext/extconf.rb"
 end
-

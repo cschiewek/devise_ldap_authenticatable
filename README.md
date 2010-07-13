@@ -27,6 +27,10 @@ In the Gemfile for your application:
     gem "devise", "1.1.rc2"
     gem "devise_ldap_authenticatable", "0.3.4"
 
+For latest version, use the git repository instead
+
+    gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git", :branch => "rails3"
+
 Setup
 -----
 
@@ -94,3 +98,4 @@ View on [Pivotal Tracker](http://www.pivotaltracker.com/projects/97318).
 Released under the MIT license
 
 Copyright (c) 2010 Curtis Schiewek, Daniel McNevin
+
