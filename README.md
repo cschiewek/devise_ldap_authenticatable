@@ -25,7 +25,7 @@ This will *only* work for Rails 3 applications.
 In the Gemfile for your application:
 
     gem "devise", "1.1.rc2"
-    gem "devise_ldap_authenticatable", "0.3.4"
+    gem "devise_ldap_authenticatable", "0.3.5"
 
 For latest version, use the git repository instead
 
