@@ -1,9 +1,7 @@
-require 'net/ldap'
+require "net/ldap"
 
 module Devise
 
-  # simple adapter for ldap credential checking
-  # ::Devise.ldap_host
   module LdapAdapter
     
     def self.valid_credentials?(login, password_plaintext)
@@ -23,7 +21,7 @@ module Devise
 
     class LdapConnect
 
-      attr_reader :ldap #, :base, :attribute, :required_groups, :login, :password, :new_password
+      attr_reader :ldap, :login #, :base, :attribute, :required_groups, :login, :password, :new_password
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]

@@ -31,11 +31,8 @@ module Devise
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
+        debugger
         if Devise::LdapAdapter.valid_credentials?(self.email, password)
-          ## TODO set the groups from ldap
-          # self.ldap_groups = 
-          ## TODO set the authorization roles from ldap
-          # self.authorizations =
           return true
         else
           return false
@@ -49,8 +46,8 @@ module Devise
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
-        def authenticate_with_ldap(attributes={})
-          return unless attributes[:email].present? 
+        def authenticate_with_ldap(attributes={})            
+          return nil unless attributes[:email].present? 
           conditions = attributes.slice(:email)
 
           unless conditions[:email]
