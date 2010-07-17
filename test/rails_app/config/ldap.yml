@@ -10,6 +10,15 @@
 #   cn=admin,dc=test,com / secret
 #   cn=example.user@test.com,ou=people,dc=test,dc=com / secret
 
+authorizations: &AUTHORIZATIONS
+  ## Authorization
+  group_base: ou=groups,dc=test,dc=com
+  required_groups:
+    - cn=admins,ou=groups,dc=test,dc=com
+  require_attribute:
+    objectClass: inetOrgPerson
+    authorizationRole: postsAdmin
+
 test:
   host: localhost
   port: 3389
@@ -18,10 +27,6 @@ test:
   admin_user: cn=admin,dc=test,dc=com
   admin_password: secret
   ssl: false
+  <<: *AUTHORIZATIONS
   
-  ## Authorization
-  group_base: ou=groups,dc=test,dc=com
-  required_groups: 
-    - cn=admins
-  require_attribute:
-    authorizationRole: blogUser
+

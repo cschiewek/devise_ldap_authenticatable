@@ -99,6 +99,20 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
-  
+  context "use role attribute for authorization" do
+    setup do
+      @admin = Factory(:admin)
+      @user = Factory(:user)
+      ::Devise.ldap_check_attributes = true
+    end
 
+    should "admin should be allowed in" do
+      should_be_validated @admin, "admin_secret"
+    end
+    
+    should "user should not be allowed in" do
+      should_not_be_validated @user, "secret"
+    end
+  end
+  
 end

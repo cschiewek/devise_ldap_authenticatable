@@ -12,8 +12,11 @@ Requirements
 
 - An LDAP server (tested on OpenLDAP)
 - Rails 3.0.0.beta4
+
+These gems are dependencies of the gem:
+
 - Devise 1.1.rc2
-- ruby-net-ldap 0.0.4
+- net-ldap 0.1.1
 
 Installation
 ------------
@@ -25,6 +28,10 @@ This will *only* work for Rails 3 applications.
 In the Gemfile for your application:
 
     gem "devise", "1.1.rc2"
+    gem "devise_ldap_authenticatable", "0.4.0"
+    
+To get the latest version, pull directly from github instead of the gem:
+
     gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git", :branch => "rails3"
 
 Setup
@@ -57,15 +64,24 @@ Configuration
 
 In initializer  `config/initializers/devise.rb` :
 
-* ldap\_create\_user
+* ldap\_create\_user _(default: false)_
 	* If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
       If set to false, you will have to create the user record before they will be allowed to login.
 
-* ldap\_config
+* ldap\_config _(default: #{Rails.root}/config/ldap.yml)_
 	* Where to find the LDAP config file. Commented out to use the default, change if needed.
 
-* ldap\_update\_password
+
+* ldap\_update\_password _(default: true)_
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
+
+
+* ldap\_check\_group_membership _(default: false)_
+  * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
+
+
+* ldap\_check\_attributes _(default: false)_
+  * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.
 
 Testing
 -------

@@ -35,8 +35,11 @@ module Devise
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["user_base"]
         @attribute = ldap_config["attribute"]
-        @required_groups = ldap_config["required_groups"]
+        
         @group_base = ldap_config["group_base"]
+        @required_groups = ldap_config["required_groups"]        
+        @required_attributes = ldap_config["require_attribute"]
+        
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
         
         @login = params[:login]
@@ -58,28 +61,40 @@ module Devise
       end
       
       def authorized?
-        if ::Devise.ldap_check_group_membership
-          authenticated? && in_required_groups?
-        else
-          authenticated?
-        end
+        authenticated? && in_required_groups? && has_required_attribute?
       end
       
       def change_password!
         update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
       end
 
-      def in_required_groups?        
+      def in_required_groups?     
+        return true unless ::Devise.ldap_check_group_membership
+           
         admin_ldap = LdapConnect.admin
         admin_ldap.bind
         
         for group in @required_groups
-          admin_ldap.search(:filter => group, :base => @group_base) do |entry|
-            return true if entry.uniqueMember.include? dn
+          admin_ldap.search(:base => group, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+            return false unless entry.uniqueMember.include? dn
           end
         end
         
-        return false
+        return true
+      end
+      
+      def has_required_attribute?
+        return true unless ::Devise.ldap_check_attributes
+        
+        admin_ldap = LdapConnect.admin
+        admin_ldap.bind
+        
+        user = find_ldap_user(admin_ldap)
+        @required_attributes.each do |key,val|
+          return false unless user[key].include? val
+        end
+        
+        return true
       end
       
       def user_groups
@@ -93,6 +108,10 @@ module Devise
       
       def self.admin
         LdapConnect.new(:admin => true).ldap
+      end
+      
+      def find_ldap_user(ldap)
+        ldap.search(:base => dn, :scope => Net::LDAP::SearchScope_BaseObject).try(:first)
       end
       
       def update_ldap(ops)
