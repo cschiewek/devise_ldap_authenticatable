@@ -25,13 +25,12 @@ module Devise
         end
       end
 
+      ## FIXME find out how to get rid of this.
       def clean_up_passwords
-       # self.password = nil
       end
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        debugger
         if Devise::LdapAdapter.valid_credentials?(self.email, password)
           return true
         else
@@ -46,7 +45,7 @@ module Devise
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
-        def authenticate_with_ldap(attributes={})            
+        def authenticate_with_ldap(attributes={}) 
           return nil unless attributes[:email].present? 
           conditions = attributes.slice(:email)
 
@@ -61,9 +60,10 @@ module Devise
           end
            
           if resource.try(:valid_ldap_authentication?, attributes[:password])
-            resource.new_record? ? resource.save : resource
+            resource.save if resource.new_record?
+            return resource
           else
-            nil
+            return nil
           end
 
         end

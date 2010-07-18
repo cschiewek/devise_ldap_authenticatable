@@ -25,13 +25,12 @@ module Devise
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]
-        # ldap_options = params
         ldap_options[:encryption] = :simple_tls if ldap_config["ssl"]
 
         @ldap = Net::LDAP.new # (ldap_options)
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
-        @ldap.base = ldap_config["user_base"]
+        @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
         
         @group_base = ldap_config["group_base"]
@@ -68,10 +67,15 @@ module Devise
 
       def in_required_groups?     
         return true unless ::Devise.ldap_check_group_membership
+        
+        ## FIXME set errors here, the ldap.yml isn't set properly.
+        return false if @required_groups.nil?   
            
         admin_ldap = LdapConnect.admin
-        admin_ldap.bind
         
+        ## FIXME set error here, or raise an execption
+        return false unless admin_ldap.bind
+                
         for group in @required_groups
           admin_ldap.search(:base => group, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             return false unless entry.uniqueMember.include? dn
@@ -85,10 +89,15 @@ module Devise
         return true unless ::Devise.ldap_check_attributes
         
         admin_ldap = LdapConnect.admin
-        admin_ldap.bind
+        
+        ## FIXME set error here, or raise an execption
+        return false unless admin_ldap.bind
         
         user = find_ldap_user(admin_ldap)
+                
         @required_attributes.each do |key,val|
+          Rails.logger.add 1, "==> LDAP: checking: #{key} :: #{val}"
+          debugger
           return false unless user[key].include? val
         end
         
@@ -97,7 +106,10 @@ module Devise
       
       def user_groups
         admin_ldap = LdapConnect.admin
-        admin_ldap.bind
+        
+        ## FIXME set error here, or raise an execption
+        return false unless admin_ldap.bind
+        
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
@@ -123,20 +135,12 @@ module Devise
         end
 
         admin_ldap = LdapConnect.admin
-        admin_ldap.bind
+        
+        ## FIXME set error here, or raise an execption
+        return false unless admin_ldap.bind
         
         admin_ldap.modify(:dn => dn, :operations => operations)
       end
-      
-      # ## This is for testing, It will clear all users out of the LDAP database. Useful to put in before hooks in rspec, cucumber, etc..
-      # def clear_users!(base = @ldap.base)
-      #   raise "You should ONLY do this on the test enviornment! It will clear out all of the users in the LDAP server" if Rails.env != "test"
-      #   if @ldap.bind
-      #     @ldap.search(:filter => "#{@attribute}=*", :base => base) do |entry|
-      #       @ldap.delete(:dn => entry.dn)
-      #     end
-      #   end
-      # end
 
     end
 
