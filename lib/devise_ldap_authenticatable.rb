@@ -1,13 +1,18 @@
 # encoding: utf-8
 require 'devise'
 
+require 'devise_ldap_authenticatable/exception'
+require 'devise_ldap_authenticatable/logger'
 require 'devise_ldap_authenticatable/schema'
 require 'devise_ldap_authenticatable/ldap_adapter'
 require 'devise_ldap_authenticatable/routes'
-require 'devise_ldap_authenticatable/exception'
 
 # Get ldap information from config/ldap.yml now
 module Devise
+  # Allow logging
+  mattr_accessor :ldap_logger
+  @@ldap_logger = true
+  
   # Add valid users to database
   mattr_accessor :ldap_create_user
   @@ldap_create_user = false

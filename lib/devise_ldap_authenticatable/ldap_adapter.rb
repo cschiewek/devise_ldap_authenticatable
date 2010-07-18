@@ -58,6 +58,7 @@ module Devise
       end
       
       def authorized?
+        DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
         authenticated? && in_required_groups? && has_required_attribute?
       end
       
@@ -72,13 +73,13 @@ module Devise
         return false if @required_groups.nil?   
            
         admin_ldap = LdapConnect.admin
-        
-        ## FIXME set error here, or raise an execption
-        return false unless admin_ldap.bind
                 
         for group in @required_groups
           admin_ldap.search(:base => group, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            return false unless entry.uniqueMember.include? dn
+            unless entry.uniqueMember.include? dn
+              DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
+              return false
+            end
           end
         end
         
@@ -90,15 +91,13 @@ module Devise
         
         admin_ldap = LdapConnect.admin
         
-        ## FIXME set error here, or raise an execption
-        return false unless admin_ldap.bind
-        
         user = find_ldap_user(admin_ldap)
                 
         @required_attributes.each do |key,val|
-          Rails.logger.add 1, "==> LDAP: checking: #{key} :: #{val}"
-          debugger
-          return false unless user[key].include? val
+          unless user[key].include? val
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
+            return false 
+          end
         end
         
         return true
@@ -107,9 +106,7 @@ module Devise
       def user_groups
         admin_ldap = LdapConnect.admin
         
-        ## FIXME set error here, or raise an execption
-        return false unless admin_ldap.bind
-        
+        DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
@@ -117,10 +114,18 @@ module Devise
       private
       
       def self.admin
-        LdapConnect.new(:admin => true).ldap
+        ldap = LdapConnect.new(:admin => true).ldap
+        
+        unless ldap.bind
+          DeviseLdapAuthenticatable::Logger.send("Cannot bind to admin LDAP user")
+          raise DeviseLdapAuthenticatable::LdapException, "Cannot connect to admin LDAP user"
+        end
+        
+        return ldap
       end
       
       def find_ldap_user(ldap)
+        DeviseLdapAuthenticatable::Logger.send("Finding user: #{dn}")
         ldap.search(:base => dn, :scope => Net::LDAP::SearchScope_BaseObject).try(:first)
       end
       
@@ -136,9 +141,7 @@ module Devise
 
         admin_ldap = LdapConnect.admin
         
-        ## FIXME set error here, or raise an execption
-        return false unless admin_ldap.bind
-        
+        DeviseLdapAuthenticatable::Logger.send("Modifying user #{dn}")
         admin_ldap.modify(:dn => dn, :operations => operations)
       end
 

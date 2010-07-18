@@ -48,6 +48,9 @@ This will install the sample.yml, update the devise.rb initializer, and update y
                                # Default: user
     [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
                                # Default: true
+    [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
+                               # Default: true
+
 
 
 Usage
@@ -65,13 +68,15 @@ Configuration
 
 In initializer  `config/initializers/devise.rb` :
 
+* ldap\_logger _(default: true)_
+  * If set to true, will log LDAP queries to the Rails logger.
+
 * ldap\_create\_user _(default: false)_
 	* If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
       If set to false, you will have to create the user record before they will be allowed to login.
 
 * ldap\_config _(default: #{Rails.root}/config/ldap.yml)_
 	* Where to find the LDAP config file. Commented out to use the default, change if needed.
-
 
 * ldap\_update\_password _(default: true)_
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
