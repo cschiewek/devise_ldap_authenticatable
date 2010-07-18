@@ -77,7 +77,7 @@ module Devise
         for group in @required_groups
           admin_ldap.search(:base => group, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             unless entry.uniqueMember.include? dn
-              DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
+              DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group}")
               return false
             end
           end
