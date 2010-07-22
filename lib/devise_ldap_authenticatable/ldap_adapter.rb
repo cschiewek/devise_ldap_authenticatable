@@ -7,8 +7,9 @@ module Devise
   module LdapAdapter
 
     def self.valid_credentials?(login, attributes, password)
-      debugger
-      login = [::Devise.ldap_login_attribute+'='+login, attributes,::Devise.ldap_base_dn].join(',')      
+      login = "#{::Devise.ldap_login_attribute}=#{login},"
+      login += "#{attributes}," unless attributes.nil?
+      login += ::Devise.ldap_base_dn
       @encryption = ::Devise.ldap_ssl ? :simple_tls : nil
       ldap = Net::LDAP.new(:encryption => @encryption)
       ldap.host = ::Devise.ldap_host
@@ -17,7 +18,6 @@ module Devise
       if ldap.bind
         true
       else
-        # errors.add_to_base(ldap.get_operation_result.message)
         false
       end
     end
