@@ -50,7 +50,7 @@ then the model :
       devise :ldap_authenticatable, :rememberable, :trackable, :timeoutable
 
       # Setup accessible (or protected) attributes for your model
-      attr_accessible :login, :password, :remember_me
+      attr_accessible :login, :ldap_attributes, :password, :remember_me
       ...
     end
 
@@ -62,6 +62,7 @@ and finally change the authentication key in the devise initializer :
 	  ...
 	end
 
+The string stored in ldap_attributes will be inserted between the login and base to provide the full dn used to bind.
 I recommend using :rememberable, :trackable, :timeoutable as it gives a full feature set for logins.
 
 Usage
