@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_ldap_authenticatable}
-  s.version = "0.1.4"
+  s.version = "0.1.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schiewek"]
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
      "README.md",
      "Rakefile",
      "VERSION",
+     "devise_ldap_authenticatable.gemspec",
      "lib/devise_ldap_authenticatable.rb",
      "lib/devise_ldap_authenticatable/ldap_adapter.rb",
      "lib/devise_ldap_authenticatable/model.rb",
