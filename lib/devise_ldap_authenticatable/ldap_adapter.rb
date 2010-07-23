@@ -45,7 +45,15 @@ module Devise
       end
 
       def dn
-        "#{@attribute}=#{@login},#{@ldap.base}"
+        DeviseLdapAuthenticatable::Logger.send("LDAP search: #{@attribute}=#{@login}")
+        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        ldap_entry = nil
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        if ldap_entry.nil?
+          "#{@attribute}=#{@login},#{@ldap.base}"
+        else
+          ldap_entry.dn
+        end
       end
 
       def authenticate!
