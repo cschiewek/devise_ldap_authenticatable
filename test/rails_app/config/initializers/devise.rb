@@ -2,7 +2,7 @@
 # four configuration values can also be set straight in your models.
 Devise.setup do |config|
   # ==> LDAP Configuration 
-  # config.ldap_create_user = false
+  config.ldap_create_user = true
   # config.ldap_update_password = true
   # config.ldap_config = "#{Rails.root}/config/ldap.yml"
     

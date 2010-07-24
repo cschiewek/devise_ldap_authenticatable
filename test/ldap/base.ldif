@@ -1,3 +1,5 @@
+# ldapadd -x -h localhost -p 3389 -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif
+
 dn: dc=test,dc=com
 objectClass: dcObject
 objectClass: organizationalUnit
@@ -17,6 +19,7 @@ dn: cn=example.user@test.com,ou=people,dc=test,dc=com
 objectClass: inetOrgPerson
 objectClass: authorizations
 sn: User
+uid: example_user
 mail: example.user@test.com
 cn: example.user@test.com
 authorizationRole: blogUser
@@ -31,6 +34,7 @@ objectClass: organizationalPerson
 objectClass: person
 objectClass: top
 sn: Admin
+uid: example_admin
 cn: example.admin@test.com
 authorizationRole: blogAdmin
 userPassword:: e1NIQX0wcUNXaERISGFwWmc3ekJxZWRRanBzNW1EUDA9

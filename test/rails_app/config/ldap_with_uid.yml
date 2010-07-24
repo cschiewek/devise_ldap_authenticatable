@@ -19,15 +19,12 @@ authorizations: &AUTHORIZATIONS
     objectClass: inetOrgPerson
     authorizationRole: blogAdmin
     
-test: &TEST
+test:
   host: localhost
   port: 3389
-  attribute: cn
+  attribute: uid
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: secret
   ssl: false
   <<: *AUTHORIZATIONS
-  
-development:
-  <<: *TEST

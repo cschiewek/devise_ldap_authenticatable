@@ -13,25 +13,29 @@ module Devise
       extend ActiveSupport::Concern
 
       included do
-        attr_reader :password, :current_password
+        attr_reader :current_password, :password
         attr_accessor :password_confirmation
+      end
+
+      def login_with
+        self[::Devise.authentication_keys.first]
+      end
+      
+      def reset_password!(new_password, new_password_confirmation)
+        if new_password == new_password_confirmation && ::Devise.ldap_update_password
+          Devise::LdapAdapter.update_password(login_with, new_password)
+        end
+        clear_reset_password_token if valid?
+        save
       end
 
       def password=(new_password)
         @password = new_password
-        
-        if @password.present?
-          Devise::LdapAdapter.update_password(self.email, password) if ::Devise.ldap_update_password
-        end
-      end
-
-      ## FIXME find out how to get rid of this.
-      def clean_up_passwords
       end
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        if Devise::LdapAdapter.valid_credentials?(self.email, password)
+        if Devise::LdapAdapter.valid_credentials?(login_with, password)
           return true
         else
           return false
@@ -39,39 +43,36 @@ module Devise
       end
       
       def ldap_groups
-         Devise::LdapAdapter.get_groups(self.email)
+        Devise::LdapAdapter.get_groups(login_with)
       end
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={}) 
-          return nil unless attributes[:email].present? 
-          conditions = attributes.slice(:email)
+          @login_with = ::Devise.authentication_keys.first
+          return nil unless attributes[@login_with].present? 
 
-          unless conditions[:email]
-            conditions[:email] = "#{conditions[:email]}"
-          end
-
-          resource = find_for_ldap_authentication(conditions)
-          
+          # resource = find_for_ldap_authentication(conditions)
+          resource = scoped.where(@login_with => attributes[@login_with]).first
+                    
           if (resource.blank? and ::Devise.ldap_create_user)
-            resource = new(conditions.merge({:password => attributes[:password]}))
+            resource = new
+            resource[@login_with] = attributes[@login_with]
+            resource.password = attributes[:password]
           end
-           
+                    
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             resource.save if resource.new_record?
             return resource
           else
             return nil
           end
-
         end
-
-        protected
-
-        def find_for_ldap_authentication(conditions)
-          scoped.where(conditions).first
+        
+        def update_with_password(resource)
+          debugger
+          puts "UPDATE_WITH_PASSWORD: #{resource.inspect}"
         end
         
       end
