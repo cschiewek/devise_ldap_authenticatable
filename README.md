@@ -62,6 +62,7 @@ Devise LDAP Authenticatable works in replacement of Database Authenticatable
 
 This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
 
+The field that is used for logins is the first key that's configured in the `config/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise.
 
 Configuration
 -------------
@@ -81,13 +82,15 @@ In initializer  `config/initializers/devise.rb` :
 * ldap\_update\_password _(default: true)_
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
 
-
 * ldap\_check\_group_membership _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
 
 
 * ldap\_check\_attributes _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.
+
+* ldap\_use\_admin\_to\_bind _(default: false)_
+  * When set to true, the admin user will be used to bind to the LDAP server during authentication.
 
 Testing
 -------

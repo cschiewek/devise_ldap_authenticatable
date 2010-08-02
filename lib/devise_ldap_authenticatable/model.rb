@@ -71,7 +71,6 @@ module Devise
         end
         
         def update_with_password(resource)
-          debugger
           puts "UPDATE_WITH_PASSWORD: #{resource.inspect}"
         end
         

@@ -5,7 +5,9 @@ module Devise
   module LdapAdapter
     
     def self.valid_credentials?(login, password_plaintext)
-      resource = LdapConnect.new(:login => login, :password => password_plaintext)
+      options = {:login => login, :password => password_plaintext}
+      options.merge({ :admin => true }) if ::Devise.ldap_use_admin_to_bind
+      resource = LdapConnect.new(options)
       resource.authorized?
     end
     
@@ -21,7 +23,7 @@ module Devise
 
     class LdapConnect
 
-      attr_reader :ldap, :login #, :base, :attribute, :required_groups, :login, :password, :new_password
+      attr_reader :ldap, :login
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]

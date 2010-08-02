@@ -106,20 +106,32 @@ class UserTest < ActiveSupport::TestCase
     end
   
     context "use role attribute for authorization" do
-    setup do
-      @admin = Factory(:admin)
-      @user = Factory(:user)
-      ::Devise.ldap_check_attributes = true
-    end
+      setup do
+        @admin = Factory(:admin)
+        @user = Factory(:user)
+        ::Devise.ldap_check_attributes = true
+      end
 
-    should "admin should be allowed in" do
-      should_be_validated @admin, "admin_secret"
+      should "admin should be allowed in" do
+        should_be_validated @admin, "admin_secret"
+      end
+    
+      should "user should not be allowed in" do
+        should_not_be_validated @user, "secret"
+      end
     end
     
-    should "user should not be allowed in" do
-      should_not_be_validated @user, "secret"
+    context "use admin setting to bind" do
+      setup do
+        @admin = Factory(:admin)
+        @user = Factory(:user)
+        ::Devise.ldap_use_admin_to_bind = true
+      end
+
+      should "description" do
+        should_be_validated @admin, "admin_secret"
+      end
     end
-  end
   
   end
   
@@ -153,8 +165,7 @@ class UserTest < ActiveSupport::TestCase
         assert_equal(User.all.size, 1)
         assert_contains(User.all.collect(&:uid), "example_user", "user not in database")
       end
-    end
-    
+    end    
   end
   
   

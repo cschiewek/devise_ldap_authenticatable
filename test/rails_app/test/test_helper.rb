@@ -5,7 +5,6 @@ require 'rails/test_help'
 class ActiveSupport::TestCase
   
   def reset_ldap_server!
-    # debugger
     `ldapmodify -x -h localhost -p 3389 -D "cn=admin,dc=test,dc=com" -w secret -f ../ldap/clear.ldif`
     `ldapadd -x -h localhost -p 3389 -D "cn=admin,dc=test,dc=com" -w secret -f ../ldap/base.ldif`
   end

@@ -1,4 +1,4 @@
-RailsApp::Application.routes.draw do |map|
+RailsApp::Application.routes.draw do
   devise_for :users
   
   resources :posts
