@@ -6,7 +6,7 @@ module Devise
     
     def self.valid_credentials?(login, password_plaintext)
       options = {:login => login, :password => password_plaintext}
-      options.merge({ :admin => true }) if ::Devise.ldap_use_admin_to_bind
+      options.merge!({ :admin => true }) if ::Devise.ldap_use_admin_to_bind
       resource = LdapConnect.new(options)
       resource.authorized?
     end
