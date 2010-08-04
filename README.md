@@ -11,11 +11,11 @@ Requirements
 ------------
 
 - An LDAP server (tested on OpenLDAP)
-- Rails 3.0.0.beta4
+- Rails 3.0.0.rc
 
 These gems are dependencies of the gem:
 
-- Devise 1.1.rc2
+- Devise 1.1.1
 - net-ldap 0.1.1
 
 Installation
