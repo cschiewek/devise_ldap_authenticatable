@@ -1,0 +1,30 @@
+## Build / start instructions for LDAP
+
+# cd test/ldap
+# mkdir openldap-data
+# mkdir openldap-data/run
+# ./run-server.sh &
+# ldapadd -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif
+# 
+# this creates the users:
+#   cn=admin,dc=test,com / secret
+#   cn=example.user@test.com,ou=people,dc=test,dc=com / secret
+
+authorizations: &AUTHORIZATIONS
+  ## Authorization
+  group_base: ou=groups,dc=test,dc=com
+  required_groups:
+    - cn=admins,ou=groups,dc=test,dc=com
+  require_attribute:
+    objectClass: inetOrgPerson
+    authorizationRole: blogAdmin
+    
+test:
+  host: localhost
+  port: 3389
+  attribute: uid
+  base: ou=people,dc=test,dc=com
+  admin_user: cn=admin,dc=test,dc=com
+  admin_password: secret
+  ssl: false
+  <<: *AUTHORIZATIONS

@@ -1,0 +1,20 @@
+dn: cn=admins,ou=groups,dc=test,dc=com
+changetype: delete
+
+dn: cn=users,ou=groups,dc=test,dc=com
+changetype: delete
+
+dn: cn=example.admin@test.com,ou=people,dc=test,dc=com
+changetype: delete
+
+dn: cn=example.user@test.com,ou=people,dc=test,dc=com
+changetype: delete
+
+dn: ou=groups,dc=test,dc=com
+changetype: delete
+
+dn: ou=people,dc=test,dc=com
+changetype: delete
+
+dn: dc=test,dc=com
+changetype: delete

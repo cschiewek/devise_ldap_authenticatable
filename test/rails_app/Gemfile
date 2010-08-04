@@ -1,0 +1,22 @@
+source 'http://rubygems.org'
+
+gem 'rails', '3.0.0.rc'
+gem 'sqlite3-ruby', :require => 'sqlite3'
+
+gem "devise", "1.1.rc2"
+gem "devise_ldap_authenticatable", :path => "../../"
+
+group :test do
+  gem "ruby-debug"
+  gem "mocha"
+  gem "shoulda"
+  gem 'factory_girl_rails'
+  gem "cucumber-rails"
+  gem "database_cleaner"
+  gem "capybara"
+  gem "launchy"
+  gem "autotest-rails"
+  gem "ZenTest"
+  gem "redgreen"
+  gem "autotest-growl"
+end
