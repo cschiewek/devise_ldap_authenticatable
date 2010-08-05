@@ -27,12 +27,12 @@ module Devise
 
       def initialize(params = {})
         ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]
-        ldap_options[:encryption] = :simple_tls if ldap_config["ssl"]
 
         @ldap = Net::LDAP.new # (ldap_options)
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
+        @ldap.encryption(:simple_tls) if ldap_config["ssl"]
         @attribute = ldap_config["attribute"]
         
         @group_base = ldap_config["group_base"]
