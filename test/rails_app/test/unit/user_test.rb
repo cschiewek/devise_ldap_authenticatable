@@ -168,5 +168,26 @@ class UserTest < ActiveSupport::TestCase
     end    
   end
   
+  context "using ERB in the config file" do
+    setup do
+      reset_ldap_server!
+      default_devise_settings!
+      ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_erb.yml"
+    end
+
+    context "authenticate" do
+      setup do
+        @admin = Factory(:admin)
+        @user = Factory(:user)
+      end
+
+      should "be able to authenticate" do
+        should_be_validated @user, "secret"
+        should_be_validated @admin, "admin_secret"
+      end
+    end
+  end
+  
+  
   
 end
