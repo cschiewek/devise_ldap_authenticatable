@@ -26,7 +26,7 @@ module Devise
       attr_reader :ldap, :login
 
       def initialize(params = {})
-        ldap_config = YAML.load_file(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")[Rails.env]
+        ldap_config = YAML.load(ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result)[Rails.env]
         ldap_options[:encryption] = :simple_tls if ldap_config["ssl"]
 
         @ldap = Net::LDAP.new # (ldap_options)
