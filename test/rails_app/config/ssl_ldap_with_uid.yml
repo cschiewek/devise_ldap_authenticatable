@@ -14,5 +14,5 @@ test:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: secret
-  ssl: false
+  ssl: true
   <<: *AUTHORIZATIONS

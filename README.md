@@ -105,7 +105,29 @@ This has been tested using the following setup:
 * OpenLDAP 2.4.11
 * REE 1.8.7 (2010.02)
 
-All unit and functional tests are part of a sample rails application under test/rails_app and requires a working LDAP sever. There are config files and setup instructions under test/ldap
+All unit and functional tests are part of a sample rails application under test/rails_app and requires a working LDAP sever.
+
+Build / Start Instructions for Test LDAP Server
+-----------------------------------------------
+
+Make sure that directories test/ldap/openldap-data and test/ldap/openldap-data/run exist.
+
+  1. To start the server, run `./run_server.sh`
+  2. Add the basic structure: `ldapadd -x -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
+    * this creates the users / passwords:
+      * cn=admin,dc=test,com / secret
+      * cn=example.user@test.com,ou=people,dc=test,dc=com / secret
+  3. You should now be able to run the tests in test/rails_app by running: `rake`
+  
+  _For a LDAP server running SSL_
+  
+  1. To start the server, run: `./run_server.sh --ssl`
+  2. Add the basic structure: `ldapadd -x -H ldaps://localhost:3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
+    * this creates the users / passwords:
+      * cn=admin,dc=test,com / secret
+      * cn=example.user@test.com,ou=people,dc=test,dc=com / secret
+  3. You should now be able to run the tests in test/rails_app by running: `LDAP_SSL=true rake`
+
 
 References
 ----------

@@ -16,7 +16,7 @@ test: &TEST
   base: <%= "ou=people,#{@base}" %>
   admin_user: <%= "cn=admin,#{@base}" %>
   admin_password: secret
-  ssl: false
+  ssl: true
   <<: *AUTHORIZATIONS
   
 development:

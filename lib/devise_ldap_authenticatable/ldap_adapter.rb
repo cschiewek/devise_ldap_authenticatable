@@ -34,7 +34,6 @@ module Devise
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
-        @ldap.encryption(:simple_tls) if ldap_config["ssl"]
         @attribute = ldap_config["attribute"]
         
         @group_base = ldap_config["group_base"]
@@ -42,7 +41,7 @@ module Devise
         @required_attributes = ldap_config["require_attribute"]
         
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
-        
+                
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]

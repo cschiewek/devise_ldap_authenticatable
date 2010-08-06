@@ -1,15 +1,3 @@
-## Build / start instructions for LDAP
-
-# cd test/ldap
-# mkdir openldap-data
-# mkdir openldap-data/run
-# ./run-server.sh &
-# ldapadd -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif
-# 
-# this creates the users:
-#   cn=admin,dc=test,com / secret
-#   cn=example.user@test.com,ou=people,dc=test,dc=com / secret
-
 authorizations: &AUTHORIZATIONS
   ## Authorization
   group_base: ou=groups,dc=test,dc=com

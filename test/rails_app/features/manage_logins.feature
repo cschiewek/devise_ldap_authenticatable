@@ -4,6 +4,7 @@ Feature: Manage logins
   I want to login with LDAP
 
   Background:
+    Given I check for SSL
     Given the following logins:
       | email                 | password |
       | example.user@test.com | secret  |

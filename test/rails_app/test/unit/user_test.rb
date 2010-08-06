@@ -12,8 +12,8 @@ class UserTest < ActiveSupport::TestCase
 
   context "With default settings" do
     setup do
-      reset_ldap_server!
       default_devise_settings!
+      reset_ldap_server!
     end
   
     context "create a basic user" do
@@ -137,9 +137,9 @@ class UserTest < ActiveSupport::TestCase
   
   context "use uid for login" do
     setup do
-      reset_ldap_server!
       default_devise_settings!
-      ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_uid.yml"
+      reset_ldap_server!
+      ::Devise.ldap_config = "#{Rails.root}/config/#{"ssl_" if ENV["LDAP_SSL"]}ldap_with_uid.yml"
       ::Devise.authentication_keys = [:uid]
     end
 
@@ -170,9 +170,9 @@ class UserTest < ActiveSupport::TestCase
   
   context "using ERB in the config file" do
     setup do
-      reset_ldap_server!
       default_devise_settings!
-      ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_erb.yml"
+      reset_ldap_server!
+      ::Devise.ldap_config = "#{Rails.root}/config/#{"ssl_" if ENV["LDAP_SSL"]}ldap_with_erb.yml"
     end
 
     context "authenticate" do
