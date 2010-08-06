@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schiewek", "Daniel McNevin"]
-  s.date = %q{2010-08-03}
+  s.date = %q{2010-08-05}
   s.description = %q{LDAP authentication module for Devise}
   s.email = %q{curtis.schiewek@gmail.com}
   s.extra_rdoc_files = [
@@ -39,8 +39,11 @@ Gem::Specification.new do |s|
      "test/ldap/clear.ldif",
      "test/ldap/local.schema",
      "test/ldap/run-server.sh",
+     "test/ldap/server.pem",
+     "test/ldap/slapd-ssl-test.conf",
      "test/ldap/slapd-test.conf",
      "test/rails_app/Gemfile",
+     "test/rails_app/Gemfile.lock",
      "test/rails_app/Rakefile",
      "test/rails_app/app/controllers/application_controller.rb",
      "test/rails_app/app/controllers/posts_controller.rb",
@@ -66,10 +69,14 @@ Gem::Specification.new do |s|
      "test/rails_app/config/initializers/secret_token.rb",
      "test/rails_app/config/initializers/session_store.rb",
      "test/rails_app/config/ldap.yml",
+     "test/rails_app/config/ldap_with_erb.yml",
      "test/rails_app/config/ldap_with_uid.yml",
      "test/rails_app/config/locales/devise.en.yml",
      "test/rails_app/config/locales/en.yml",
      "test/rails_app/config/routes.rb",
+     "test/rails_app/config/ssl_ldap.yml",
+     "test/rails_app/config/ssl_ldap_with_erb.yml",
+     "test/rails_app/config/ssl_ldap_with_uid.yml",
      "test/rails_app/db/migrate/20100708120302_create_posts.rb",
      "test/rails_app/db/migrate/20100708120448_devise_create_users.rb",
      "test/rails_app/db/schema.rb",
