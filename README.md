@@ -128,6 +128,13 @@ Make sure that directories test/ldap/openldap-data and test/ldap/openldap-data/r
       * cn=example.user@test.com,ou=people,dc=test,dc=com / secret
   3. You should now be able to run the tests in test/rails_app by running: `LDAP_SSL=true rake`
 
+**_Please Note_**
+
+In your system LDAP config file (on OSX it's /etc/openldap/ldap.conf) make sure you have the following setting:
+
+    TLS_REQCERT	never
+
+This will allow requests to go to the test LDAP server without being signed by a trusted root (it uses a self-signed cert)
 
 References
 ----------
