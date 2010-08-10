@@ -5,8 +5,11 @@ module Devise
   module LdapAdapter
     
     def self.valid_credentials?(login, password_plaintext)
-      options = {:login => login, :password => password_plaintext}
-      options.merge!({ :admin => true }) if ::Devise.ldap_use_admin_to_bind
+      options = {:login => login, 
+                 :password => password_plaintext, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+                 
       resource = LdapConnect.new(options)
       resource.authorized?
     end
@@ -35,6 +38,7 @@ module Devise
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
+        @ldap_auth_username_builder = params[:ldap_auth_username_builder]
         
         @group_base = ldap_config["group_base"]
         @required_groups = ldap_config["required_groups"]        
@@ -53,7 +57,7 @@ module Devise
         ldap_entry = nil
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
         if ldap_entry.nil?
-          "#{@attribute}=#{@login},#{@ldap.base}"
+          @ldap_auth_username_builder.call(@attribute,@login,@ldap)
         else
           ldap_entry.dn
         end
