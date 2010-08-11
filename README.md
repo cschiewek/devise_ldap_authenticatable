@@ -139,7 +139,7 @@ This will allow requests to go to the test LDAP server without being signed by a
 References
 ----------
 
-* [Original Plugin](http://github.com/cschiewek/devise_ldap_authenticatable)
+* [OpenLDAP](http://www.openldap.org/)
 * [Devise](http://github.com/plataformatec/devise)
 * [Warden](http://github.com/hassox/warden)
 
