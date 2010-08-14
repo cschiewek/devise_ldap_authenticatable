@@ -32,7 +32,7 @@ This will *only* work for Rails 3 applications.
 In the Gemfile for your application:
 
     gem "devise", "1.1.1"
-    gem "devise_ldap_authenticatable", "0.4.3"
+    gem "devise_ldap_authenticatable", "0.4.4"
     
 To get the latest version, pull directly from github instead of the gem:
 
@@ -44,17 +44,18 @@ Setup
 
 Run the rails generator
 
-    rails generate devise_ldap_authenticatable:install
+    rails generate devise_ldap_authenticatable:install [options]
 
 This will install the sample.yml, update the devise.rb initializer, and update your user model. There are some options you can pass to it:
 
-    [--user-model=USER_MODEL]  # Model to update
-                               # Default: user
-    [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
-                               # Default: true
-    [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
-                               # Default: true
-
+Options:
+  [--user-model=USER_MODEL]  # Model to update
+                             # Default: user
+  [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
+                             # Default: true
+  [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
+                             # Default: true
+  [--advanced]               # Add advanced config options to the devise initializer
 
 
 Usage
@@ -99,6 +100,8 @@ In initializer  `config/initializers/devise.rb` :
 
 Advanced Configuration
 ----------------------
+
+These parameters will be added to `config/initializers/devise.rb` when you pass the `--advanced` switch to the generator:
 
 * ldap\_auth\_username\_builder _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
   * You can pass a proc to the username option to explicitly specify the format that you search for a users' DN on your LDAP server.

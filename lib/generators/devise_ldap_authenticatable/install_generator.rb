@@ -5,6 +5,7 @@ module DeviseLdapAuthenticatable
     class_option :user_model, :type => :string, :default => "user", :desc => "Model to update"
     class_option :update_model, :type => :boolean, :default => true, :desc => "Update model to change from database_authenticatable to ldap_authenticatable"
     class_option :add_rescue, :type => :boolean, :default => true, :desc => "Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException"
+    class_option :advanced, :type => :boolean, :desc => "Add advanced config options to the devise initializer"
     
     
     def create_ldap_config
@@ -26,7 +27,7 @@ module DeviseLdapAuthenticatable
     private
     
     def default_devise_settings
-      <<-eof
+      settings = <<-eof
   # ==> LDAP Configuration 
   # config.ldap_logger = true
   # config.ldap_create_user = false
@@ -36,10 +37,16 @@ module DeviseLdapAuthenticatable
   # config.ldap_check_attributes = false
   # config.ldap_use_admin_to_bind = false
   
+      eof
+      if options.advanced?  
+        settings << <<-eof  
   # ==> Advanced LDAP Configuration
   # config.ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "\#{attribute}=\#{login},\#{ldap.base}" }
   
-      eof
+        eof
+      end
+      
+      settings
     end
     
     def rescue_from_exception
