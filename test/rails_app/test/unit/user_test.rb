@@ -20,7 +20,7 @@ class UserTest < ActiveSupport::TestCase
       setup do
         @user = Factory(:user)
       end
-
+  
       should "check for password validation" do
         assert_equal(@user.email, "example.user@test.com")
         should_be_validated @user, "secret"
@@ -33,7 +33,7 @@ class UserTest < ActiveSupport::TestCase
       setup do
         @user = Factory(:user)
       end
-
+  
       should "change password" do
         should_be_validated @user, "secret"
         @user.reset_password!("changed","changed")
@@ -70,7 +70,7 @@ class UserTest < ActiveSupport::TestCase
           assert_equal(User.all.size, 1)
           assert_contains(User.all.collect(&:email), "example.user@test.com", "user not in database")
         end
-
+  
         should "not create a user in the database if the password is wrong_secret" do
           @user = User.authenticate_with_ldap(:email => "example.user", :password => "wrong_secret")
           assert(User.all.blank?, "There's users in the database")
@@ -91,7 +91,7 @@ class UserTest < ActiveSupport::TestCase
         ::Devise.authentication_keys = [:email]
         ::Devise.ldap_check_group_membership = true
       end
-
+  
       should "admin should be allowed in" do
         should_be_validated @admin, "admin_secret"
       end
@@ -111,7 +111,7 @@ class UserTest < ActiveSupport::TestCase
         @user = Factory(:user)
         ::Devise.ldap_check_attributes = true
       end
-
+  
       should "admin should be allowed in" do
         should_be_validated @admin, "admin_secret"
       end
@@ -127,7 +127,7 @@ class UserTest < ActiveSupport::TestCase
         @user = Factory(:user)
         ::Devise.ldap_use_admin_to_bind = true
       end
-
+  
       should "description" do
         should_be_validated @admin, "admin_secret"
       end
@@ -142,13 +142,13 @@ class UserTest < ActiveSupport::TestCase
       ::Devise.ldap_config = "#{Rails.root}/config/#{"ssl_" if ENV["LDAP_SSL"]}ldap_with_uid.yml"
       ::Devise.authentication_keys = [:uid]
     end
-
+  
     context "description" do
       setup do
         @admin = Factory(:admin)
         @user = Factory(:user, :uid => "example_user")
       end
-
+  
       should "be able to authenticate using uid" do
         should_be_validated @user, "secret"
         should_not_be_validated @admin, "admin_secret"
@@ -159,7 +159,7 @@ class UserTest < ActiveSupport::TestCase
       setup do
         ::Devise.ldap_create_user = true
       end
-
+  
       should "create a user in the database" do
         @user = User.authenticate_with_ldap(:uid => "example_user", :password => "secret")
         assert_equal(User.all.size, 1)
@@ -174,13 +174,13 @@ class UserTest < ActiveSupport::TestCase
       reset_ldap_server!
       ::Devise.ldap_config = "#{Rails.root}/config/#{"ssl_" if ENV["LDAP_SSL"]}ldap_with_erb.yml"
     end
-
+  
     context "authenticate" do
       setup do
         @admin = Factory(:admin)
         @user = Factory(:user)
       end
-
+  
       should "be able to authenticate" do
         should_be_validated @user, "secret"
         should_be_validated @admin, "admin_secret"
@@ -188,6 +188,19 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
-  
+  context "use username builder" do
+    setup do
+      default_devise_settings!
+      reset_ldap_server!
+      ::Devise.ldap_auth_username_builder = Proc.new() do |attribute, login, ldap|
+        "#{attribute}=#{login},ou=others,dc=test,dc=com"
+      end
+      @other = Factory(:other)
+    end
+
+    should "be able to authenticate" do
+      should_be_validated @other, "other_secret"
+    end
+  end
   
 end

@@ -10,10 +10,16 @@ changetype: delete
 dn: cn=example.user@test.com,ou=people,dc=test,dc=com
 changetype: delete
 
+dn: cn=other.user@test.com,ou=others,dc=test,dc=com
+changetype: delete
+
 dn: ou=groups,dc=test,dc=com
 changetype: delete
 
 dn: ou=people,dc=test,dc=com
+changetype: delete
+
+dn: ou=others,dc=test,dc=com
 changetype: delete
 
 dn: dc=test,dc=com

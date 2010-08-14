@@ -21,6 +21,7 @@ class ActiveSupport::TestCase
     ::Devise.ldap_config = "#{Rails.root}/config/#{"ssl_" if ENV["LDAP_SSL"]}ldap.yml"
     ::Devise.ldap_check_group_membership = false
     ::Devise.ldap_check_attributes = false
+    ::Devise.ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
     ::Devise.authentication_keys = [:email]
   end
   

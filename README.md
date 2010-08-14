@@ -96,6 +96,13 @@ In initializer  `config/initializers/devise.rb` :
 * ldap\_use\_admin\_to\_bind _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
 
+
+Advanced Configuration
+----------------------
+
+* ldap\_auth\_username\_builder _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
+  * You can pass a proc to the username option to explicitly specify the format that you search for a users' DN on your LDAP server.
+
 Testing
 -------
 

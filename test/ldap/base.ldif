@@ -10,6 +10,10 @@ dn: ou=people,dc=test,dc=com
 objectClass: organizationalUnit
 ou: people
 
+dn: ou=others,dc=test,dc=com
+objectClass: organizationalUnit
+ou: others
+
 dn: ou=groups,dc=test,dc=com
 objectClass: organizationalUnit
 ou: groups
@@ -25,6 +29,19 @@ cn: example.user@test.com
 authorizationRole: blogUser
 userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
  =
+
+# other.user@test.com
+dn: cn=other.user@test.com,ou=others,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Other
+uid: other_user
+cn: other.user@test.com
+authorizationRole: blogUser
+userPassword:: e1NIQX1IQXdtdk13RGF1ZUpyZDhwakxXMzZ6Yi9jTUU9
 
 # example.admin@test.com, people, test.com
 dn: cn=example.admin@test.com,ou=people,dc=test,dc=com

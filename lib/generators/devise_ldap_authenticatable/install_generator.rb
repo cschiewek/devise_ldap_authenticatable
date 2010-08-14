@@ -36,6 +36,9 @@ module DeviseLdapAuthenticatable
   # config.ldap_check_attributes = false
   # config.ldap_use_admin_to_bind = false
   
+  # ==> Advanced LDAP Configuration
+  # config.ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "\#{attribute}=\#{login},\#{ldap.base}" }
+  
       eof
     end
     
