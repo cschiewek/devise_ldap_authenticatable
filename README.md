@@ -49,13 +49,14 @@ Run the rails generator
 This will install the sample.yml, update the devise.rb initializer, and update your user model. There are some options you can pass to it:
 
 Options:
-  [--user-model=USER_MODEL]  # Model to update
-                             # Default: user
-  [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
-                             # Default: true
-  [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
-                             # Default: true
-  [--advanced]               # Add advanced config options to the devise initializer
+
+    [--user-model=USER_MODEL]  # Model to update
+                               # Default: user
+    [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
+                               # Default: true
+    [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
+                               # Default: true
+    [--advanced]               # Add advanced config options to the devise initializer
 
 
 Usage
