@@ -15,11 +15,11 @@ Requirements
 ------------
 
 - An LDAP server (tested on OpenLDAP)
-- Rails 3.0.0.rc
+- Rails 3.0.0
 
 These gems are dependencies of the gem:
 
-- Devise 1.1.1
+- Devise 1.1.2
 - net-ldap 0.1.1
 
 Installation
@@ -31,8 +31,8 @@ This will *only* work for Rails 3 applications.
 
 In the Gemfile for your application:
 
-    gem "devise", "1.1.1"
-    gem "devise_ldap_authenticatable", "0.4.4"
+    gem "devise", "1.1.2"
+    gem "devise_ldap_authenticatable", "0.4.5"
     
 To get the latest version, pull directly from github instead of the gem:
 
@@ -42,7 +42,12 @@ To get the latest version, pull directly from github instead of the gem:
 Setup
 -----
 
-Run the rails generator
+Run the rails generators for devise (please check the [devise](http://github.com/plataformatec/devise) documents for further instructions)
+
+    rails generate devise:install
+    rails generate devise MODEL_NAME
+
+Run the rails generator for devise_ldap_authenticatable
 
     rails generate devise_ldap_authenticatable:install [options]
 
