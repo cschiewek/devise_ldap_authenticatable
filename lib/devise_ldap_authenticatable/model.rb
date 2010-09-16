@@ -42,6 +42,23 @@ module Devise
         end
       end
       
+      # Updates attributes from ldap for the desired attributes (specified in config)
+      def update_attributes_from_ldap(password)
+        entry = Devise::LdapAdapter.get_entry(login_with, password)
+        ::Devise.ldap_update_user_attributes.each_pair do |model_attribute, entry_attribute|
+          begin
+            send model_attribute+"=", entry.send(entry_attribute)[0].to_s
+          rescue NoMethodError => e
+            # when the entry doesn't have the specified entry_attribute, set it to nil
+            # this raises the error again if the model doesn't have a model_attribute= method
+            send model_attribute+"=", nil
+          end
+        end
+        if !save
+          puts "LDAP warning : could not update model attributes : #{errors}"
+        end
+      end
+      
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
       end
@@ -63,6 +80,7 @@ module Devise
           end
                     
           if resource.try(:valid_ldap_authentication?, attributes[:password])
+            resource.update_attributes_from_ldap(attributes[:password])
             resource.save if resource.new_record?
             return resource
           else

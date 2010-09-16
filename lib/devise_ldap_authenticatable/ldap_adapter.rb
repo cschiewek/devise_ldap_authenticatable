@@ -24,6 +24,16 @@ module Devise
       ldap.user_groups
     end
 
+    def self.get_entry(login, password_plaintext)
+      options = {:login => login, 
+                 :password => password_plaintext, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+                 
+      resource = LdapConnect.new(options)
+      resource.entry
+    end
+
     class LdapConnect
 
       attr_reader :ldap, :login
@@ -45,10 +55,21 @@ module Devise
         @required_attributes = ldap_config["require_attribute"]
         
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
-                
+        
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+      end
+      
+      # returns the LDAP entry object
+      def entry
+        # try to authenticate to bind in order to get eventual access rights for search
+        authenticate!
+        res = nil
+        @ldap.search(:base => @ldap.base, :filter => Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)) do |entry| 
+          res = entry
+        end
+        return res
       end
 
       def dn
