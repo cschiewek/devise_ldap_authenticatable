@@ -58,9 +58,11 @@ userPassword:: e1NIQX0wcUNXaERISGFwWmc3ekJxZWRRanBzNW1EUDA9
 
 # users, groups, test.com
 dn: cn=users,ou=groups,dc=test,dc=com
+objectClass: authorizations
 objectClass: groupOfUniqueNames
 objectClass: top
 uniqueMember: cn=example.user@test.com,ou=people,dc=test,dc=com
+authorizationRole: cn=example.admin@test.com,ou=people,dc=test,dc=com
 cn: users
 
 # users, groups, test.com

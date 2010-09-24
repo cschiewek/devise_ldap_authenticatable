@@ -32,7 +32,7 @@ This will *only* work for Rails 3 applications.
 In the Gemfile for your application:
 
     gem "devise", "1.1.2"
-    gem "devise_ldap_authenticatable", "0.4.5"
+    gem "devise_ldap_authenticatable"
     
 To get the latest version, pull directly from github instead of the gem:
 
@@ -95,7 +95,6 @@ In initializer  `config/initializers/devise.rb` :
 
 * ldap\_check\_group_membership _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
-
 
 * ldap\_check\_attributes _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.

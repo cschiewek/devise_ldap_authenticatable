@@ -90,9 +90,15 @@ module Devise
         admin_ldap = LdapConnect.admin
                 
         for group in @required_groups
-          admin_ldap.search(:base => group, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            unless entry.uniqueMember.include? dn
-              DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group}")
+          if group.is_a?(Array)
+            group_attribute, group_name = group
+          else
+            group_attribute = "uniqueMember"
+            group_name = group
+          end
+          admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+            unless entry[group_attribute].include? dn
+              DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
               return false
             end
           end

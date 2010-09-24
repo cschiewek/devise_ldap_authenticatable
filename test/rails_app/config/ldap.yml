@@ -3,6 +3,7 @@ authorizations: &AUTHORIZATIONS
   group_base: ou=groups,dc=test,dc=com
   required_groups:
     - cn=admins,ou=groups,dc=test,dc=com
+    - ["authorizationRole", "cn=users,ou=groups,dc=test,dc=com"]
   require_attribute:
     objectClass: inetOrgPerson
     authorizationRole: blogAdmin

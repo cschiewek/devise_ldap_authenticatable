@@ -103,6 +103,11 @@ class UserTest < ActiveSupport::TestCase
       should "user should not be allowed in" do
         should_not_be_validated @user, "secret"
       end
+      
+      should "not be validated if group with different attribute is removed" do
+        `ldapmodify #{ldap_connect_string} -f ../ldap/delete_authorization_role.ldif`
+        should_not_be_validated @admin, "admin_secret"
+      end
     end
   
     context "use role attribute for authorization" do
