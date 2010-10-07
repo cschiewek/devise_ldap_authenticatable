@@ -13,10 +13,14 @@ module Devise
       # success and the authenticated user if everything is okay. Otherwise redirect
       # to sign in page.
       def authenticate!
-        if resource = mapping.to.authenticate_with_ldap(params[scope])
-          success!(resource)
-        else
-          fail(:invalid)
+        begin
+          if resource = mapping.to.authenticate_with_ldap(params[scope])
+            success!(resource)
+          else
+            fail(:invalid)
+          end
+        rescue Net::LDAP::LdapError
+          fail(:ldap_error)
         end
       end
 
