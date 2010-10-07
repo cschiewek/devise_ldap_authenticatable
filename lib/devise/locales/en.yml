@@ -1,0 +1,4 @@
+en:
+  devise:
+    sessions:
+      ldap_error: 'Unable to connect to LDAP server'
