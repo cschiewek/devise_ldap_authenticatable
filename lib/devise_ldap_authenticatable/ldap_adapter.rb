@@ -20,7 +20,8 @@ module Devise
     end
     
     def self.get_groups(login)
-      ldap = LdapConnect.new(:login => login)
+    	# GEG: if admin==true, we'll need it to get the groups
+      ldap = LdapConnect.new(:login => login, :admin => ::Devise.ldap_use_admin_to_bind)
       ldap.user_groups
     end
 
@@ -38,6 +39,8 @@ module Devise
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
+        #GEG: add group attribute
+        @group_attribute = ldap_config["group_attribute"]
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
         
         @group_base = ldap_config["group_base"]
@@ -128,7 +131,7 @@ module Devise
         admin_ldap = LdapConnect.admin
         
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        filter = Net::LDAP::Filter.eq(@group_attribute, dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
       
