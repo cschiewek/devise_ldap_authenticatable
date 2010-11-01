@@ -21,7 +21,7 @@ module Devise
     
     def self.get_groups(login)
     	# GEG: if admin==true, we'll need it to get the groups
-      ldap = LdapConnect.new(:login => login, :admin => ::Devise.ldap_use_admin_to_bind)
+      ldap = LdapConnect.new(:login => login, :admin => ::Devise.ldap_use_admin_to_bind,:ldap_auth_username_builder => ::Devise.ldap_auth_username_builder)
       ldap.user_groups
     end
 
