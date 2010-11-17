@@ -4,3 +4,4 @@ log
 openldap-data
 test/rails_app/tmp
 pkg/*
+*.swp

@@ -54,7 +54,11 @@ module Devise
           return nil unless attributes[@login_with].present? 
 
           # resource = find_for_ldap_authentication(conditions)
-          resource = scoped.where(@login_with => attributes[@login_with]).first
+          if responds_to?(:scoped)
+            resource = scoped.where(@login_with => attributes[@login_with]).first
+          else
+            resource = where(@login_with => attributes[@login_with]).first
+          end
                     
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
