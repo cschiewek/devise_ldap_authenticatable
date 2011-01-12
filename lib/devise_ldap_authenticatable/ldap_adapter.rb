@@ -62,6 +62,7 @@ module Devise
       end
       
       # returns the LDAP entry object
+      # FIXME this is probably good candidate for refactoring
       def entry
         # try to authenticate to bind in order to get eventual access rights for search
         authenticate!

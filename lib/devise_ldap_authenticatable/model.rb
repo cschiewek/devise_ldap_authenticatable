@@ -43,19 +43,24 @@ module Devise
       end
       
       # Updates attributes from ldap for the desired attributes (specified in config)
+      #   config.ldap_update_user_attributes = {:dn => :dn}
+      #   key is an attribute in LDAP, value is a target attribute in (user) model
       def update_attributes_from_ldap(password)
-        entry = Devise::LdapAdapter.get_entry(login_with, password)
-        ::Devise.ldap_update_user_attributes.each_pair do |model_attribute, entry_attribute|
+        ldap_entry = Devise::LdapAdapter.get_entry(login_with, password)
+        ::Devise.ldap_update_user_attributes.each_pair do |ldap_attribute, model_attribute|
           begin
-            send model_attribute+"=", entry.send(entry_attribute)[0].to_s
+            send model_attribute.to_s+"=", ldap_entry.send(ldap_attribute.to_s).to_a.first.to_s
           rescue NoMethodError => e
-            # when the entry doesn't have the specified entry_attribute, set it to nil
-            # this raises the error again if the model doesn't have a model_attribute= method
-            send model_attribute+"=", nil
+            DeviseLdapAuthenticatable::Logger.send("LDAP warning: uknown attributes #{ldap_attribute.to_s}")
+            begin
+              send model_attribute.to_s+"=", nil
+            rescue NoMethodError => e
+              DeviseLdapAuthenticatable::Logger.send("LDAP warning: uknown model attribute #{model_attribute.to_s}")
+            end
           end
         end
         if !save
-          puts "LDAP warning : could not update model attributes : #{errors}"
+          DeviseLdapAuthenticatable::Logger.send("LDAP wardning: could not update model attributes: #{errors}")
         end
       end
       
