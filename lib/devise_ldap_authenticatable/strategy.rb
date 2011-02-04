@@ -23,7 +23,7 @@ module Devise
       protected
 
         def valid_controller?
-          params[:controller] == 'devise/sessions'
+          params[:controller] == mapping.controllers[:sessions]
         end
 
         def valid_params?
