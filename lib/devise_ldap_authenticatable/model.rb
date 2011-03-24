@@ -45,6 +45,10 @@ module Devise
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
       end
+      
+      def ldap_dn
+        Devise::LdapAdapter.get_dn(login_with)
+      end
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
