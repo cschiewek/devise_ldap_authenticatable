@@ -56,9 +56,9 @@ module Devise
         def authenticate_with_ldap(attributes={}) 
           @login_with = ::Devise.authentication_keys.first
           return nil unless attributes[@login_with].present? 
-
+          
           # resource = find_for_ldap_authentication(conditions)
-          resource = scoped.where(@login_with => attributes[@login_with]).first
+          resource = where(@login_with => attributes[@login_with]).first
                     
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
