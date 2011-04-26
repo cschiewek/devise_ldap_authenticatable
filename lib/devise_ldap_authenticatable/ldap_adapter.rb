@@ -41,6 +41,14 @@ module Devise
       resource.dn
     end
 
+    def self.get_ldap_param(login,param)
+      options = {:login => login, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+      resource = LdapConnect.new(options)
+      resource.ldap_param_value(param)
+    end
+    
     class LdapConnect
 
       attr_reader :ldap, :login
@@ -71,18 +79,20 @@ module Devise
       def dn
         DeviseLdapAuthenticatable::Logger.send("LDAP search: #{@attribute}=#{@login}")
         filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
-        @ldap_entry = nil
+        ldap_entry = nil
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
-        if @ldap_entry.nil?
+        if ldap_entry.nil?
           @ldap_auth_username_builder.call(@attribute,@login,@ldap)
         else
-          @ldap_entry.dn
+          ldap_entry.dn
         end
       end
 
 			def ldap_param_value(param)
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        ldap_entry = nil
 				DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
-				@ldap_entry.send(param)
+				ldap_entry.send(param)
 			end
 			
       def authenticate!
