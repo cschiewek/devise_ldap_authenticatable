@@ -81,6 +81,7 @@ module Devise
       end
 
 			def ldap_param_value(param)
+				DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
 				@ldap_entry.send(param)
 			end
 			
