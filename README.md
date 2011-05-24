@@ -19,8 +19,8 @@ Requirements
 
 These gems are dependencies of the gem:
 
-- Devise 1.1.2
-- net-ldap 0.1.1
+- Devise 1.3.1
+- net-ldap 0.2.2
 
 Installation
 ------------
@@ -31,7 +31,7 @@ This will *only* work for Rails 3 applications.
 
 In the Gemfile for your application:
 
-    gem "devise", "1.1.2"
+    gem "devise", "1.3.1"
     gem "devise_ldap_authenticatable"
     
 To get the latest version, pull directly from github instead of the gem:
@@ -74,6 +74,21 @@ Devise LDAP Authenticatable works in replacement of Database Authenticatable
 This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
 
 The field that is used for logins is the first key that's configured in the `config/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise.
+
+
+Querying LDAP
+----------------
+
+Given that ldap\_create\_user is set to true and you are authenticating with username, you can query an LDAP server for other attributes.
+
+in your user model:
+
+	before_save :get_ldap_email
+
+  def get_ldap_email
+    self.email = Devise::LdapAdapter.get_ldap_param(self.username,"mail")
+  end
+
 
 Configuration
 -------------
