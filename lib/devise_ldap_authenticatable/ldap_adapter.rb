@@ -48,7 +48,7 @@ module Devise
       resource = LdapConnect.new(options)
       resource.ldap_param_value(param)
     end
-    
+
     class LdapConnect
 
       attr_reader :ldap, :login
@@ -89,10 +89,12 @@ module Devise
       end
 
 			def ldap_param_value(param)
-        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+				filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
         ldap_entry = nil
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+
 				DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
-				ldap_entry.send(param)
+				ldap_entry.send(param).to_s
 			end
 			
       def authenticate!

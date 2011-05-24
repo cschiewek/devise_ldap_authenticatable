@@ -50,7 +50,7 @@ module Devise
         Devise::LdapAdapter.get_dn(login_with)
       end
 
-      def ldap_get_param(param)
+      def ldap_get_param(login_with, param)
         Devise::LdapAdapter.get_ldap_param(login_with,param)
       end
 
