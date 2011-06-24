@@ -19,7 +19,7 @@ Requirements
 
 These gems are dependencies of the gem:
 
-- Devise 1.3.1
+- Devise 1.4.0
 - net-ldap 0.2.2
 
 Installation
