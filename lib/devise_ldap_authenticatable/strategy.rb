@@ -18,7 +18,7 @@ module Devise
         else
           fail(:invalid)
         end
-      end
+     end
 
       protected
 
