@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_ldap_authenticatable}
-  s.version = "0.4.6"
+  s.version = "0.4.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schiewek", "Daniel McNevin"]
