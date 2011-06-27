@@ -15,13 +15,38 @@ module Devise
     end
     
     def self.update_password(login, new_password)
-      resource = LdapConnect.new(:login => login, :new_password => new_password)
+      options = {:login => login,
+                 :new_password => new_password,
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+                 
+      resource = LdapConnect.new(options)
       resource.change_password! if new_password.present? 
     end
     
     def self.get_groups(login)
-      ldap = LdapConnect.new(:login => login)
+      options = {:login => login, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+
+      ldap = LdapConnect.new(options)
       ldap.user_groups
+    end
+    
+    def self.get_dn(login)
+      options = {:login => login, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+      resource = LdapConnect.new(options)
+      resource.dn
+    end
+
+    def self.get_ldap_param(login,param)
+      options = {:login => login, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+      resource = LdapConnect.new(options)
+      resource.ldap_param_value(param)
     end
 
     def self.get_entry(login, password_plaintext)
@@ -85,6 +110,15 @@ module Devise
         end
       end
 
+			def ldap_param_value(param)
+				filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        ldap_entry = nil
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+
+				DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
+				ldap_entry.send(param).to_s
+			end
+			
       def authenticate!
         @ldap.auth(dn, @password)
         @ldap.bind
@@ -148,7 +182,7 @@ module Devise
       
       def user_groups
         admin_ldap = LdapConnect.admin
-        
+
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)

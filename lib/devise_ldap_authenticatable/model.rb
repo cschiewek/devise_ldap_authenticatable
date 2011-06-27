@@ -67,6 +67,15 @@ module Devise
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
       end
+      
+      def ldap_dn
+        Devise::LdapAdapter.get_dn(login_with)
+      end
+
+      def ldap_get_param(login_with, param)
+        Devise::LdapAdapter.get_ldap_param(login_with,param)
+      end
+
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
@@ -74,9 +83,9 @@ module Devise
         def authenticate_with_ldap(attributes={}) 
           @login_with = ::Devise.authentication_keys.first
           return nil unless attributes[@login_with].present? 
-
+          
           # resource = find_for_ldap_authentication(conditions)
-          resource = scoped.where(@login_with => attributes[@login_with]).first
+          resource = where(@login_with => attributes[@login_with]).first
                     
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
