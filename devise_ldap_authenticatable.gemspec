@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_ldap_authenticatable}
-  s.version = "0.4.7"
+  s.version = "0.4.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schiewek", "Daniel McNevin"]
-  s.date = %q{2011-05-24}
+  s.date = %q{2011-07-06}
   s.description = %q{LDAP authentication module for Devise}
   s.email = %q{curtis.schiewek@gmail.com}
   s.extra_rdoc_files = [
@@ -119,14 +119,14 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<devise>, ["= 1.4.0"])
+      s.add_runtime_dependency(%q<devise>, ["~> 1.4"])
       s.add_runtime_dependency(%q<net-ldap>, ["= 0.2.2"])
     else
-      s.add_dependency(%q<devise>, ["= 1.4.0"])
+      s.add_dependency(%q<devise>, ["~> 1.4"])
       s.add_dependency(%q<net-ldap>, ["= 0.2.2"])
     end
   else
-    s.add_dependency(%q<devise>, ["= 1.4.0"])
+    s.add_dependency(%q<devise>, ["~> 1.4"])
     s.add_dependency(%q<net-ldap>, ["= 0.2.2"])
   end
 end

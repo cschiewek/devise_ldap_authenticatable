@@ -43,7 +43,7 @@ begin
     gemspec.email = "curtis.schiewek@gmail.com"
     gemspec.homepage = "http://github.com/cschiewek/devise_ldap_authenticatable"
     gemspec.authors = ["Curtis Schiewek", "Daniel McNevin"]
-    gemspec.add_runtime_dependency "devise", "1.3.1"
+    gemspec.add_runtime_dependency "devise", "~> 1.4"
     gemspec.add_runtime_dependency "net-ldap", "0.2.2"
   end
   Jeweler::GemcutterTasks.new
