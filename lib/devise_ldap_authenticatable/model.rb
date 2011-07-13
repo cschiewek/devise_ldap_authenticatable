@@ -20,7 +20,7 @@ module Devise
       def login_with
         self[::Devise.authentication_keys.first]
       end
-      
+
       def reset_password!(new_password, new_password_confirmation)
         if new_password == new_password_confirmation && ::Devise.ldap_update_password
           Devise::LdapAdapter.update_password(login_with, new_password)
@@ -41,11 +41,11 @@ module Devise
           return false
         end
       end
-      
+
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
       end
-      
+
       def ldap_dn
         Devise::LdapAdapter.get_dn(login_with)
       end
@@ -59,18 +59,14 @@ module Devise
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={}) 
-          @login_with = ::Devise.authentication_keys.first
-          return nil unless attributes[@login_with].present? 
-          
-          # resource = find_for_ldap_authentication(conditions)
-          resource = where(@login_with => attributes[@login_with]).first
-                    
+          return nil unless attributes[login_with].present?
+
+          resource = find_for_ldap_authentication(attributes)
+
           if (resource.blank? and ::Devise.ldap_create_user)
-            resource = new
-            resource[@login_with] = attributes[@login_with]
-            resource.password = attributes[:password]
+            resource = create_from_ldap_authentication(attributes)
           end
-                    
+
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             resource.save if resource.new_record?
             return resource
@@ -78,11 +74,31 @@ module Devise
             return nil
           end
         end
-        
+
         def update_with_password(resource)
           puts "UPDATE_WITH_PASSWORD: #{resource.inspect}"
         end
-        
+
+        protected
+
+        def login_with
+          ::Devise.authentication_keys.first
+        end
+
+        def login_with_field
+          ::Devise.authentication_keys.first
+        end
+
+        def find_for_ldap_authentication(attributes)
+          where(login_with_field => attributes[login_with]).first
+        end
+
+        def create_from_ldap_authentication(attributes)
+          resource = new
+          resource[login_with_field] = attributes[login_with]
+          resource.password = attributes[:password]
+        end
+
       end
     end
   end
