@@ -18,7 +18,8 @@ module Devise
       end
 
       def login_with
-        self[::Devise.authentication_keys.first]
+        @login_with ||= Devise.mappings[self.class.to_s.downcase.to_sym].to.authentication_keys.first
+        self[@login_with]
       end
       
       def reset_password!(new_password, new_password_confirmation)
@@ -59,15 +60,15 @@ module Devise
         # Authenticate a user based on configured attribute keys. Returns the
         # authenticated user if it's valid or nil.
         def authenticate_with_ldap(attributes={}) 
-          @login_with = ::Devise.authentication_keys.first
-          return nil unless attributes[@login_with].present? 
-          
+          auth_key = self.authentication_keys.first
+          return nil unless attributes[auth_key].present? 
+
           # resource = find_for_ldap_authentication(conditions)
-          resource = where(@login_with => attributes[@login_with]).first
+          resource = where(auth_key => attributes[auth_key]).first
                     
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
-            resource[@login_with] = attributes[@login_with]
+            resource[auth_key] = attributes[auth_key]
             resource.password = attributes[:password]
           end
                     
