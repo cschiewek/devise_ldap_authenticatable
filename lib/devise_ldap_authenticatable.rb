@@ -34,6 +34,9 @@ module Devise
   
   mattr_accessor :ldap_auth_username_builder
   @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
+
+  mattr_accessor :ldap_ad_group_check
+  @@ldap_ad_group_check = false
 end
 
 # Add ldap_authenticatable strategy to defaults.
