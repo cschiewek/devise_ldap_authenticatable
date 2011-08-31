@@ -34,6 +34,10 @@ module Devise
   
   mattr_accessor :ldap_auth_username_builder
   @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
+  
+  mattr_accessor :ldap_update_user_attributes
+  @@ldap_update_user_attributes = {}
+  
 end
 
 # Add ldap_authenticatable strategy to defaults.
