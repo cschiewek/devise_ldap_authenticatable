@@ -37,7 +37,7 @@ test:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
-  ssl: false
+  ssl: simple_tls
   # <<: *AUTHORIZATIONS
 
 production:
@@ -47,5 +47,5 @@ production:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
-  ssl: true
+  ssl: start_tls
   # <<: *AUTHORIZATIONS
