@@ -1,9 +1,9 @@
 PATH
-  remote: /Users/dpmcnevin/Rails/devise_ldap_authenticatable
+  remote: ../../
   specs:
-    devise_ldap_authenticatable (0.4.5)
-      devise (= 1.1.2)
-      net-ldap (= 0.1.1)
+    devise_ldap_authenticatable (0.4.9)
+      devise (~> 1.4.0)
+      net-ldap (~> 0.2.2)
 
 GEM
   remote: http://rubygems.org/
@@ -43,7 +43,7 @@ GEM
       autotest (>= 4.2.4)
     autotest-rails (4.1.0)
       ZenTest
-    bcrypt-ruby (2.1.2)
+    bcrypt-ruby (3.0.1)
     builder (2.1.2)
     capybara (0.3.9)
       culerity (>= 0.2.4)
@@ -64,9 +64,10 @@ GEM
       cucumber (>= 0.8.0)
     culerity (0.2.12)
     database_cleaner (0.5.2)
-    devise (1.1.2)
-      bcrypt-ruby (~> 2.1.2)
-      warden (~> 0.10.7)
+    devise (1.4.7)
+      bcrypt-ruby (~> 3.0)
+      orm_adapter (~> 0.0.3)
+      warden (~> 1.0.3)
     diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -91,8 +92,9 @@ GEM
     mime-types (1.16)
     mocha (0.9.8)
       rake
-    net-ldap (0.1.1)
+    net-ldap (0.2.2)
     nokogiri (1.4.3.1)
+    orm_adapter (0.0.5)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.12)
@@ -132,8 +134,8 @@ GEM
       polyglot (>= 0.3.1)
     trollop (1.16.2)
     tzinfo (0.3.23)
-    warden (0.10.7)
-      rack (>= 1.0.0)
+    warden (1.0.5)
+      rack (>= 1.0)
 
 PLATFORMS
   ruby
@@ -145,7 +147,7 @@ DEPENDENCIES
   capybara
   cucumber-rails
   database_cleaner
-  devise (= 1.1.2)
+  devise (~> 1.4.0)
   devise_ldap_authenticatable!
   factory_girl_rails
   launchy
