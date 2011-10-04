@@ -15,6 +15,16 @@ class UserTest < ActiveSupport::TestCase
       default_devise_settings!
       reset_ldap_server!
     end
+
+    context "look up and ldap user" do
+      should "return true for a user that does exist in LDAP" do
+        assert_equal true, ::Devise::LdapAdapter.valid_login?('example.user@test.com')
+      end
+
+      should "return false for a user that doesn't exist in LDAP" do
+        assert_equal false, ::Devise::LdapAdapter.valid_login?('barneystinson')
+      end
+    end
   
     context "create a basic user" do
       setup do
