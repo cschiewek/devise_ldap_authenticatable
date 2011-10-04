@@ -1,6 +1,7 @@
 .bundle
 log
 *.sqlite3
-openldap-data
+openldap-data/*
+!openldap-data/run
 test/rails_app/tmp
 pkg/*

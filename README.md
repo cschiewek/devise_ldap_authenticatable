@@ -140,8 +140,6 @@ All unit and functional tests are part of a sample rails application under test/
 Build / Start Instructions for Test LDAP Server
 -----------------------------------------------
 
-Make sure that directories test/ldap/openldap-data and test/ldap/openldap-data/run exist.
-
   1. To start the server, run `./run_server.sh`
   2. Add the basic structure: `ldapadd -x -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
     * this creates the users / passwords:
