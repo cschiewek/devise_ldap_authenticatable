@@ -55,6 +55,14 @@ module Devise
         Devise::LdapAdapter.get_ldap_param(login_with,param)
       end
 
+      #
+      # callbacks
+      #
+
+      # # Called before the ldap record is saved automatically
+      # def ldap_before_save
+      # end
+
 
       module ClassMethods
         # Authenticate a user based on configured attribute keys. Returns the
@@ -73,7 +81,10 @@ module Devise
           end
                     
           if resource.try(:valid_ldap_authentication?, attributes[:password])
-            resource.save if resource.new_record?
+            if resource.new_record?
+              resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
+              resource.save 
+            end
             return resource
           else
             return nil
