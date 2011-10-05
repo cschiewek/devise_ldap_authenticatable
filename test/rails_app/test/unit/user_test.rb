@@ -196,7 +196,7 @@ class UserTest < ActiveSupport::TestCase
 
       should "not call ldap_before_save hook if not defined" do
         assert_nothing_raised do
-          User.authenticate_with_ldap(:uid => "example_user", :password => "secret")
+          should_be_validated Factory(:user, :uid => "example_user"), "secret"
         end
       end
     end    
@@ -218,6 +218,20 @@ class UserTest < ActiveSupport::TestCase
       should "be able to authenticate" do
         should_be_validated @user, "secret"
         should_be_validated @admin, "admin_secret"
+      end
+    end
+  end
+
+  context "using variants in the config file" do
+    setup do
+      default_devise_settings!
+      reset_ldap_server!
+      ::Devise.ldap_config = Rails.root.join 'config', 'ldap_with_boolean_ssl.yml'
+    end
+
+    should "not fail if config file has ssl: true" do
+      assert_nothing_raised do
+        Devise::LdapAdapter::LdapConnect.new
       end
     end
   end
