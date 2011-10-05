@@ -13,6 +13,14 @@ module Devise
       resource = LdapConnect.new(options)
       resource.authorized?
     end
+
+    def self.valid_login?(login)
+      options = {:login => login, 
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+      resource = LdapConnect.new(options)
+      resource.valid_login?
+    end
     
     def self.update_password(login, new_password)
       options = {:login => login,
@@ -77,10 +85,8 @@ module Devise
       end
 
       def dn
-        DeviseLdapAuthenticatable::Logger.send("LDAP search: #{@attribute}=#{@login}")
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
-        ldap_entry = nil
-        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
+        ldap_entry = search_for_login
         if ldap_entry.nil?
           @ldap_auth_username_builder.call(@attribute,@login,@ldap)
         else
@@ -178,6 +184,10 @@ module Devise
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
+
+      def valid_login?
+        !search_for_login.nil?
+      end
       
       private
       
@@ -195,6 +205,17 @@ module Devise
       def find_ldap_user(ldap)
         DeviseLdapAuthenticatable::Logger.send("Finding user: #{dn}")
         ldap.search(:base => dn, :scope => Net::LDAP::SearchScope_BaseObject).try(:first)
+      end
+
+      # Searches the LDAP for the login
+      #
+      # @return [Object] the LDAP entry found; nil if not found
+      def search_for_login
+        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
+        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        ldap_entry = nil
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        ldap_entry
       end
       
       def update_ldap(ops)
