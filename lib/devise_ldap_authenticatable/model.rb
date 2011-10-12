@@ -18,7 +18,7 @@ module Devise
       end
 
       def login_with
-        @login_with ||= Devise.mappings[self.class.to_s.downcase.to_sym].to.authentication_keys.first
+        @login_with ||= Devise.mappings[self.class.to_s.underscore.to_sym].to.authentication_keys.first
         self[@login_with]
       end
       
