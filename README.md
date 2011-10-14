@@ -140,7 +140,9 @@ All unit and functional tests are part of a sample rails application under test/
 Build / Start Instructions for Test LDAP Server
 -----------------------------------------------
 
-  1. To start the server, run `./run_server.sh`
+These instructions require the current directory context to be the `test/ldap` directory relative to the project root.
+
+  1. To start the server, run `./run-server.sh`
   2. Add the basic structure: `ldapadd -x -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
     * this creates the users / passwords:
       * cn=admin,dc=test,com / secret
@@ -149,7 +151,7 @@ Build / Start Instructions for Test LDAP Server
   
   _For a LDAP server running SSL_
   
-  1. To start the server, run: `./run_server.sh --ssl`
+  1. To start the server, run: `./run-server.sh --ssl`
   2. Add the basic structure: `ldapadd -x -H ldaps://localhost:3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
     * this creates the users / passwords:
       * cn=admin,dc=test,com / secret
