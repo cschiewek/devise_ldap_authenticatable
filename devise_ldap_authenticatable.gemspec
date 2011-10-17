@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_ldap_authenticatable}
-  s.version = "0.4.9"
+  s.version = "0.4.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Curtis Schiewek", "Daniel McNevin"]
-  s.date = %q{2011-07-06}
+  s.authors = ["Curtis Schiewek", "Daniel McNevin", "Steven Xu"]
+  s.date = %q{2011-10-17}
   s.description = %q{LDAP authentication module for Devise}
   s.email = %q{curtis.schiewek@gmail.com}
   s.extra_rdoc_files = [
