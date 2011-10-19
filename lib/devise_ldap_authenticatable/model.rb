@@ -79,7 +79,8 @@ module Devise
             resource[auth_key] = attributes[auth_key]
             resource.password = attributes[:password]
           end
-                    
+          
+          Rails.logger.info "ATTRIBUTES: #{attributes.inspect}"
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             if resource.new_record?
               resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
