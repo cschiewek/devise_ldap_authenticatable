@@ -80,7 +80,6 @@ module Devise
             resource.password = attributes[:password]
           end
           
-          debugger
           if resource.try(:valid_ldap_authentication?, attributes[:password])
             if resource.new_record?
               resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
