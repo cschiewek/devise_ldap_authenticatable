@@ -15,7 +15,7 @@ module Devise
   
   # Add valid users to database
   mattr_accessor :ldap_create_user
-  @@ldap_create_user = false
+  @@ldap_create_user = true
   
   mattr_accessor :ldap_config
   # @@ldap_config = "#{Rails.root}/config/ldap.yml"
