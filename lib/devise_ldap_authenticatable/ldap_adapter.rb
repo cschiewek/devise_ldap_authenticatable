@@ -13,14 +13,6 @@ module Devise
       resource = LdapConnect.new(options)
       resource.authorized?
     end
-
-    def self.valid_login?(login)
-      options = {:login => login, 
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-      resource = LdapConnect.new(options)
-      resource.valid_login?
-    end
     
     def self.update_password(login, new_password)
       options = {:login => login,
@@ -31,30 +23,34 @@ module Devise
       resource = LdapConnect.new(options)
       resource.change_password! if new_password.present? 
     end
-    
-    def self.get_groups(login)
+
+    def self.ldap_connect(login)
       options = {:login => login, 
                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                  :admin => ::Devise.ldap_use_admin_to_bind}
 
-      ldap = LdapConnect.new(options)
-      ldap.user_groups
+      resource = LdapConnect.new(options)
+    end
+
+    def self.valid_login?(login)
+      self.ldap_connect(login).valid_login?
+    end
+
+    def self.get_groups(login)
+      self.ldap_connect(login).user_groups
     end
     
     def self.get_dn(login)
-      options = {:login => login, 
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-      resource = LdapConnect.new(options)
-      resource.dn
+      self.ldap_connect(login).dn
     end
 
     def self.get_ldap_param(login,param)
-      options = {:login => login, 
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-      resource = LdapConnect.new(options)
+      resource = self.ldap_connect(login)
       resource.ldap_param_value(param)
+    end
+
+    def self.get_ldap_entry(login)
+      self.ldap_connect(login).search_for_login
     end
 
     class LdapConnect
@@ -100,8 +96,19 @@ module Devise
         ldap_entry = nil
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
 
-				DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
-				ldap_entry.send(param)
+        if ldap_entry 
+          if ldap_entry[param]
+            DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
+            value = ldap_entry.send(param)
+            value = value.first if value.is_a?(Array) and value.count == 1
+          else
+            DeviseLdapAuthenticatable::Logger.send("Requested param #{param} does not exist")
+            value = nil
+          end
+        else
+          DeviseLdapAuthenticatable::Logger.send("Requested ldap entry does not exist")
+          value = nil
+        end
 			end
 			
       def authenticate!
@@ -189,6 +196,17 @@ module Devise
       def valid_login?
         !search_for_login.nil?
       end
+
+      # Searches the LDAP for the login
+      #
+      # @return [Object] the LDAP entry found; nil if not found
+      def search_for_login
+        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
+        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        ldap_entry = nil
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        ldap_entry
+      end
       
       private
       
@@ -206,17 +224,6 @@ module Devise
       def find_ldap_user(ldap)
         DeviseLdapAuthenticatable::Logger.send("Finding user: #{dn}")
         ldap.search(:base => dn, :scope => Net::LDAP::SearchScope_BaseObject).try(:first)
-      end
-
-      # Searches the LDAP for the login
-      #
-      # @return [Object] the LDAP entry found; nil if not found
-      def search_for_login
-        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
-        ldap_entry = nil
-        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
-        ldap_entry
       end
       
       def update_ldap(ops)
