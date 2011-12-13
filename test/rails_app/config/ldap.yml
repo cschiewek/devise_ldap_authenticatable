@@ -1,6 +1,7 @@
 authorizations: &AUTHORIZATIONS
   ## Authorization
   group_base: ou=groups,dc=test,dc=com
+  group_attribute: uniqueMember
   required_groups:
     - cn=admins,ou=groups,dc=test,dc=com
     - ["authorizationRole", "cn=users,ou=groups,dc=test,dc=com"]

@@ -1,0 +1,36 @@
+PATH
+  remote: .
+  specs:
+    devise_ldap_authenticatable (0.5.1)
+      devise (~> 1.5.0)
+      net-ldap (~> 0.2.2)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    bcrypt-ruby (3.0.1)
+    columnize (0.3.1)
+    devise (1.5.2)
+      bcrypt-ruby (~> 3.0)
+      orm_adapter (~> 0.0.3)
+      warden (~> 1.1)
+    linecache (0.43)
+    net-ldap (0.2.2)
+    orm_adapter (0.0.5)
+    rack (1.2.4)
+    ruby-debug (0.10.3)
+      columnize (>= 0.1)
+      ruby-debug-base (~> 0.10.3.0)
+    ruby-debug-base (0.10.3)
+      linecache (>= 0.3)
+    warden (1.1.0)
+      rack (>= 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  devise (~> 1.5.0)
+  devise_ldap_authenticatable!
+  net-ldap (~> 0.2.2)
+  ruby-debug (>= 0.10.3)
