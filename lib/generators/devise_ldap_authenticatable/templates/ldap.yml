@@ -4,10 +4,12 @@
 # enviornment if you need something different per enviornment.
 authorizations: &AUTHORIZATIONS
   group_base: ou=groups,dc=test,dc=com
+  ## Requires config.ldap_custom_group_attribute in devise.rb be true. Default is "uniqueMember":
+  group_attribute: uniqueMember
   ## Requires config.ldap_check_group_membership in devise.rb be true
   # Can have multiple values, must match all to be authorized
   required_groups:
-    # If only a group name is given, membership will be checked against "uniqueMember"
+    # If only a group name is given, membership will be checked against "uniqueMember" unless a custom group attribute is specified:
     - cn=admins,ou=groups,dc=test,dc=com
     - cn=users,ou=groups,dc=test,dc=com
     # If an array is given, the first element will be the attribute to check against, the second the group name

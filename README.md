@@ -117,6 +117,9 @@ In initializer  `config/initializers/devise.rb` :
 * ldap\_use\_admin\_to\_bind _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
 
+* ldap\_custom\_group\_attribute _(default: false)_
+  * When set to true, the group attribute can be specified in the ldap.yml file.  Useful for querying Active Directory based LDAP services.
+    When set to false, the group attribute will default to "uniqueMember"
 
 Advanced Configuration
 ----------------------

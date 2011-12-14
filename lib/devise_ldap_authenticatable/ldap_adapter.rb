@@ -60,10 +60,12 @@ module Devise
       def initialize(params = {})
         ldap_config = YAML.load(ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result)[Rails.env]
         ldap_options = params
+        
         ldap_config["ssl"] = :simple_tls if ldap_config["ssl"] === true
         ldap_options[:encryption] = ldap_config["ssl"].to_sym if ldap_config["ssl"]
 
         @ldap = Net::LDAP.new(ldap_options)
+        
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
@@ -71,7 +73,8 @@ module Devise
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
         
         @group_base = ldap_config["group_base"]
-        @required_groups = ldap_config["required_groups"]        
+        @group_attribute = ldap_config["group_attribute"] || "uniqueMember"
+        @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
         
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin] 
@@ -141,7 +144,7 @@ module Devise
           if group.is_a?(Array)
             group_attribute, group_name = group
           else
-            group_attribute = "uniqueMember"
+            group_attribute = @group_attribute
             group_name = group
           end
           unless ::Devise.ldap_ad_group_check
@@ -189,7 +192,8 @@ module Devise
         admin_ldap = LdapConnect.admin
 
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        #filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        filter = Net::LDAP::Filter.eq(@group_attribute, dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 

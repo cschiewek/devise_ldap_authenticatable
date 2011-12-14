@@ -5,6 +5,7 @@ Devise.setup do |config|
   # config.ldap_create_user = true
   # config.ldap_update_password = true
   # config.ldap_config = "#{Rails.root}/config/ldap.yml"
+  config.ldap_custom_group_attribute = true
     
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in DeviseMailer.
