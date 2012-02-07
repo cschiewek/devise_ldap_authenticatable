@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'devise', '~> 1.5.0'
+gem 'devise', '~> 2.0.0'
 gem 'net-ldap', '~> 0.2.2'
 
 platforms :mri_18 do
