@@ -3,7 +3,7 @@ PATH
   specs:
     devise_ldap_authenticatable (0.5.1)
       devise (~> 1.5.0)
-      net-ldap (~> 0.2.2)
+      net-ldap (~> 0.3.1)
 
 GEM
   remote: http://rubygems.org/
@@ -16,7 +16,7 @@ GEM
       warden (~> 1.1)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
-    net-ldap (0.2.2)
+    net-ldap (0.3.1)
     orm_adapter (0.0.6)
     rack (1.4.0)
     rbx-require-relative (0.0.5)
@@ -34,5 +34,5 @@ PLATFORMS
 DEPENDENCIES
   devise (~> 1.5.0)
   devise_ldap_authenticatable!
-  net-ldap (~> 0.2.2)
+  net-ldap (~> 0.3.1)
   ruby-debug (>= 0.10.3)
