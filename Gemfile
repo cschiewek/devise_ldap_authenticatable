@@ -2,6 +2,8 @@ source "http://rubygems.org"
 
 gemspec
 
+gem 'rake', '>= 0.9'
+gem 'rdoc', '>= 3'
 gem 'devise', '~> 2.0.0'
 gem 'net-ldap', '~> 0.2.2'
 
