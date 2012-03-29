@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('ruby-prof')
   s.add_development_dependency('factory_girl_rails', '~> 1.0')
+  s.add_development_dependency('factory_girl', '~> 2.0')
   s.add_development_dependency('shoulda', '~> 2.11')
   s.add_development_dependency('rspec-rails')
 

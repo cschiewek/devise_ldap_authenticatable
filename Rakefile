@@ -1,9 +1,8 @@
-require File.expand_path('test/rails_app/config/environment', File.dirname(__FILE__))
-require 'rake/testtask'
+require File.expand_path('spec/rails_app/config/environment', File.dirname(__FILE__))
 require 'rdoc/task'
 
 desc 'Default: run test suite.'
-task :default => :test
+task :default => :spec
 
 desc 'Generate documentation for the devise_ldap_authenticatable plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
