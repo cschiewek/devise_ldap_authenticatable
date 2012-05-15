@@ -69,7 +69,9 @@ module Devise
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
-        
+
+        @ldap_allow_unauthenticated_bind = ldap_config["allow_unauthenticated_bind"]
+
         @group_base = ldap_config["group_base"]
         @required_groups = ldap_config["required_groups"]        
         @required_attributes = ldap_config["require_attribute"]
@@ -113,6 +115,9 @@ module Devise
 			end
 			
       def authenticate!
+        unless @ldap_allow_unauthenticated_bind
+          return false if @password.nil? || @password.empty?
+        end
         @ldap.auth(dn, @password)
         @ldap.bind
       end
