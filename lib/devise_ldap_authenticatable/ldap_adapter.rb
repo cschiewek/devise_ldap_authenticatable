@@ -24,6 +24,10 @@ module Devise
       resource.change_password! if new_password.present? 
     end
 
+    def self.update_own_password(login, new_password, current_password)
+      set_ldap_param(login, :userpassword, new_password, current_password)
+    end
+
     def self.ldap_connect(login)
       options = {:login => login, 
                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
@@ -42,6 +46,15 @@ module Devise
     
     def self.get_dn(login)
       self.ldap_connect(login).dn
+    end
+
+    def self.set_ldap_param(login, param, new_value, password = nil)
+      options = { :login => login,
+                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                  :password => password }
+
+      resource = LdapConnect.new(options)
+      resource.set_param(param, new_value)
     end
 
     def self.get_ldap_param(login,param)
@@ -81,6 +94,10 @@ module Devise
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+      end
+
+      def set_param(param, new_value)
+        update_ldap( { param.to_sym => new_value } )
       end
 
       def dn
@@ -242,10 +259,15 @@ module Devise
           operations = ops
         end
 
-        admin_ldap = LdapConnect.admin
+        if ::Devise.ldap_use_admin_to_bind
+          privileged_ldap = LdapConnect.admin
+        else
+          authenticate!
+          privileged_ldap = self.ldap
+        end
         
         DeviseLdapAuthenticatable::Logger.send("Modifying user #{dn}")
-        admin_ldap.modify(:dn => dn, :operations => operations)
+        privileged_ldap.modify(:dn => dn, :operations => operations)
       end
 
     end
