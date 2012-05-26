@@ -22,6 +22,8 @@ authorizations: &AUTHORIZATIONS
 
 development:
   host: localhost
+  ## Uncommented, this will precede the previous host and introduce fallback hosts. They are tried in specified order.
+  #hosts: host1,host2,host3
   port: 389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -32,6 +34,8 @@ development:
 
 test:
   host: localhost
+  ## Uncommented, this will precede the previous host and introduce fallback hosts. They are tried in specified order.
+  #hosts: host1,host2,host3
   port: 3389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -42,6 +46,8 @@ test:
 
 production:
   host: localhost
+  ## Uncommented, this will precede the previous host and introduce fallback hosts. They are tried in specified order.
+  #hosts: host1,host2,host3
   port: 636
   attribute: cn
   base: ou=people,dc=test,dc=com
