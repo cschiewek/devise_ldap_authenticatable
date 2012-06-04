@@ -5,7 +5,9 @@ module Devise
   module LdapAdapter
 
     def self.valid_credentials?(login, password_plaintext)
-      options = {:login => login,
+      bin_login = login.clone
+      bin_login.force_encoding('BINARY')
+      options = {:login => bin_login,
                  :password => password_plaintext,
                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                  :admin => ::Devise.ldap_use_admin_to_bind}
@@ -15,8 +17,14 @@ module Devise
     end
 
     def self.update_password(login, new_password)
-      options = {:login => login,
-                 :new_password => new_password,
+      bin_login = login.clone
+      bin_login.force_encoding('BINARY')
+
+      bin_new_password = new_password.clone
+      bin_new_password.force_encoding('BINARY')
+
+      options = {:login => bin_login,
+                 :new_password => bin_new_password,
                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                  :admin => ::Devise.ldap_use_admin_to_bind}
 
@@ -29,7 +37,9 @@ module Devise
     end
 
     def self.ldap_connect(login)
-      options = {:login => login,
+      bin_login = login.clone
+      bin_login.force_encoding('BINARY')
+      options = {:login => bin_login,
                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                  :admin => ::Devise.ldap_use_admin_to_bind}
 
@@ -49,7 +59,9 @@ module Devise
     end
 
     def self.set_ldap_param(login, param, new_value, password = nil)
-      options = { :login => login,
+      bin_login = login.clone
+      bin_login.force_encoding('BINARY')
+      options = { :login => bin_login,
                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                   :password => password }
 
@@ -99,18 +111,21 @@ module Devise
       end
 
       def dn
+        DeviseLdapAuthenticatable::Logger.send("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST")
         DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
         ldap_entry = search_for_login
-        return_dn = if ldap_entry.nil?
+        bin_dn = if ldap_entry.nil?
           @ldap_auth_username_builder.call(@attribute,@login,@ldap)
         else
           ldap_entry.dn
         end
-        return_dn.force_encoding('BINARY')
+        bin_dn.force_encoding('BINARY')
       end
 
       def ldap_param_value(param)
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        bin_login = @login.to_s.clone
+        bin_login.force_encoding('BINARY')
+        filter = Net::LDAP::Filter.eq(@attribute.to_s, bin_login)
         ldap_entry = nil
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
 
@@ -220,8 +235,10 @@ module Devise
       #
       # @return [Object] the LDAP entry found; nil if not found
       def search_for_login
-        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+        bin_login = @login.to_s.clone
+        bin_login.force_encoding('BINARY')
+        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{bin_login}")
+        filter = Net::LDAP::Filter.eq(@attribute.to_s, bin_login)
         ldap_entry = nil
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
         ldap_entry
