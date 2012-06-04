@@ -101,11 +101,12 @@ module Devise
       def dn
         DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
         ldap_entry = search_for_login
-        if ldap_entry.nil?
+        return_dn = if ldap_entry.nil?
           @ldap_auth_username_builder.call(@attribute,@login,@ldap)
         else
           ldap_entry.dn
         end
+        return_dn.force_encoding('BINARY')
       end
 
       def ldap_param_value(param)
