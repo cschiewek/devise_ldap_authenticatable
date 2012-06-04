@@ -111,7 +111,6 @@ module Devise
       end
 
       def dn
-        DeviseLdapAuthenticatable::Logger.send("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST")
         DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
         ldap_entry = search_for_login
         bin_dn = if ldap_entry.nil?
