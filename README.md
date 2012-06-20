@@ -7,10 +7,6 @@ If you are building applications for use within your organization which require 
 
 For a screencast with an example application, please visit: [http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html](http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html)
 
-**_Please Note_**
-
-If you are using rails 2.x then use 0.1.x series of gem, and see the rails2 branch README for instructions.
-
 Requirements
 ------------
 
