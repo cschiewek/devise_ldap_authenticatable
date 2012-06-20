@@ -57,6 +57,15 @@ module Devise
       resource.set_param(param, new_value)
     end
 
+    def self.delete_ldap_param(login, param, password = nil)
+      options = { :login => login,
+                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                  :password => password }
+
+      resource = LdapConnect.new(options)
+      resource.delete_param(param)
+    end
+
     def self.get_ldap_param(login,param)
       resource = self.ldap_connect(login)
       resource.ldap_param_value(param)
@@ -93,6 +102,10 @@ module Devise
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+      end
+
+      def delete_param(param)
+        update_ldap [[:delete, param.to_sym, nil]]
       end
 
       def set_param(param, new_value)
