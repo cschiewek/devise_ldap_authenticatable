@@ -13,6 +13,10 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
 end
 
+def ldap_root
+  File.expand_path('ldap', File.dirname(__FILE__))
+end
+
 def ldap_connect_string
   if ENV["LDAP_SSL"]
     "-x -H ldaps://localhost:3389 -D 'cn=admin,dc=test,dc=com' -w secret"
@@ -23,11 +27,11 @@ end
 
 def reset_ldap_server!
   if ENV["LDAP_SSL"]
-    `ldapmodify #{ldap_connect_string} -f ../ldap/clear.ldif`
-    `ldapadd #{ldap_connect_string} -f ../ldap/base.ldif`
+    `ldapmodify #{ldap_connect_string} -f #{File.join(ldap_root, 'clear.ldif')}`
+    `ldapadd #{ldap_connect_string} -f #{File.join(ldap_root, 'base.ldif')}`
   else
-    `ldapmodify #{ldap_connect_string} -f ../ldap/clear.ldif`
-    `ldapadd #{ldap_connect_string} -f ../ldap/base.ldif`
+    `ldapmodify #{ldap_connect_string} -f #{File.join(ldap_root, 'clear.ldif')}`
+    `ldapadd #{ldap_connect_string} -f #{File.join(ldap_root, 'base.ldif')}`
   end
 end
 
