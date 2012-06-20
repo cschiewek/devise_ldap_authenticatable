@@ -92,7 +92,7 @@ describe 'Users' do
         end
 
         it "should create a user in the database if case insensitivity does not matter" do
-          ::Devise.case_insensitive_keys = false
+          ::Devise.case_insensitive_keys = []
           @user = Factory.create(:user)
 
           expect do
