@@ -102,21 +102,56 @@ class UserTest < ActiveSupport::TestCase
         ::Devise.ldap_check_group_membership = true
       end
   
-      should "admin should be allowed in" do
-        should_be_validated @admin, "admin_secret"
-      end
+      context "config check_group_membership is not defined" do
+        should "admin should be allowed in" do
+          should_be_validated @admin, "admin_secret"
+        end
     
-      should "admin should have the proper groups set" do
-        assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
-      end
+        should "admin should have the proper groups set" do
+          assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
+        end
     
-      should "user should not be allowed in" do
-        should_not_be_validated @user, "secret"
-      end
+        should "user should not be allowed in" do
+          should_not_be_validated @user, "secret"
+        end
       
-      should "not be validated if group with different attribute is removed" do
-        `ldapmodify #{ldap_connect_string} -f ../ldap/delete_authorization_role.ldif`
-        should_not_be_validated @admin, "admin_secret"
+        should "not be validated if group with different attribute is removed" do
+          `ldapmodify #{ldap_connect_string} -f ../ldap/delete_authorization_role.ldif`
+          should_not_be_validated @admin, "admin_secret"
+        end
+      end
+
+      context "config file check_group_membership is defined" do
+        setup do
+          default_devise_settings!
+          reset_ldap_server!
+        end
+
+        context "check_group_membership is turned on" do
+          setup do
+            ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_check_membership_on.yml"
+
+            ::Devise.ldap_check_group_membership = false
+          end
+
+          # Config file value has precedence over ldap_check_group_membership
+          should "user should not be allowed in" do
+            should_not_be_validated @user, "secret"
+          end
+        end
+
+        context "check_group_membership is turned off" do
+          setup do
+            ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_check_membership_off.yml"
+
+            ::Devise.ldap_check_group_membership = true
+          end
+
+          # Config file value has precedence over ldap_check_group_membership
+          should "user should be allowed in" do
+            should_be_validated @user, "secret"
+          end
+        end
       end
     end
   
