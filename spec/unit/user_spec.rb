@@ -78,7 +78,7 @@ describe 'Users' do
         it "should create a user in the database" do
           @user = User.authenticate_with_ldap(:email => "example.user@test.com", :password => "secret")
           assert_equal(User.all.size, 1)
-          assert_contains(User.all.collect(&:email), "example.user@test.com", "user not in database")
+          User.all.collect(&:email).should include("example.user@test.com")
         end
 
         it "should not create a user in the database if the password is wrong_secret" do
@@ -95,25 +95,25 @@ describe 'Users' do
           ::Devise.case_insensitive_keys = false
           @user = Factory.create(:user)
 
-          assert_difference "User.count", +1 do
+          expect do
             User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
-          end
+          end.to change { User.count }.by(1)
         end
 
         it "should not create a user in the database if case insensitivity matters" do
           ::Devise.case_insensitive_keys = [:email]
           @user = Factory.create(:user)
 
-          assert_no_difference "User.count" do
+          expect do
             User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
-          end
+          end.to_not change { User.count }
         end
 
         it "should create a user with downcased email in the database if case insensitivity matters" do
           ::Devise.case_insensitive_keys = [:email]
 
           @user = User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
-          assert_contains(User.all.collect(&:email), "example.user@test.com", "user not in database")
+          User.all.collect(&:email).should include("example.user@test.com")
         end
       end
 
@@ -132,7 +132,7 @@ describe 'Users' do
       end
 
       it "should admin should have the proper groups set" do
-        assert_contains(@admin.ldap_groups, /cn=admins/, "groups attribute not being set properly")
+        @admin.ldap_groups.should include('cn=admins,ou=groups,dc=test,dc=com')
       end
 
       it "should user should not be allowed in" do
@@ -198,7 +198,7 @@ describe 'Users' do
       it "should create a user in the database" do
         @user = User.authenticate_with_ldap(:uid => "example_user", :password => "secret")
         assert_equal(User.all.size, 1)
-        assert_contains(User.all.collect(&:uid), "example_user", "user not in database")
+        User.all.collect(&:uid).should include("example_user")
       end
 
       it "should call ldap_before_save hooks" do
