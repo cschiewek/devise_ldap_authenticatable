@@ -1,7 +1,13 @@
 #!/usr/bin/env ruby
 
+require 'erb'
+
 ## For OSX:
 ENV['PATH'] = "#{ENV['PATH']}:/usr/libexec"
+
+File.open(File.expand_path('slapd-test.conf', File.dirname(__FILE__)), 'w') do |f|
+  f.write ERB.new(File.read(File.expand_path('slapd-test.conf.erb', File.dirname(__FILE__)))).result
+end
 
 if ARGV.first == '--ssl'
   exec "slapd -d 1 -f slapd-ssl-test.conf -h ldaps://localhost:3389"

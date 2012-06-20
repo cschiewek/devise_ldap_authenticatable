@@ -2,13 +2,14 @@
 # See slapd.conf(5) for details on configuration options.
 # This file should NOT be world readable.
 #
-include		/etc/openldap/schema/core.schema
-include		/etc/openldap/schema/cosine.schema
-include		/etc/openldap/schema/inetorgperson.schema
-include		/etc/openldap/schema/nis.schema
+<% ldapdir = RUBY_PLATFORM.match(/linux/) ? 'ldap' : 'openldap' %>
+include		/etc/<%= ldapdir %>/schema/core.schema
+include		/etc/<%= ldapdir %>/schema/cosine.schema
+include		/etc/<%= ldapdir %>/schema/inetorgperson.schema
+include		/etc/<%= ldapdir %>/schema/nis.schema
 
 ## Local definitions
-# include		/etc/openldap/schema/local.schema
+# include		/etc/<%= ldapdir %>/schema/local.schema
 include   local.schema
 
 # Allow LDAPv2 client connections.  This is NOT the default.
@@ -91,17 +92,10 @@ access to *
 # ldbm and/or bdb database definitions
 #######################################################################
 
-database	bdb
+database	ldif
 
 suffix          "dc=test,dc=com"
 directory       openldap-data
 rootdn          "cn=admin,dc=test,dc=com"
 ## rootpw = secret
 rootpw          {SSHA}fFjKcZb4cfOAcwSjJer8nCGOEVRUnwCC
-
-# Indices to maintain for this database
-index objectClass                       eq,pres
-index ou,cn,mail,surname,givenname      eq,pres,sub
-index uidNumber,gidNumber,loginShell    eq,pres
-index uid,memberUid                     eq,pres,sub
-index nisMapName,nisMapEntry            eq,pres,sub
