@@ -15,6 +15,8 @@ Requirements
 ------------
 
 - An LDAP server (tested on OpenLDAP)
+ - This seems to come out of the box with Mac OS X 10.6
+ - On Ubuntu (tested on 12.04), you can run `sudo apt-get install slapd`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors.
 - Rails 3.0.0
 
 These gems are dependencies of the gem:
