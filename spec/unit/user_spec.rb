@@ -138,11 +138,6 @@ describe 'Users' do
       it "should user should not be allowed in" do
         should_not_be_validated @user, "secret"
       end
-
-      it "should not be validated if group with different attribute is removed" do
-        `ldapmodify #{ldap_connect_string} -f ../ldap/delete_authorization_role.ldif`
-        should_not_be_validated @admin, "admin_secret"
-      end
     end
 
     describe "use role attribute for authorization" do
