@@ -84,6 +84,7 @@ module Devise
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
         @group_base = ldap_config["group_base"]
+        @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
@@ -148,7 +149,7 @@ module Devise
       end
 
       def in_required_groups?
-        return true unless ::Devise.ldap_check_group_membership
+        return true unless @check_group_membership
 
         ## FIXME set errors here, the ldap.yml isn't set properly.
         return false if @required_groups.nil?
