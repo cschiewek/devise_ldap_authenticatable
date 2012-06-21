@@ -11,6 +11,8 @@ Requirements
 ------------
 
 - An LDAP server (tested on OpenLDAP)
+ - This seems to come out of the box with Mac OS X 10.6
+ - On Ubuntu (tested on 12.04), you can run `sudo apt-get install slapd`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors.
 - Rails 3.0.0
 
 These gems are dependencies of the gem:
@@ -138,7 +140,7 @@ Build / Start Instructions for Test LDAP Server
 
 These instructions require the current directory context to be the `test/ldap` directory relative to the project root.
 
-  1. To start the server, run `./run-server.sh`
+  1. To start the server, run `./run-server`
   2. Add the basic structure: `ldapadd -x -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
     * this creates the users / passwords:
       * cn=admin,dc=test,com / secret
@@ -147,7 +149,7 @@ These instructions require the current directory context to be the `test/ldap` d
   
   _For a LDAP server running SSL_
   
-  1. To start the server, run: `./run-server.sh --ssl`
+  1. To start the server, run: `./run-server --ssl`
   2. Add the basic structure: `ldapadd -x -H ldaps://localhost:3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
     * this creates the users / passwords:
       * cn=admin,dc=test,com / secret
