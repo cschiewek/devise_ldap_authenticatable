@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('shoulda', '~> 2.11')
   s.add_development_dependency('rspec-rails')
 
-  %w{ruby-debug mocha database_cleaner capybara launchy autotest-rails ZenTest redgreen autotest-growl}.each do |dep|
+  %w{mocha database_cleaner capybara launchy autotest-rails ZenTest autotest-growl}.each do |dep|
     s.add_development_dependency(dep)
   end
 end

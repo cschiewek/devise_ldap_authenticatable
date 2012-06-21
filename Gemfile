@@ -2,8 +2,7 @@ source "http://rubygems.org"
 
 gemspec
 
-group :test do
-  platforms :mri_18 do
-    gem 'ruby-debug', '>= 0.10.3'
-  end
+group :development, :test do
+  gem 'ruby-debug', '>= 0.10.3', :platform => :mri_18
+  gem 'debugger', :platform => :ruby_19
 end

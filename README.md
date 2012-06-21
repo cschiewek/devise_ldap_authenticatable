@@ -7,10 +7,6 @@ If you are building applications for use within your organization which require 
 
 For a screencast with an example application, please visit: [http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html](http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html)
 
-**_Please Note_**
-
-If you are using rails 2.x then use 0.1.x series of gem, and see the rails2 branch README for instructions.
-
 Requirements
 ------------
 
@@ -21,7 +17,7 @@ Requirements
 
 These gems are dependencies of the gem:
 
-- Devise ~> 1.4.0 
+- Devise ~> 2.0.0 
 - net-ldap ~> 0.2.2
 
 Installation
@@ -33,7 +29,7 @@ This will *only* work for Rails 3 applications.
 
 In the Gemfile for your application:
 
-    gem "devise", "~> 1.4"
+    gem "devise", "~> 2.0"
     gem "devise_ldap_authenticatable"
     
 To get the latest version, pull directly from github instead of the gem:
@@ -175,13 +171,6 @@ References
 * [Devise](http://github.com/plataformatec/devise)
 * [Warden](http://github.com/hassox/warden)
 
-
-TODO
-----
-
-View on [Pivotal Tracker](http://www.pivotaltracker.com/projects/97318).
-
 Released under the MIT license
 
-Copyright (c) 2010 Curtis Schiewek, Daniel McNevin
-
+Copyright (c) 2010 Curtis Schiewek, Daniel McNevin, Steven Xu
