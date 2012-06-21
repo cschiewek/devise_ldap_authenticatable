@@ -1,4 +1,5 @@
 .bundle
+Gemfile.lock
 log
 *.sqlite3
 test/ldap/openldap-data/*
