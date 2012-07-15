@@ -1,37 +1,24 @@
 Devise LDAP Authenticatable
 ===========================
-
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
 If you are building applications for use within your organization which require authentication and you want to use LDAP, this plugin is for you.
 
+Devise LDAP Authenticatable works in replacement of Database Authenticatable. This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
+
 For a screencast with an example application, please visit: [http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html](http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html)
 
-Requirements
-------------
+Prerequisites
+-------------
+ * devise ~> 2.0.0 (which requires rails ~> 3.1)
+ * net-ldap ~> 0.2.2
 
-- An LDAP server (tested on OpenLDAP)
- - This seems to come out of the box with Mac OS X 10.6
- - On Ubuntu (tested on 12.04), you can run `sudo apt-get install slapd`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors.
-- Rails 3.0.0
-
-These gems are dependencies of the gem:
-
-- Devise ~> 2.0.0 
-- net-ldap ~> 0.2.2
-
-Installation
-------------
-
-**_Please Note_**
-
-This will *only* work for Rails 3 applications.
-
+Usage
+-----
 In the Gemfile for your application:
 
-    gem "devise", "~> 2.0"
     gem "devise_ldap_authenticatable"
-    
+
 To get the latest version, pull directly from github instead of the gem:
 
     gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git"
@@ -39,13 +26,12 @@ To get the latest version, pull directly from github instead of the gem:
 
 Setup
 -----
-
 Run the rails generators for devise (please check the [devise](http://github.com/plataformatec/devise) documents for further instructions)
 
     rails generate devise:install
     rails generate devise MODEL_NAME
 
-Run the rails generator for devise_ldap_authenticatable
+Run the rails generator for `devise_ldap_authenticatable`
 
     rails generate devise_ldap_authenticatable:install [options]
 
@@ -57,27 +43,13 @@ Options:
                                # Default: user
     [--update-model]           # Update model to change from database_authenticatable to ldap_authenticatable
                                # Default: true
-    [--add-rescue]             # Update Application Controller with resuce_from for DeviseLdapAuthenticatable::LdapException
+    [--add-rescue]             # Update Application Controller with rescue_from for DeviseLdapAuthenticatable::LdapException
                                # Default: true
     [--advanced]               # Add advanced config options to the devise initializer
 
-
-Usage
------
-
-Devise LDAP Authenticatable works in replacement of Database Authenticatable
-
-**_Please Note_**
-
-This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
-
-The field that is used for logins is the first key that's configured in the `config/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise.
-
-
 Querying LDAP
-----------------
-
-Given that ldap\_create\_user is set to true and you are authenticating with username, you can query an LDAP server for other attributes.
+-------------
+Given that `ldap\_create\_user` is set to true and you are authenticating with username, you can query an LDAP server for other attributes.
 
 in your user model:
 
@@ -87,86 +59,66 @@ in your user model:
     self.email = Devise::LdapAdapter.get_ldap_param(self.username,"mail")
   end
 
-
 Configuration
 -------------
-
 In initializer  `config/initializers/devise.rb` :
 
-* ldap\_logger _(default: true)_
+* `ldap\_logger` _(default: true)_
   * If set to true, will log LDAP queries to the Rails logger.
 
-* ldap\_create\_user _(default: false)_
-	* If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
+* `ldap\_create\_user` _(default: false)_
+  * If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
       If set to false, you will have to create the user record before they will be allowed to login.
 
-* ldap\_config _(default: #{Rails.root}/config/ldap.yml)_
+* `ldap\_config` _(default: #{Rails.root}/config/ldap.yml)_
 	* Where to find the LDAP config file. Commented out to use the default, change if needed.
 
-* ldap\_update\_password _(default: true)_
+* `ldap\_update\_password` _(default: true)_
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
 
-* ldap\_check\_group_membership _(default: false)_
+* `ldap\_check\_group_membership` _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
 
-* ldap\_check\_attributes _(default: false)_
+* `ldap\_check\_attributes` _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.
 
-* ldap\_use\_admin\_to\_bind _(default: false)_
+* `ldap\_use\_admin\_to\_bind` _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
-
 
 Advanced Configuration
 ----------------------
-
 These parameters will be added to `config/initializers/devise.rb` when you pass the `--advanced` switch to the generator:
 
-* ldap\_auth\_username\_builder _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
+* `ldap\_auth\_username\_builder` _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
   * You can pass a proc to the username option to explicitly specify the format that you search for a users' DN on your LDAP server.
 
-Testing
--------
+Troubleshooting
+--------------
+**Using a "username" instead of an "email":** The field that is used for logins is the first key that's configured in the `config/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise.
 
-This has been tested using the following setup:
+**SSL certificate invalid:** If you're using a test LDAP server running a self-signed SSL certificate, make sure the appropriate root certificate is installed on your system. Alternately, you may temporarily disable certificate checking for SSL by modifying your system LDAP configuration (e.g., `/etc/openldap/ldap.conf` or `/etc/ldap/ldap.conf`) to read `TLS_REQCERT never`.
 
-* Mac OSX 10.6
-* OpenLDAP 2.4.11
-* REE 1.8.7 (2010.02)
+Development guide
+------------
+To contribute to `devise_ldap_authentication`, you should be able to run a test OpenLDAP server. Specifically, you need the `slapd`, `ldapadd`, and `ldapmodify` binaries.
 
-All unit and functional tests are part of a sample rails application under test/rails_app and requires a working LDAP sever.
+This seems to come out of the box with Mac OS X 10.6.
 
-Build / Start Instructions for Test LDAP Server
------------------------------------------------
+On Ubuntu (tested on 12.04), you can run `sudo apt-get install slapd ldap-utils`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors.
 
-These instructions require the current directory context to be the `test/ldap` directory relative to the project root.
+To start hacking on `devise_ldap_authentication`, clone the github repository, start the test LDAP server, and run the rake test task:
 
-  1. To start the server, run `./run-server`
-  2. Add the basic structure: `ldapadd -x -h localhost -p 3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
-    * this creates the users / passwords:
-      * cn=admin,dc=test,com / secret
-      * cn=example.user@test.com,ou=people,dc=test,dc=com / secret
-  3. You should now be able to run the tests in test/rails_app by running: `rake`
-  
-  _For a LDAP server running SSL_
-  
-  1. To start the server, run: `./run-server --ssl`
-  2. Add the basic structure: `ldapadd -x -H ldaps://localhost:3389 -x -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif`
-    * this creates the users / passwords:
-      * cn=admin,dc=test,com / secret
-      * cn=example.user@test.com,ou=people,dc=test,dc=com / secret
-  3. You should now be able to run the tests in test/rails_app by running: `LDAP_SSL=true rake`
+    git clone https://github.com/cschiewek/devise_ldap_authenticatable.git
+    cd devise_ldap_authenticatable
+    bundle install
 
-**_Please Note_**
+    # in a separate console or backgrounded
+    ./spec/ldap/run-server
 
-In your system LDAP config file (on OSX it's /etc/openldap/ldap.conf) make sure you have the following setting:
-
-    TLS_REQCERT	never
-
-This will allow requests to go to the test LDAP server without being signed by a trusted root (it uses a self-signed cert)
+    bundle exec rake spec
 
 References
 ----------
-
 * [OpenLDAP](http://www.openldap.org/)
 * [Devise](http://github.com/plataformatec/devise)
 * [Warden](http://github.com/hassox/warden)
