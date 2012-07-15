@@ -10,7 +10,7 @@ include		/etc/<%= ldapdir %>/schema/nis.schema
 
 ## Local definitions
 # include		/etc/<%= ldapdir %>/schema/local.schema
-include   local.schema
+include   <%= File.expand_path('local.schema', @conf_root) %>
 
 # Allow LDAPv2 client connections.  This is NOT the default.
 allow bind_v2
@@ -19,8 +19,8 @@ allow bind_v2
 # service AND an understanding of referrals.
 #referral	ldap://root.openldap.org
 
-pidfile         openldap-data/run/slapd.pid
-argsfile        openldap-data/run/slapd.args
+pidfile         <%= File.expand_path('openldap-data/run/slapd.pid', @conf_root) %>
+argsfile        <%= File.expand_path('openldap-data/run/slapd.args', @conf_root) %>
 
 # Load dynamic backend modules:
 modulepath	/usr/lib/openldap
@@ -53,9 +53,15 @@ modulepath	/usr/lib/openldap
 # may balk at self-signed certificates, however.
 
 # ## For LDAPS
+<% if @ssl %>
+TLSCACertificateFile <%= File.expand_path('server.pem', @conf_root) %>
+TLSCertificateFile <%= File.expand_path('server.pem', @conf_root) %>
+TLSCertificateKeyFile <%= File.expand_path('server.pem', @conf_root) %>
+<% else %>
 # TLSCACertificateFile server.pem
 # TLSCertificateFile server.pem
 # TLSCertificateKeyFile server.pem
+<% end %>
 # 
 # TLSVerifyClient demand
 
