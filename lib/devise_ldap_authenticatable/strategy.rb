@@ -10,10 +10,12 @@ module Devise
       # to sign in page.
       def authenticate!
         resource = valid_password? && mapping.to.authenticate_with_ldap(params[scope])
-        return fail(:invalid) unless resource
+        return fail(:invalid) if resource.nil?
 
         if validate(resource)
           success!(resource)
+        else
+          fail(:invalid)
         end
       end
     end
