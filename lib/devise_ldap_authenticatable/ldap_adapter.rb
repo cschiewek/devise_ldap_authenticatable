@@ -14,6 +14,16 @@ module Devise
       resource.authorized?
     end
 
+    def self.valid_user?(login, password_plaintext = nil)
+      options = {:login => login,
+                 :password => password_plaintext,
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                 :admin => ::Devise.ldap_use_admin_to_bind}
+
+      resource = LdapConnect.new(options)
+      resource.valid_user?
+    end
+
     def self.update_password(login, new_password)
       options = {:login => login,
                  :new_password => new_password,
@@ -154,7 +164,11 @@ module Devise
 
       def authorized?
         DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
-        authenticated? && in_required_groups? && has_required_attribute?
+        authenticated? && valid_user?
+      end
+
+      def valid_user?
+        in_required_groups? && has_required_attribute?
       end
 
       def change_password!
