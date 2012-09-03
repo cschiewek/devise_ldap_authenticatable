@@ -44,6 +44,10 @@ module Devise
       self.ldap_connect(login).user_groups
     end
 
+    def self.in_ldap_group?(login, group)
+      self.ldap_connect(login).in_group?(*group)
+    end
+
     def self.get_dn(login)
       self.ldap_connect(login).dn
     end
@@ -170,33 +174,35 @@ module Devise
         admin_ldap = LdapConnect.admin
 
         for group in @required_groups
-          if group.is_a?(Array)
-            group_attribute, group_name = group
-          else
-            group_attribute = "uniqueMember"
-            group_name = group
+          unless in_group?(*group)
+            return false
           end
-          unless ::Devise.ldap_ad_group_check
-            admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-              unless entry[group_attribute].include? dn
-                DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
-                return false
-              end
-            end
-          else
-            # AD optimization - extension will recursively check sub-groups with one query
-            # "(memberof:1.2.840.113556.1.4.1941:=group_name)"
-            search_result = admin_ldap.search(:base => dn,
-                              :filter => Net::LDAP::Filter.ex("memberof:1.2.840.113556.1.4.1941", group_name),
-                              :scope => Net::LDAP::SearchScope_BaseObject)
-            # Will return  the user entry if belongs to group otherwise nothing
-            unless search_result.length == 1 && search_result[0].dn.eql?(dn)
+        end
+
+        return true
+      end
+      
+      def in_group?(group_name, group_attribute = "uniqueMember") 
+        unless ::Devise.ldap_ad_group_check
+          admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+            unless entry[group_attribute].include? dn
               DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
               return false
             end
           end
+        else
+          # AD optimization - extension will recursively check sub-groups with one query
+          # "(memberof:1.2.840.113556.1.4.1941:=group_name)"
+          search_result = admin_ldap.search(:base => dn,
+                            :filter => Net::LDAP::Filter.ex("memberof:1.2.840.113556.1.4.1941", group_name),
+                            :scope => Net::LDAP::SearchScope_BaseObject)
+          # Will return  the user entry if belongs to group otherwise nothing
+          unless search_result.length == 1 && search_result[0].dn.eql?(dn)
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
+            return false
+          end
         end
-
+        
         return true
       end
 
