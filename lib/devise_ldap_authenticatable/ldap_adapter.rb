@@ -75,6 +75,10 @@ module Devise
       self.ldap_connect(login).search_for_login
     end
 
+    def self.get_ldap_attribute(login, attribute_name)
+      self.ldap_connect(login).attribute(attribute_name)
+    end
+
     class LdapConnect
 
       attr_reader :ldap, :login
@@ -242,6 +246,14 @@ module Devise
         end
 
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+      end
+
+      def attribute attribute_name
+        admin_ldap = LdapConnect.admin
+
+        DeviseLdapAuthenticatable::Logger.send("Getting attribute #{attribute_name} for user #{dn}")
+
+        find_ldap_user(admin_ldap)[attribute_name]
       end
 
       def valid_login?
