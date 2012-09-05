@@ -1,19 +1,17 @@
 #!/usr/bin/env ruby
 
 require 'erb'
+require 'fileutils'
+
+FileUtils.chdir(File.dirname(__FILE__))
 
 ## For OSX:
 ENV['PATH'] = "#{ENV['PATH']}:/usr/libexec"
 
-def file(n)
-  File.read(File.expand_path(n, File.dirname(__FILE__)))
-end
+template = File.read('slapd-test.conf.erb')
+normal_out = 'slapd-test.conf'
+ssl_out = 'slapd-ssl-test.conf'
 
-template = file('slapd-test.conf.erb')
-normal_out = File.expand_path('slapd-test.conf', File.dirname(__FILE__))
-ssl_out = File.expand_path('slapd-ssl-test.conf', File.dirname(__FILE__))
-
-@conf_root = File.expand_path(File.dirname(__FILE__))
 File.open(normal_out, 'w') do |f|
   @ssl = false
   f.write ERB.new(template).result(binding)
