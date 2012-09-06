@@ -52,10 +52,6 @@ module Devise
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
       end
-      
-      def in_ldap_group?(group)
-        Devise::LdapAdapter.in_ldap_group?(login_with, group)
-      end
 
       def ldap_dn
         Devise::LdapAdapter.get_dn(login_with)
