@@ -171,6 +171,8 @@ module Devise
         ## FIXME set errors here, the ldap.yml isn't set properly.
         return false if @required_groups.nil?
 
+        admin_ldap = LdapConnect.admin
+
         for group in @required_groups
           unless in_group?(*group)
             return false
@@ -180,9 +182,7 @@ module Devise
         return true
       end
       
-      def in_group?(group_name, group_attribute = "uniqueMember")
-        admin_ldap = LdapConnect.admin
-
+      def in_group?(group_name, group_attribute = "uniqueMember") 
         unless ::Devise.ldap_ad_group_check
           admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             unless entry[group_attribute].include? dn
