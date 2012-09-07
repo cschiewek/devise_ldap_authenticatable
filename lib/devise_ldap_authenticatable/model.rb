@@ -54,7 +54,7 @@ module Devise
       end
 
       def in_ldap_group?(*group)
-        Devise::LdapAdapter.in_ldap_group?(login_with, group)
+        Devise::LdapAdapter.in_ldap_group?(login_with, *group)
       end
 
       def ldap_dn
