@@ -44,8 +44,8 @@ module Devise
       self.ldap_connect(login).user_groups
     end
 
-    def self.in_ldap_group?(login, *group)
-      self.ldap_connect(login).in_group?(*group)
+    def self.in_ldap_group?(login, group_name, group_attribute = nil)
+      self.ldap_connect(login).in_group?(group_name, group_attribute)
     end
 
     def self.get_dn(login)
@@ -179,8 +179,8 @@ module Devise
         return true
       end
 
-      def in_group?(group_name, group_attribute = "uniqueMember")
-
+      def in_group?(group_name, group_attribute)
+        group_attribute ||= "uniqueMember"
         admin_ldap = LdapConnect.admin
 
         unless ::Devise.ldap_ad_group_check

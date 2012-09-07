@@ -53,8 +53,8 @@ module Devise
         Devise::LdapAdapter.get_groups(login_with)
       end
 
-      def in_ldap_group?(*group)
-        Devise::LdapAdapter.in_ldap_group?(login_with, *group)
+      def in_ldap_group?(group_name, group_attribute = nil)
+        Devise::LdapAdapter.in_ldap_group?(login_with, group_name, group_attribute)
       end
 
       def ldap_dn
