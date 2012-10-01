@@ -24,18 +24,21 @@ module Devise
       resource.valid_user?
     end
 
-    def self.update_password(login, new_password)
+    def self.update_password(login, new_password, current_password = nil)
+      return if new_password.blank?
+
       options = {:login => login,
                  :new_password => new_password,
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
+                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder}
                  
-      resource = LdapConnect.new(options)
-      resource.change_password! if new_password.present? 
-    end
+      if current_password.nil?
+        options.merge!(:admin => true)
+      else
+        options.merge!(:password => current_password)
+      end
 
-    def self.update_own_password(login, new_password, current_password)
-      set_ldap_param(login, :userpassword, new_password, current_password)
+      resource = LdapConnect.new(options)
+      resource.change_password!
     end
 
     def self.ldap_connect(login)
@@ -56,15 +59,6 @@ module Devise
     
     def self.get_dn(login)
       self.ldap_connect(login).dn
-    end
-
-    def self.set_ldap_param(login, param, new_value, password = nil)
-      options = { :login => login,
-                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                  :password => password }
-
-      resource = LdapConnect.new(options)
-      resource.set_param(param, new_value)
     end
 
     def self.delete_ldap_param(login, param, password = nil)
@@ -177,7 +171,7 @@ module Devise
       end
       
       def change_password!
-        update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
+        set_param( :userpassword, Net::LDAP::Password.generate(:sha, @new_password))
       end
 
       def in_required_groups?     
@@ -195,6 +189,7 @@ module Devise
             group_attribute = "uniqueMember"
             group_name = group
           end
+
           unless ::Devise.ldap_ad_group_check
             admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
               unless entry[group_attribute].include? dn

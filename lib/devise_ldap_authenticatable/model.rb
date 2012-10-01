@@ -25,7 +25,7 @@ module Devise
       def change_password!(current_password)
         raise "Need to set new password first" if @password.blank?
 
-        Devise::LdapAdapter.update_own_password(login_with, @password, current_password)
+        Devise::LdapAdapter.update_password(login_with, @password, current_password)
       end
       
       def reset_password!(new_password, new_password_confirmation)
