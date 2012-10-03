@@ -180,9 +180,6 @@ module Devise
         if @ldap_is_ad
           the_dn = dn
 
-          DeviseLdapAuthenticatable::Logger.send("Change_password: Logging in with #{the_dn.inspect}")
-          DeviseLdapAuthenticatable::Logger.send("Result: #{@ldap.get_operation_result}")
-
           authenticate!
 
           # A :replace operation does not work, it has to be 'delete the old password value', 'add the new password value'
@@ -190,10 +187,6 @@ module Devise
             [:delete, :unicodePwd, encode_for_ad(@password) ],
             [:add, :unicodePwd, encode_for_ad(@new_password)] ]
           )
-
-          DeviseLdapAuthenticatable::Logger.send("Result of modify: #{@ldap.get_operation_result}")
-
-          result
         else
           set_param( :userpassword, Net::LDAP::Password.generate(:sha, @new_password))
         end
@@ -209,7 +202,6 @@ module Devise
         # a format that can be sent 'over the wire'
         encoded_password.force_encoding("ASCII-8BIT")
       end
-
 
       def in_required_groups?
         return true unless @check_group_membership
