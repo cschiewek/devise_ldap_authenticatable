@@ -190,6 +190,12 @@ module Devise
         else
           set_param( :userpassword, Net::LDAP::Password.generate(:sha, @new_password))
         end
+
+        result = @ldap.get_operation_result
+
+        if result.code == 19
+          raise DeviseLdapAuthenticatable::InsufficientComplexityException
+        end
       end
 
       def encode_for_ad( password )
