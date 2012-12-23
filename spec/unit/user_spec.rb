@@ -150,8 +150,8 @@ describe 'Users' do
         assert_equal true, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
       end
       
-      it "should return false for admin being in the admins group using the 'member' group attribute" do
-        assert_equal false, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com', 'member')
+      it "should return false for admin being in the admins group using the 'foobar' group attribute" do
+        assert_equal false, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com', 'foobar')
       end
       
       it "should return true for user being in the users group" do
