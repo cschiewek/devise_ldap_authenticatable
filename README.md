@@ -117,6 +117,7 @@ To start hacking on `devise_ldap_authentication`, clone the github repository, s
     # in a separate console or backgrounded
     ./spec/ldap/run-server
 
+    bundle exec rake db:migrate # first time only
     bundle exec rake spec
 
 References
