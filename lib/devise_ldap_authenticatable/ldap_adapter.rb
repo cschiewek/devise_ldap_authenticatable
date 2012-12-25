@@ -1,4 +1,4 @@
-﻿require "net/ldap"
+require "net/ldap"
 
 module Devise
   module LdapAdapter
