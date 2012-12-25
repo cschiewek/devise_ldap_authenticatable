@@ -179,8 +179,7 @@ module Devise
         return true
       end
 
-      def in_group?(group_name, group_attribute)
-        group_attribute ||= "uniqueMember"
+      def in_group?(group_name, group_attribute = 'uniqueMember')
         admin_ldap = LdapConnect.admin
 
         unless ::Devise.ldap_ad_group_check
