@@ -1,4 +1,4 @@
-require 'devise_ldap_authenticatable/strategy'
+﻿require 'devise_ldap_authenticatable/strategy'
 
 module Devise
   module Models
@@ -51,6 +51,10 @@ module Devise
 
       def ldap_groups
         Devise::LdapAdapter.get_groups(login_with)
+      end
+
+      def in_ldap_group?(group_name, group_attribute = nil)
+        Devise::LdapAdapter.in_ldap_group?(login_with, group_name, group_attribute)
       end
 
       def ldap_dn
