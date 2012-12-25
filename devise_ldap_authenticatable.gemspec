@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('devise', '~> 2.0')
-  s.add_dependency('net-ldap', '~> 0.2.2')
+  s.add_dependency('net-ldap', '~> 0.2')
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('rdoc', '>= 3')
@@ -27,10 +27,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency('ruby-prof')
   s.add_development_dependency('factory_girl_rails', '~> 1.0')
   s.add_development_dependency('factory_girl', '~> 2.0')
-  s.add_development_dependency('shoulda', '~> 2.11')
   s.add_development_dependency('rspec-rails')
 
-  %w{mocha database_cleaner capybara launchy autotest-rails ZenTest autotest-growl}.each do |dep|
+  %w{database_cleaner capybara launchy autotest-rails ZenTest autotest-growl}.each do |dep|
     s.add_development_dependency(dep)
   end
 end

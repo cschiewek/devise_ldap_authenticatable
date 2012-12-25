@@ -104,7 +104,9 @@ To contribute to `devise_ldap_authentication`, you should be able to run a test 
 
 This seems to come out of the box with Mac OS X 10.6.
 
-On Ubuntu (tested on 12.04), you can run `sudo apt-get install slapd ldap-utils`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors.
+On Ubuntu (tested on 12.04 and 12.10), you can run `sudo apt-get install slapd ldap-utils`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors. Something like this should do:
+
+    /path/to/devise_ldap_authenticatable/spec/ldap/** rw,$
 
 To start hacking on `devise_ldap_authentication`, clone the github repository, start the test LDAP server, and run the rake test task:
 
@@ -115,6 +117,7 @@ To start hacking on `devise_ldap_authentication`, clone the github repository, s
     # in a separate console or backgrounded
     ./spec/ldap/run-server
 
+    bundle exec rake db:migrate # first time only
     bundle exec rake spec
 
 References
