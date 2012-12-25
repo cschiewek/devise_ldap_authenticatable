@@ -53,7 +53,7 @@ module Devise
         Devise::LdapAdapter.get_groups(login_with)
       end
 
-      def in_ldap_group?(group_name, group_attribute = nil)
+      def in_ldap_group?(group_name, group_attribute = LdapAdapter::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
         Devise::LdapAdapter.in_ldap_group?(login_with, group_name, group_attribute)
       end
 
