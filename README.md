@@ -53,11 +53,11 @@ Given that `ldap_create_user` is set to true and you are authenticating with use
 
 in your user model:
 
-	before_save :get_ldap_email
+    before_save :get_ldap_email
 
-  def get_ldap_email
-    self.email = Devise::LdapAdapter.get_ldap_param(self.username,"mail")
-  end
+    def get_ldap_email
+      self.email = Devise::LdapAdapter.get_ldap_param(self.username,"mail")
+    end
 
 Configuration
 -------------
