@@ -158,7 +158,18 @@ module Devise
 
       def authorized?
         DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
-        authenticated? && in_required_groups? && has_required_attribute?
+        if !authenticated?
+          DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
+          return false
+        elsif !in_required_groups?
+          DeviseLdapAuthenticatable::Logger.send("Not authorized because not in required groups.")
+          return false
+        elsif !has_required_attribute?
+          DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute.")
+          return false
+        else
+          return true
+        end
       end
 
       def change_password!
@@ -172,8 +183,10 @@ module Devise
         return false if @required_groups.nil?
 
         for group in @required_groups
-          unless in_group?(*group)
-            return false
+          if group.is_a?(Array)
+            return false unless in_group?(group[1], group[0])
+          else
+            return false unless in_group?(group)
           end
         end
         return true
@@ -203,7 +216,7 @@ module Devise
         end
 
         unless in_group
-          DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
+          DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name}")
         end
 
         return in_group
