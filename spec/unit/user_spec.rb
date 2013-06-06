@@ -161,6 +161,10 @@ describe 'Users' do
       it "should return false for user being in the admins group" do
         assert_equal false, @user.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
       end
+
+      it "should return false for a user being in a nonexistent group" do
+        assert_equal false, @user.in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
+      end
     end
     
 
