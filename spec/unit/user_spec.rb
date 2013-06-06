@@ -46,7 +46,8 @@ describe 'Users' do
 
       it "should change password" do
         should_be_validated @user, "secret"
-        @user.reset_password!("changed","changed")
+        @user.password = "changed"
+        @user.change_password!("secret")
         should_be_validated @user, "changed", "password was not changed properly on the LDAP sevrer"
       end
 
