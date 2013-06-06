@@ -180,13 +180,14 @@ module Devise
       end
 
       def in_group?(group_name, group_attribute = DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+        in_group = false
+
         admin_ldap = LdapConnect.admin
 
         unless ::Devise.ldap_ad_group_check
           admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            unless entry[group_attribute].include? dn
-              DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
-              return false
+            if entry[group_attribute].include? dn
+              in_group = true
             end
           end
         else
@@ -196,13 +197,16 @@ module Devise
                             :filter => Net::LDAP::Filter.ex("memberof:1.2.840.113556.1.4.1941", group_name),
                             :scope => Net::LDAP::SearchScope_BaseObject)
           # Will return  the user entry if belongs to group otherwise nothing
-          unless search_result.length == 1 && search_result[0].dn.eql?(dn)
-            DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
-            return false
+          if search_result.length == 1 && search_result[0].dn.eql?(dn)
+            in_group = true
           end
         end
 
-        return true
+        unless in_group
+          DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
+        end
+
+        return in_group
       end
 
       def has_required_attribute?
