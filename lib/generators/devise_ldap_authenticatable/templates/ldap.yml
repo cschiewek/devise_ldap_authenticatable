@@ -17,6 +17,15 @@ authorizations: &AUTHORIZATIONS
   require_attribute:
     objectClass: inetOrgPerson
     authorizationRole: postsAdmin
+  ## When defined, the group_member_attributes takes an array where are specified which attributes
+  ## must be looked up to retrieve the user groups when ldap_groups is called on the user model.
+  ## In some cases, a specific use attribute should be used to lookup the group attribute.
+  ## Example: posixGroup linked a user to the group with the uid attribute. Therefore the syntax is 
+  ## something like that: uid=username. In this case, the DN attribute cannot be use. To address this
+  ## issue, the syntax in the configuration is groupMemberAttribute:userAttribute.
+  ## The memberUnique is used by default when the group_member_attributes is not present.
+  ## Finally, you could have some configuration like the following one:
+  group_member_attributes: [ "member", "memberUid:uid", ...]
 
 ## Environment
 

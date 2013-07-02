@@ -97,6 +97,14 @@ module Devise
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
         @group_base = ldap_config["group_base"]
+
+        # Check if specific group membership attributes must be used to retrieve the user groups
+        if ldap_config.has_key?("group_member_attributes") and ldap_config["group_member_attributes"].is_a? Array and ldap_config["group_member_attributes"].any?
+          @group_member_attributes = ldap_config["group_member_attributes"].uniq
+        else
+          @group_member_attributes = ["uniqueMember"]
+        end       
+        
         @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
@@ -243,7 +251,18 @@ module Devise
         admin_ldap = LdapConnect.admin
 
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+
+        # Retrieve the user to get his attributes
+        user = find_ldap_user(admin_ldap)
+
+        # At least one filter must be present
+        filter = build_group_filter(@group_member_attributes[0], user)
+
+        # From the second element in the group attributes configuration, combinates the filters with an OR operator
+        @group_member_attributes.drop(1).each do |attribute_config|
+          filter = filter | build_group_filter(attribute_config, user)
+        end
+
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 
@@ -303,6 +322,17 @@ module Devise
         privileged_ldap.modify(:dn => dn, :operations => operations)
       end
 
+      def build_group_filter attribute_config, user
+        # Check if the member attribute must use different field on the user than the dn one
+        if attribute_config[':']
+          attribute_parts = attribute_config.split ":"           
+
+          Net::LDAP::Filter.eq(attribute_parts[0], user["#{attribute_parts[1]}"][0])	
+        else
+          Net::LDAP::Filter.eq(attribute_config, dn)	
+        end
+      end
+      
     end
 
   end
