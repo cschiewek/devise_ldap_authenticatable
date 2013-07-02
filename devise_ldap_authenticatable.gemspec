@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('rdoc', '>= 3')
-  s.add_development_dependency('rails', '>= 3.2')
+  s.add_development_dependency('rails', '>= 4.0')
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('factory_girl_rails', '~> 1.0')
   s.add_development_dependency('factory_girl', '~> 2.0')
