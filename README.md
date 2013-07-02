@@ -100,6 +100,11 @@ Troubleshooting
 
 **SSL certificate invalid:** If you're using a test LDAP server running a self-signed SSL certificate, make sure the appropriate root certificate is installed on your system. Alternately, you may temporarily disable certificate checking for SSL by modifying your system LDAP configuration (e.g., `/etc/openldap/ldap.conf` or `/etc/ldap/ldap.conf`) to read `TLS_REQCERT never`.
 
+Discussion Group
+------------
+
+For additional support, questions or discussions, please see the discussion forum on [Google Groups](https://groups.google.com/forum/#!forum/devise_ldap_authenticatable)
+
 Development guide
 ------------
 To contribute to `devise_ldap_authentication`, you should be able to run a test OpenLDAP server. Specifically, you need the `slapd`, `ldapadd`, and `ldapmodify` binaries.
