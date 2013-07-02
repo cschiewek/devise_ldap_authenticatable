@@ -93,6 +93,23 @@ module Devise
         @ldap.host = ldap_config["host"]
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
+
+        # try all servers and get one responding
+        if ldap_config["hosts"]
+          servers = ldap_config["hosts"].split(',')
+          servers.each do |host|
+            begin
+              @ldap.host = host
+              @ldap.open do end
+            rescue Net::LDAP::LdapError
+              DeviseLdapAuthenticatable::Logger.send("Could not connect to #{@ldap.host}, trying next one")
+              next
+            else
+              break
+            end
+          end
+        end
+
         @attribute = ldap_config["attribute"]
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
