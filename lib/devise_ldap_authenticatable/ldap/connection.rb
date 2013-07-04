@@ -52,9 +52,10 @@ module Devise
         @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
 
         if ldap_entry
-          if ldap_entry[param]
-            DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
+          unless ldap_entry[param].empty?
             value = ldap_entry.send(param)
+            DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{value}")
+            value
           else
             DeviseLdapAuthenticatable::Logger.send("Requested param #{param} does not exist")
             value = nil
