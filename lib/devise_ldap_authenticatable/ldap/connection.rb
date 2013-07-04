@@ -55,8 +55,6 @@ module Devise
           if ldap_entry[param]
             DeviseLdapAuthenticatable::Logger.send("Requested param #{param} has value #{ldap_entry.send(param)}")
             value = ldap_entry.send(param)
-            value = value.first if value.is_a?(Array) and value.count == 1
-            value
           else
             DeviseLdapAuthenticatable::Logger.send("Requested param #{param} does not exist")
             value = nil
