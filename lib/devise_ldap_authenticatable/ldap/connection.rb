@@ -1,86 +1,6 @@
-require "net/ldap"
-
 module Devise
-  module LdapAdapter
-    DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY = 'uniqueMember'
-
-    def self.valid_credentials?(login, password_plaintext)
-      options = {:login => login,
-                 :password => password_plaintext,
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-
-      resource = LdapConnect.new(options)
-      resource.authorized?
-    end
-
-    def self.update_password(login, new_password)
-      options = {:login => login,
-                 :new_password => new_password,
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-
-      resource = LdapConnect.new(options)
-      resource.change_password! if new_password.present?
-    end
-
-    def self.update_own_password(login, new_password, current_password)
-      set_ldap_param(login, :userpassword, Net::LDAP::Password.generate(:sha, new_password), current_password)
-    end
-
-    def self.ldap_connect(login)
-      options = {:login => login,
-                 :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                 :admin => ::Devise.ldap_use_admin_to_bind}
-
-      resource = LdapConnect.new(options)
-    end
-
-    def self.valid_login?(login)
-      self.ldap_connect(login).valid_login?
-    end
-
-    def self.get_groups(login)
-      self.ldap_connect(login).user_groups
-    end
-
-    def self.in_ldap_group?(login, group_name, group_attribute = nil)
-      self.ldap_connect(login).in_group?(group_name, group_attribute)
-    end
-
-    def self.get_dn(login)
-      self.ldap_connect(login).dn
-    end
-
-    def self.set_ldap_param(login, param, new_value, password = nil)
-      options = { :login => login,
-                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                  :password => password }
-
-      resource = LdapConnect.new(options)
-      resource.set_param(param, new_value)
-    end
-
-    def self.delete_ldap_param(login, param, password = nil)
-      options = { :login => login,
-                  :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                  :password => password }
-
-      resource = LdapConnect.new(options)
-      resource.delete_param(param)
-    end
-
-    def self.get_ldap_param(login,param)
-      resource = self.ldap_connect(login)
-      resource.ldap_param_value(param)
-    end
-
-    def self.get_ldap_entry(login)
-      self.ldap_connect(login).search_for_login
-    end
-
-    class LdapConnect
-
+  module LDAP
+    class Connection
       attr_reader :ldap, :login
 
       def initialize(params = {})
@@ -192,10 +112,10 @@ module Devise
         return true
       end
 
-      def in_group?(group_name, group_attribute = DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+      def in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
         in_group = false
 
-        admin_ldap = LdapConnect.admin
+        admin_ldap = Connection.admin
 
         unless ::Devise.ldap_ad_group_check
           admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
@@ -225,7 +145,7 @@ module Devise
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes
 
-        admin_ldap = LdapConnect.admin
+        admin_ldap = Connection.admin
 
         user = find_ldap_user(admin_ldap)
 
@@ -240,7 +160,7 @@ module Devise
       end
 
       def user_groups
-        admin_ldap = LdapConnect.admin
+        admin_ldap = Connection.admin
 
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
@@ -267,7 +187,7 @@ module Devise
       private
 
       def self.admin
-        ldap = LdapConnect.new(:admin => true).ldap
+        ldap = Connection.new(:admin => true).ldap
 
         unless ldap.bind
           DeviseLdapAuthenticatable::Logger.send("Cannot bind to admin LDAP user")
@@ -293,7 +213,7 @@ module Devise
         end
 
         if ::Devise.ldap_use_admin_to_bind
-          privileged_ldap = LdapConnect.admin
+          privileged_ldap = Connection.admin
         else
           authenticate!
           privileged_ldap = self.ldap
@@ -302,9 +222,6 @@ module Devise
         DeviseLdapAuthenticatable::Logger.send("Modifying user #{dn}")
         privileged_ldap.modify(:dn => dn, :operations => operations)
       end
-
     end
-
   end
-
 end

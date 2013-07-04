@@ -18,11 +18,11 @@ describe 'Users' do
 
     describe "look up and ldap user" do
       it "should return true for a user that does exist in LDAP" do
-        assert_equal true, ::Devise::LdapAdapter.valid_login?('example.user@test.com')
+        assert_equal true, ::Devise::LDAP::Adapter.valid_login?('example.user@test.com')
       end
 
       it "should return false for a user that doesn't exist in LDAP" do
-        assert_equal false, ::Devise::LdapAdapter.valid_login?('barneystinson')
+        assert_equal false, ::Devise::LDAP::Adapter.valid_login?('barneystinson')
       end
     end
 
@@ -280,7 +280,7 @@ describe 'Users' do
 
     it "should not fail if config file has ssl: true" do
       assert_nothing_raised do
-        Devise::LdapAdapter::LdapConnect.new
+        Devise::LDAP::Connection.new
       end
     end
   end
