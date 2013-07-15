@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/cschiewek/devise_ldap_authenticatable'
   s.description = s.summary
   s.authors = ['Curtis Schiewek', 'Daniel McNevin', 'Steven Xu']
+  s.license = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
