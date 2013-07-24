@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('devise', '>= 3.0')
-  s.add_dependency('net-ldap', '>= 0.3.1', '< 0.5.0')
+  s.add_dependency('net-ldap', '>= 0.3.1', '< 0.6.0')
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('rdoc', '>= 3')
