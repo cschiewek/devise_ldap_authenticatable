@@ -84,14 +84,11 @@ module Devise
           auth_key = self.authentication_keys.first
           return nil unless attributes[auth_key].present?
 
-          auth_key_value = (self.case_insensitive_keys || []).include?(auth_key) ? attributes[auth_key].downcase : attributes[auth_key]
-
-          # resource = find_for_ldap_authentication(conditions)
-          resource = where(auth_key => auth_key_value).first
-
+          resource = find_first_by_auth_conditions(auth_key => attributes[auth_key])
+          
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
-            resource[auth_key] = auth_key_value
+            resource[auth_key] = devise_parameter_filter.filter(auth_key => attributes[auth_key])[auth_key]
             resource.password = attributes[:password]
           end
 
