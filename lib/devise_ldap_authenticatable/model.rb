@@ -88,7 +88,7 @@ module Devise
           
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
-            resource[auth_key] = auth_key_value
+            resource[auth_key] = devise_parameter_filter.filter(tainted_conditions)[auth_key]
             resource.password = attributes[:password]
           end
 
