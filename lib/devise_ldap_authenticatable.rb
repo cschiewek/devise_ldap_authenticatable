@@ -36,6 +36,9 @@ module Devise
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
+
+  mattr_accessor :ldap_anonymous_bind
+  @@ldap_anonymous_bind = true
 end
 
 # Add ldap_authenticatable strategy to defaults.

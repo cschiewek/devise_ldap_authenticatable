@@ -26,6 +26,11 @@ module Devise
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+
+        if !params[:anonymous_bind]
+          # non anonymous binding requires this
+          @ldap.auth @login, @password
+        end
       end
 
       def delete_param(param)

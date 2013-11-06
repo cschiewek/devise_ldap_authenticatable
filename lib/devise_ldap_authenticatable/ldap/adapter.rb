@@ -9,7 +9,8 @@ module Devise
         options = {:login => login,
                    :password => password_plaintext,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                   :admin => ::Devise.ldap_use_admin_to_bind}
+                   :admin => ::Devise.ldap_use_admin_to_bind,
+                   :anonymous_bind => ::Devise.ldap_anonymous_bind}
 
         resource = Devise::LDAP::Connection.new(options)
         resource.authorized?
@@ -19,7 +20,8 @@ module Devise
         options = {:login => login,
                    :new_password => new_password,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                   :admin => ::Devise.ldap_use_admin_to_bind}
+                   :admin => ::Devise.ldap_use_admin_to_bind,
+                   :anonymous_bind => ::Devise.ldap_anonymous_bind}
 
         resource = Devise::LDAP::Connection.new(options)
         resource.change_password! if new_password.present?
@@ -32,7 +34,8 @@ module Devise
       def self.ldap_connect(login)
         options = {:login => login,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                   :admin => ::Devise.ldap_use_admin_to_bind}
+                   :admin => ::Devise.ldap_use_admin_to_bind,
+                   :anonymous_bind => ::Devise.ldap_anonymous_bind}
 
         resource = Devise::LDAP::Connection.new(options)
       end
@@ -56,7 +59,8 @@ module Devise
       def self.set_ldap_param(login, param, new_value, password = nil)
         options = { :login => login,
                     :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                    :password => password }
+                    :password => password,
+                    :anonymous_bind => ::Devise.ldap_anonymous_bind }
 
         resource = Devise::LDAP::Connection.new(options)
         resource.set_param(param, new_value)
@@ -65,7 +69,8 @@ module Devise
       def self.delete_ldap_param(login, param, password = nil)
         options = { :login => login,
                     :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                    :password => password }
+                    :password => password,
+                    :anonymous_bind => ::Devise.ldap_anonymous_bind }
 
         resource = Devise::LDAP::Connection.new(options)
         resource.delete_param(param)
