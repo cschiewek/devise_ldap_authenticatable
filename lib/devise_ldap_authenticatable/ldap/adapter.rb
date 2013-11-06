@@ -31,10 +31,11 @@ module Devise
         set_ldap_param(login, :userpassword, Net::LDAP::Password.generate(:sha, new_password), current_password)
       end
 
-      def self.ldap_connect(login)
+      def self.ldap_connect(login, password = nil)
         options = {:login => login,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                    :admin => ::Devise.ldap_use_admin_to_bind,
+                   :password => password,
                    :anonymous_bind => ::Devise.ldap_anonymous_bind}
 
         resource = Devise::LDAP::Connection.new(options)
@@ -76,8 +77,13 @@ module Devise
         resource.delete_param(param)
       end
 
-      def self.get_ldap_param(login,param)
-        resource = self.ldap_connect(login)
+      def self.get_ldap_param(login,param, password = nil)
+        options = { :login => login,
+                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                    :password => password,
+                    :bind_user => ::Devise.ldap_user_to_bind }
+
+        resource = Devise::LDAP::Connection.new(options)
         resource.ldap_param_value(param)
       end
 
