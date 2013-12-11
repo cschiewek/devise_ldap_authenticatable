@@ -114,10 +114,10 @@ module Devise
       def in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
         in_group = false
 
-        admin_ldap = Connection.admin
+        connection = ::Devise.ldap_use_admin_for_groups ? Connection.admin : self.ldap
 
         unless ::Devise.ldap_ad_group_check
-          admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+          connection.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             if entry[group_attribute].include? dn
               in_group = true
             end
@@ -125,7 +125,7 @@ module Devise
         else
           # AD optimization - extension will recursively check sub-groups with one query
           # "(memberof:1.2.840.113556.1.4.1941:=group_name)"
-          search_result = admin_ldap.search(:base => dn,
+          search_result = connection.search(:base => dn,
                             :filter => Net::LDAP::Filter.ex("memberof:1.2.840.113556.1.4.1941", group_name),
                             :scope => Net::LDAP::SearchScope_BaseObject)
           # Will return  the user entry if belongs to group otherwise nothing
@@ -144,9 +144,9 @@ module Devise
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes
 
-        admin_ldap = Connection.admin
+        connection = ::Devise.ldap_use_admin_for_attributes ? Connection.admin : self.ldap
 
-        user = find_ldap_user(admin_ldap)
+        user = find_ldap_user(connection)
 
         @required_attributes.each do |key,val|
           unless user[key].include? val
@@ -159,11 +159,11 @@ module Devise
       end
 
       def user_groups
-        admin_ldap = Connection.admin
+        connection = ::Devise.ldap_use_admin_for_groups ? Connection.admin : self.ldap
 
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
-        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+        connection.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 
       def valid_login?

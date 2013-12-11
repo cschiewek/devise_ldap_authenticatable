@@ -36,6 +36,12 @@ module Devise
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
+
+  mattr_accessor :ldap_use_admin_for_attributes
+  @@ldap_use_admin_for_attributes = true
+
+  mattr_accessor :ldap_use_admin_for_groups
+  @@ldap_use_admin_for_groups = true
 end
 
 # Add ldap_authenticatable strategy to defaults.
