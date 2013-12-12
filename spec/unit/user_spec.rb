@@ -66,7 +66,7 @@ describe 'Users' do
         assert(User.all.blank?, "There shouldn't be any users in the database")
       end
 
-      it "should don't create user in the database" do
+      it "should not create user in the database" do
         @user = User.find_for_ldap_authentication(:email => "example.user@test.com", :password => "secret")
         assert(User.all.blank?)
       end

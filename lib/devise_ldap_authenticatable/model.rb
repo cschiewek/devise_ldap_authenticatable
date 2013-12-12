@@ -87,13 +87,13 @@ module Devise
 
           resource = where(auth_key => auth_key_value).first
 
-          if (resource.blank? and ::Devise.ldap_create_user)
+          if resource.blank? && ::Devise.ldap_create_user
             resource = new
             resource[auth_key] = auth_key_value
             resource.password = attributes[:password]
           end
 
-          if resource && resource.new_record?
+          if resource && resource.new_record? && resource.valid_ldap_authentication?(attributes[:password])
             resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
             resource.save!
           end
