@@ -93,12 +93,12 @@ module Devise
             resource.password = attributes[:password]
           end
 
-          if resource.new_record?
+          if resource && resource.new_record?
             resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
             resource.save!
           end
 
-          return resource
+          resource
         end
 
         def update_with_password(resource)
