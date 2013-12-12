@@ -78,32 +78,27 @@ module Devise
 
 
       module ClassMethods
-        # Authenticate a user based on configured attribute keys. Returns the
-        # authenticated user if it's valid or nil.
-        def authenticate_with_ldap(attributes={})
+        # Find a user for ldap authentication.
+        def find_for_ldap_authentication(attributes={})
           auth_key = self.authentication_keys.first
           return nil unless attributes[auth_key].present?
 
           auth_key_value = (self.case_insensitive_keys || []).include?(auth_key) ? attributes[auth_key].downcase : attributes[auth_key]
 
-          # resource = find_for_ldap_authentication(conditions)
           resource = where(auth_key => auth_key_value).first
 
-          if (resource.blank? and ::Devise.ldap_create_user)
+          if resource.blank? && ::Devise.ldap_create_user
             resource = new
             resource[auth_key] = auth_key_value
             resource.password = attributes[:password]
           end
 
-          if resource.try(:valid_ldap_authentication?, attributes[:password])
-            if resource.new_record?
-              resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
-              resource.save!
-            end
-            return resource
-          else
-            return nil
+          if resource && resource.new_record? && resource.valid_ldap_authentication?(attributes[:password])
+            resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
+            resource.save!
           end
+
+          resource
         end
 
         def update_with_password(resource)

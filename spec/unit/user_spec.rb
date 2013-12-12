@@ -66,8 +66,8 @@ describe 'Users' do
         assert(User.all.blank?, "There shouldn't be any users in the database")
       end
 
-      it "should don't create user in the database" do
-        @user = User.authenticate_with_ldap(:email => "example.user@test.com", :password => "secret")
+      it "should not create user in the database" do
+        @user = User.find_for_ldap_authentication(:email => "example.user@test.com", :password => "secret")
         assert(User.all.blank?)
       end
 
@@ -77,18 +77,18 @@ describe 'Users' do
         end
 
         it "should create a user in the database" do
-          @user = User.authenticate_with_ldap(:email => "example.user@test.com", :password => "secret")
+          @user = User.find_for_ldap_authentication(:email => "example.user@test.com", :password => "secret")
           assert_equal(User.all.size, 1)
           User.all.collect(&:email).should include("example.user@test.com")
         end
 
         it "should not create a user in the database if the password is wrong_secret" do
-          @user = User.authenticate_with_ldap(:email => "example.user", :password => "wrong_secret")
+          @user = User.find_for_ldap_authentication(:email => "example.user", :password => "wrong_secret")
           assert(User.all.blank?, "There's users in the database")
         end
 
-        it "should create a user if the user is not in LDAP" do
-          @user = User.authenticate_with_ldap(:email => "wrong_secret.user@test.com", :password => "wrong_secret")
+        it "should not create a user if the user is not in LDAP" do
+          @user = User.find_for_ldap_authentication(:email => "wrong_secret.user@test.com", :password => "wrong_secret")
           assert(User.all.blank?, "There's users in the database")
         end
 
@@ -97,7 +97,7 @@ describe 'Users' do
           @user = Factory.create(:user)
 
           expect do
-            User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
+            User.find_for_ldap_authentication(:email => "EXAMPLE.user@test.com", :password => "secret")
           end.to change { User.count }.by(1)
         end
 
@@ -106,14 +106,14 @@ describe 'Users' do
           @user = Factory.create(:user)
 
           expect do
-            User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
+            User.find_for_ldap_authentication(:email => "EXAMPLE.user@test.com", :password => "secret")
           end.to_not change { User.count }
         end
 
         it "should create a user with downcased email in the database if case insensitivity matters" do
           ::Devise.case_insensitive_keys = [:email]
 
-          @user = User.authenticate_with_ldap(:email => "EXAMPLE.user@test.com", :password => "secret")
+          @user = User.find_for_ldap_authentication(:email => "EXAMPLE.user@test.com", :password => "secret")
           User.all.collect(&:email).should include("example.user@test.com")
         end
       end
@@ -225,7 +225,7 @@ describe 'Users' do
       end
 
       it "should create a user in the database" do
-        @user = User.authenticate_with_ldap(:uid => "example_user", :password => "secret")
+        @user = User.find_for_ldap_authentication(:uid => "example_user", :password => "secret")
         assert_equal(User.all.size, 1)
         User.all.collect(&:uid).should include("example_user")
       end
@@ -236,7 +236,7 @@ describe 'Users' do
             @foobar = 'foobar'
           end
         end
-        user = User.authenticate_with_ldap(:uid => "example_user", :password => "secret")
+        user = User.find_for_ldap_authentication(:uid => "example_user", :password => "secret")
         assert_equal 'foobar', user.instance_variable_get(:"@foobar")
         User.class_eval do
           undef ldap_before_save
