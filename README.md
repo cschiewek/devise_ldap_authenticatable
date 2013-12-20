@@ -98,6 +98,9 @@ These parameters will be added to `config/initializers/devise.rb` when you pass 
 * `ldap_auth_username_builder` _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
   * You can pass a proc to the username option to explicitly specify the format that you search for a users' DN on your LDAP server.
 
+* `ldap_auth_password_build` _(default: `Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }`)_
+  * Optionally you can define a proc to create custom password encrption when user reset password
+
 Troubleshooting
 --------------
 **Using a "username" instead of an "email":** The field that is used for logins is the first key that's configured in the `config/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise.
