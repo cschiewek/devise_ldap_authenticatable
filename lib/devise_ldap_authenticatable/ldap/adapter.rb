@@ -26,7 +26,7 @@ module Devise
       end
 
       def self.update_own_password(login, new_password, current_password)
-        set_ldap_param(login, :userpassword, Net::LDAP::Password.generate(:sha, new_password), current_password)
+        set_ldap_param(login, :userPassword, ::Devise.ldap_auth_password_builder.call(new_password), current_password)
       end
 
       def self.ldap_connect(login)
