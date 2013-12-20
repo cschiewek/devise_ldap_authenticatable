@@ -36,7 +36,7 @@ module Devise
   @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
 
   mattr_accessor :ldap_auth_password_builder
-  @@ldap_auth_password_builder = Proc.new() {|new_password| Net::LDAP::Password.generate(:ssha, new_password) }
+  @@ldap_auth_password_builder = Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
