@@ -38,6 +38,9 @@ module Devise
   mattr_accessor :ldap_auth_password_builder
   @@ldap_auth_password_builder = Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }
 
+  mattr_accessor :ldap_update_operations_builder
+  @@ldap_update_operations_builder = Proc.new() {|operations, options| [] }
+
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
 end

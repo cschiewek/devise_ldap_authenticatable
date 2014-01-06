@@ -211,11 +211,17 @@ module Devise
           operations = ops
         end
 
+        additional_operations = ::Devise.ldap_update_operations_builder.call(operations, ops)
+
         if ::Devise.ldap_use_admin_to_bind
           privileged_ldap = Connection.admin
         else
           authenticate!
           privileged_ldap = self.ldap
+        end
+
+        unless additional_operations.size.zero?
+          privileged_ldap.modify(:dn => dn, :operations => additional_operations)
         end
 
         DeviseLdapAuthenticatable::Logger.send("Modifying user #{dn}")
