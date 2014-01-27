@@ -32,7 +32,7 @@ module Devise
         elsif params[:bind_user] == :user
           # bind using authentication of the user
           DeviseLdapAuthenticatable::Logger.send("Binding as user")
-          @ldap.auth @login, @password
+          @ldap.auth ldap_config["ad_domain"] + '\\' + @login, @password
         end
       end
 
