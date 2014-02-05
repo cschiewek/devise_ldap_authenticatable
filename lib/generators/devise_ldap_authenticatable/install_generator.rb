@@ -37,6 +37,7 @@ module DeviseLdapAuthenticatable
   # config.ldap_check_attributes = false
   # config.ldap_use_admin_to_bind = false
   # config.ldap_ad_group_check = false
+  # config.ldap_anonymous_bind = true
   
       eof
       if options.advanced?  

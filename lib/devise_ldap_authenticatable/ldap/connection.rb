@@ -21,11 +21,18 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
-        @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
 
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+
+        if params[:admin]
+          @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"]
+
+        elsif !params[:anonymous_bind]
+          # non anonymous binding using the users credentials
+          @ldap.auth @login, @password
+        end
       end
 
       def delete_param(param)
