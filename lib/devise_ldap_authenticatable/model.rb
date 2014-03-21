@@ -84,6 +84,7 @@ module Devise
           return nil unless attributes[auth_key].present?
 
           auth_key_value = (self.case_insensitive_keys || []).include?(auth_key) ? attributes[auth_key].downcase : attributes[auth_key]
+	  auth_key_value = (self.strip_whitespace_keys || []).include?(auth_key) ? auth_key_value.strip : auth_key_value
 
           resource = where(auth_key => auth_key_value).first
 
