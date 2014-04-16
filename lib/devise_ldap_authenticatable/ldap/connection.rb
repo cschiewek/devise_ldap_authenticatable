@@ -141,10 +141,10 @@ module Devise
         return in_group
       end
 
-		def user_in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+		def user_in_group?(group_base, group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
 			in_group = false
 
-			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+			@ldap.search(:base => group_base, :scope => Net::LDAP::SearchScope_BaseObject, :filter => group_name) do |entry|
 				if entry[group_attribute].include? dn
 					in_group = true
 				end
