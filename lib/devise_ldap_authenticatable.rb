@@ -26,6 +26,9 @@ module Devise
   mattr_accessor :ldap_check_group_membership
   @@ldap_check_group_membership = false
   
+  mattr_accessor :ldap_check_group_membership_without_admin
+  @@ldap_check_group_membership_without_admin = false
+
   mattr_accessor :ldap_check_attributes
   @@ldap_check_role_attribute = false
   

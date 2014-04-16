@@ -18,6 +18,7 @@ module Devise
 
         @group_base = ldap_config["group_base"]
         @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
+		  @check_group_membership_without_admin = ldap_config.has_key?("check_group_membership_without_admin") ? ldap_config["check_group_membership_without_admin"] : ::Devise.ldap_check_group_membership_without_admin
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
@@ -96,18 +97,26 @@ module Devise
       end
 
       def in_required_groups?
-        return true unless @check_group_membership
+			return true unless @check_group_membership || @check_group_membership_without_admin
 
         ## FIXME set errors here, the ldap.yml isn't set properly.
-        return false if @required_groups.nil?
+			return false if @required_groups.nil?
 
-        for group in @required_groups
-          if group.is_a?(Array)
-            return false unless in_group?(group[1], group[0])
-          else
-            return false unless in_group?(group)
-          end
-        end
+			for group in @required_groups
+				if @check_group_membership_without_admin
+					if group.is_a?(Array)
+						return false unless user_in_group?(group[1], group[0])
+					else
+						return false unless user_in_group?(group)
+					end
+				else
+					if group.is_a?(Array)
+						return false unless in_group?(group[1], group[0])
+					else
+						return false unless in_group?(group)
+					end
+				end
+			end
         return true
       end
 
@@ -140,6 +149,25 @@ module Devise
 
         return in_group
       end
+
+		def user_in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+			in_group = false
+
+			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+				if entry.uniqueMember.include? dn
+					in_group = true
+					## Logging because it's a nice thing to do. 
+					DeviseLdapAuthenticatable::Logger.send("User #{dn} IS included in group: #{group_name}")
+				end
+			end
+
+			unless in_group
+				DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name}")
+			end
+
+			return in_group
+		end
+
 
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes

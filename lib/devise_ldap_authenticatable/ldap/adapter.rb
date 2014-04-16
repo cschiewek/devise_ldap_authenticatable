@@ -45,9 +45,17 @@ module Devise
         self.ldap_connect(login).user_groups
       end
 
+		def self.get_groups_as_user(login)
+			self.ldap_connect(login).auth_user_groups
+		end
+
       def self.in_ldap_group?(login, group_name, group_attribute = nil)
         self.ldap_connect(login).in_group?(group_name, group_attribute)
       end
+
+		def self.user_in_ldap_group?(login, group_name, group_attribute = nil)
+			self.ldap_connect(login).user_in_group?(group_name, group_attribute)
+		end
 
       def self.get_dn(login)
         self.ldap_connect(login).dn
