@@ -156,6 +156,8 @@ module Devise
 			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
 				if entry.uniqueMember.include? dn
 					in_group = true
+					## Logging because it's a nice thing to do. 
+					DeviseLdapAuthenticatable::Logger.send("User #{dn} IS included in group: #{group_name}")
 				end
 			end
 
