@@ -144,8 +144,9 @@ module Devise
 		def user_in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
 			in_group = false
 
+			##FLAG
 			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-				entry.each do |ent|
+				entry.uniqueMember.each do |ent|
 					DeviseLdapAuthenticatable::Logger.send("Entry -> #{ent}")
 				end
 				if entry[group_attribute].include? dn
