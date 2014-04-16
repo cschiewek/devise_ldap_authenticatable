@@ -145,7 +145,9 @@ module Devise
 			in_group = false
 
 			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-				DeviseLdapAuthenticatable::Logger.send("Entry -> #{entry}")
+				entry.each do |ent|
+					DeviseLdapAuthenticatable::Logger.send("Entry -> #{ent}")
+				end
 				if entry[group_attribute].include? dn
 					in_group = true
 				end
