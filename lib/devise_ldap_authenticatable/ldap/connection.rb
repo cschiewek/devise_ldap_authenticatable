@@ -18,6 +18,7 @@ module Devise
 
         @group_base = ldap_config["group_base"]
         @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
+		  @check_group_membership_without_admin = ldap_config.has_key?("check_group_membership_without_admin") ? ldap_config["check_group_membership_without_admin"] : ::Devise.ldap_check_group_memebership_without_admin
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
@@ -96,18 +97,26 @@ module Devise
       end
 
       def in_required_groups?
-        return true unless @check_group_membership
+			return true unless @check_group_membership || @check_group_membership_without_admin
 
         ## FIXME set errors here, the ldap.yml isn't set properly.
-        return false if @required_groups.nil?
+			return false if @required_groups.nil?
 
-        for group in @required_groups
-          if group.is_a?(Array)
-            return false unless in_group?(group[1], group[0])
-          else
-            return false unless in_group?(group)
-          end
-        end
+			for group in @required_groups
+				if @check_group_membership_without_admin
+					if group.is_a?(Array)
+						return false unless user_in_group?(group[1], group[0])
+					else
+						return false unless user_in_group?(group)
+					end
+				else
+					if group.is_a?(Array)
+						return false unless in_group?(group[1], group[0])
+					else
+						return false unless in_group?(group)
+					end
+				end
+			end
         return true
       end
 
@@ -182,23 +191,6 @@ module Devise
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
-
-		##FLAG
-		def auth_user_groups
-			DeviseLdapAuthenticatable::Logger.send("Getting Groups for #{dn} inside #{@group_base}")
-			filter = Net::LDAP::Filter.eq("uniqueMember", dn)
-			groups = []
-			@ldap.search(:base => @group_base) do |entry|
-				entry.each do |ent|
-					DeviseLdapAuthenticatable::Logger.send("Found Entry -> #{ent}")
-				end
-
-				if entry.uniqueMember.include? dn
-					groups << "Entry->#{entry.cn}"
-				end
-			end
-			return groups
-		end
 
       def valid_login?
         !search_for_login.nil?
