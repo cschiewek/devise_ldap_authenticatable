@@ -149,6 +149,11 @@ module Devise
 				entry.uniqueMember.each do |ent|
 					DeviseLdapAuthenticatable::Logger.send("Entry -> #{ent}")
 				end
+
+				if entry.uniqueMember.include? dn
+					DeviseLdapAuthenticatable::Logger.send("User #{dn} is in group: #{group_name}")
+				end
+
 				if entry[group_attribute].include? dn
 					in_group = true
 				end
