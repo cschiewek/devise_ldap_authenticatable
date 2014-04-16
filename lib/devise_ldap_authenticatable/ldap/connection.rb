@@ -188,9 +188,7 @@ module Devise
 			filter = Net::LDAP::Filter.eq("uniqueMember", dn)
 			groups = []
 			@ldap.search(:filter => filter, :base => @group_base) do |entry|
-				if entry.include? dn
-					groups << entry
-				end
+				groups << entry
 			end
 			return groups
 		end
