@@ -146,15 +146,7 @@ module Devise
 
 			##FLAG
 			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-				entry.uniqueMember.each do |ent|
-					DeviseLdapAuthenticatable::Logger.send("Entry -> #{ent}")
-				end
-
 				if entry.uniqueMember.include? dn
-					DeviseLdapAuthenticatable::Logger.send("User #{dn} is in group: #{group_name}")
-				end
-
-				if entry[group_attribute].include? dn
 					in_group = true
 				end
 			end
@@ -193,11 +185,13 @@ module Devise
       end
 
 		def auth_user_groups
-			DeviseLdapAuthenticatable::Logger.send("Getting Groups for #{dn}")
-			#filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+			DeviseLdapAuthenticatable::Logger.send("Getting Groups for #{dn} inside #{@group_base}")
+			filter = Net::LDAP::Filter.eq("uniqueMember", dn)
 			groups = []
-			@ldap.search(:base => @group_base) do |entry|
-				groups << entry
+			@ldap.search(:base => @group_base, :filter => filter) do |entry|
+				if entry.uniqueMember.include? dn
+					groups << "Entry->#{entry.cn}"
+				end
 			end
 			return groups
 		end
