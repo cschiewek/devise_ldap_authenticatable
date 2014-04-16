@@ -192,6 +192,7 @@ module Devise
 					groups << entry
 				end
 			end
+			return groups
 		end
 
       def valid_login?
