@@ -185,9 +185,9 @@ module Devise
 
 		def auth_user_groups
 			DeviseLdapAuthenticatable::Logger.send("Getting Groups for #{dn}")
-			filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+			#filter = Net::LDAP::Filter.eq("uniqueMember", dn)
 			groups = []
-			@ldap.search(:filter => filter, :base => @group_base) do |entry|
+			@ldap.search(:base => @group_base) do |entry|
 				groups << entry
 			end
 			return groups
