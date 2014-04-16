@@ -141,6 +141,23 @@ module Devise
         return in_group
       end
 
+		def user_in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+			in_group = false
+
+			@ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+				if entry[group_attribute].include? dn
+					in_group = true
+				end
+			end
+
+			unless in_group
+				DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name}")
+			end
+
+			return in_group
+		end
+
+
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes
 
