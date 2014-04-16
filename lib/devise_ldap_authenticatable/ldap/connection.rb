@@ -183,6 +183,12 @@ module Devise
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 
+		def auth_user_groups
+			DeviseLdapAuthenticatable::Logger.send("Getting Groups for #{dn}")
+			filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+			@ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+		end
+
       def valid_login?
         !search_for_login.nil?
       end
