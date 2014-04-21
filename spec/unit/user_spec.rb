@@ -167,7 +167,24 @@ describe 'Users' do
         assert_equal false, @user.in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
       end
     end
-    
+
+    describe "check group membership w/out admin bind" do
+      before do
+        @user = Factory.create(:user)
+      end
+
+      it "should return true for user being in the users group" do
+        assert_equal true, @user.user_in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
+      end
+
+      it "should return false for user being in the admins group" do
+        assert_equal false, @user.user_in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
+      end
+
+      it "should return false for a user being in a nonexistent group" do
+        assert_equal false, @user.user_in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
+      end
+    end
 
     describe "use role attribute for authorization" do
       before do
