@@ -9,7 +9,7 @@ require 'factory_girl' # not sure why this is not already required
 # on the test db and when.
 #
 # https://github.com/rspec/rspec-rails/issues/936
-if defined?(ActiveRecord::Migration)
+if defined?(ActiveRecord::Migration) && ActiveRecord::Migration.respond_to?(:maintain_test_schema!)
   ActiveRecord::Migration.maintain_test_schema!
 end
 
