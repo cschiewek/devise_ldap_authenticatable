@@ -18,7 +18,7 @@ module Devise
       end
 
       def login_with
-        @login_with ||= Devise.mappings[self.class.to_s.underscore.to_sym].to.authentication_keys.first
+        @login_with ||= Devise.mappings.find {|k,v| v.class_name == self.class.name}.last.to.authentication_keys.first
         self[@login_with]
       end
 
@@ -45,11 +45,7 @@ module Devise
 
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
-        if Devise::LDAP::Adapter.valid_credentials?(login_with, password)
-          return true
-        else
-          return false
-        end
+        Devise::LDAP::Adapter.valid_credentials?(login_with, password)
       end
 
       def ldap_groups
