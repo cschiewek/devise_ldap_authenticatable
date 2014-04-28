@@ -171,19 +171,32 @@ describe 'Users' do
     describe "check group membership w/out admin bind" do
       before do
         @user = Factory.create(:user)
+        ::Devise.ldap_check_group_membership_without_admin = true
+      end
+
+      after do
+        ::Devise.ldap_check_group_membership_without_admin = false
       end
 
       it "should return true for user being in the users group" do
-        assert_equal true, @user.user_in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
+        assert_equal true, @user.in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
       end
 
       it "should return false for user being in the admins group" do
-        assert_equal false, @user.user_in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
       end
 
       it "should return false for a user being in a nonexistent group" do
-        assert_equal false, @user.user_in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
       end
+
+      # TODO: add a test that confirms the user's own binding is used rather
+      # than the admin binding by creating an LDAP user who can't do group
+      # lookups perhaps?
+
+      # TODO: add a test to demonstrate this function won't work on a user
+      # after the initial login request if the password isn't available. This
+      # might have to be more of a full stack test.
     end
 
     describe "use role attribute for authorization" do

@@ -71,25 +71,20 @@ In initializer  `config/initializers/devise.rb` :
 
 * `ldap_logger` _(default: true)_
   * If set to true, will log LDAP queries to the Rails logger.
-
 * `ldap_create_user` _(default: false)_
-  * If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created.
-      If set to false, you will have to create the user record before they will be allowed to login.
-
+  * If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created. If set to false, you will have to create the user record before they will be allowed to login.
 * `ldap_config` _(default: #{Rails.root}/config/ldap.yml)_
-	* Where to find the LDAP config file. Commented out to use the default, change if needed.
-
+  * Where to find the LDAP config file. Commented out to use the default, change if needed.
 * `ldap_update_password` _(default: true)_
   * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
-
 * `ldap_check_group_membership` _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
-
 * `ldap_check_attributes` _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.
-
 * `ldap_use_admin_to_bind` _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
+* `ldap_check_group_membership_without_admin` _(default: false)_
+  * When set to true, the group membership check is done with the user's own credentials rather than with admin credentials. Since these credentials are only available to the Device user model during the login flow, the group check function will not work if a group check is performed when this option is true outside of the login flow (e.g., before particular actions).
 
 Advanced Configuration
 ----------------------
@@ -97,7 +92,6 @@ These parameters will be added to `config/initializers/devise.rb` when you pass 
 
 * `ldap_auth_username_builder` _(default: `Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }`)_
   * You can pass a proc to the username option to explicitly specify the format that you search for a users' DN on your LDAP server.
-
 * `ldap_auth_password_build` _(default: `Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }`)_
   * Optionally you can define a proc to create custom password encrption when user reset password
 
