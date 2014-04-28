@@ -114,11 +114,12 @@ For additional support, questions or discussions, please see the discussion foru
 
 Development guide
 ------------
-To contribute to `devise_ldap_authentication`, you should be able to run a test OpenLDAP server. Specifically, you need the `slapd`, `ldapadd`, and `ldapmodify` binaries.
 
-This seems to come out of the box with Mac OS X 10.6.
+Devise LDAP Authenticatable uses a running OpenLDAP server to do automated acceptance tests. You'll need the executables `slapd`, `ldapadd`, and `ldapmodify`.
 
-On Ubuntu (tested on 12.04 and 12.10), you can run `sudo apt-get install slapd ldap-utils`. You will also likely have to add the `spec/ldap` directory of your local git clone to the slapd [apparmor](https://wiki.ubuntu.com/DebuggingApparmor) profile `/etc/apparmor.d/usr.sbin.slapd` if you get permissions errors. Something like this should do:
+On OS X, this is available out of the box.
+
+On Ubuntu, you can install OpenLDAP with `sudo apt-get install slapd ldap-utils`. If slapd runs under AppArmor, add an exception like this to `/etc/apparmor.d/local/usr.sbin.slapd` to let slapd read our configs.
 
     /path/to/devise_ldap_authenticatable/spec/ldap/** rw,$
 
