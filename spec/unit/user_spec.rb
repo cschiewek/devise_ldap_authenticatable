@@ -244,9 +244,7 @@ describe 'Users' do
       end
 
       it "should not call ldap_before_save hook if not defined" do
-        assert_nothing_raised do
-          should_be_validated Factory.create(:user, :uid => "example_user"), "secret"
-        end
+        should_be_validated Factory.create(:user, :uid => "example_user"), "secret"
       end
     end
   end
@@ -279,9 +277,7 @@ describe 'Users' do
     end
 
     it "should not fail if config file has ssl: true" do
-      assert_nothing_raised do
-        Devise::LDAP::Connection.new
-      end
+      Devise::LDAP::Connection.new
     end
   end
 

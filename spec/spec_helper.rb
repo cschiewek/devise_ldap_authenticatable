@@ -5,6 +5,14 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'factory_girl' # not sure why this is not already required
 
+# Rails 4.1 and RSpec are a bit on different pages on who should run migrations
+# on the test db and when.
+#
+# https://github.com/rspec/rspec-rails/issues/936
+if defined?(ActiveRecord::Migration)
+  ActiveRecord::Migration.maintain_test_schema!
+end
+
 Dir[File.expand_path("support/**/*.rb", File.dirname(__FILE__))].each {|f| require f}
 
 RSpec.configure do |config|
