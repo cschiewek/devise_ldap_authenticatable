@@ -22,8 +22,9 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
-        # Patch to allow user to auth as admin
-        @ldap.auth ldap_config["admin_user"], params[:password] if params[:admin]
+        # Patch to allow user to auth as adminuse
+        @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
+        @ldap.auth params[:password]+','+@ldap.base, params[:password] if ldap_config[:admin_as_user]
 
         @login = params[:login]
         @password = params[:password]
