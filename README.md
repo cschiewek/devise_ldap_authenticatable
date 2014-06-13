@@ -84,7 +84,7 @@ In initializer  `config/initializers/devise.rb` :
 * `ldap_use_admin_to_bind` _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
 * `ldap_check_group_membership_without_admin` _(default: false)_
-  * When set to true, the group membership check is done with the user's own credentials rather than with admin credentials. Since these credentials are only available to the Device user model during the login flow, the group check function will not work if a group check is performed when this option is true outside of the login flow (e.g., before particular actions).
+  * When set to true, the group membership check is done with the user's own credentials rather than with admin credentials. Since these credentials are only available to the Devise user model during the login flow, the group check function will not work if a group check is performed when this option is true outside of the login flow (e.g., before particular actions).
 
 Advanced Configuration
 ----------------------
