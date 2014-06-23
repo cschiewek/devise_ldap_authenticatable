@@ -38,19 +38,19 @@ module Devise
       end
 
       def dn
-        DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
-        ldap_entry = search_for_login
-        if ldap_entry.nil?
-          @ldap_auth_username_builder.call(@attribute,@login,@ldap)
-        else
-          ldap_entry.dn
+        @dn ||= begin
+          DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
+          ldap_entry = search_for_login
+          if ldap_entry.nil?
+            @ldap_auth_username_builder.call(@attribute,@login,@ldap)
+          else
+            ldap_entry.dn
+          end
         end
       end
 
       def ldap_param_value(param)
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
-        ldap_entry = nil
-        @ldap.search(:filter => filter) {|entry| ldap_entry = entry}
+        ldap_entry = search_for_login
 
         if ldap_entry
           unless ldap_entry[param].empty?
@@ -181,13 +181,15 @@ module Devise
       #
       # @return [Object] the LDAP entry found; nil if not found
       def search_for_login
-        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
-        filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
-        ldap_entry = nil
-        match_count = 0
-        @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
-        DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
-        ldap_entry
+        @login_ldap_entry ||= begin
+          DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
+          filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+          ldap_entry = nil
+          match_count = 0
+          @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
+          DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
+          ldap_entry
+        end
       end
 
       private
