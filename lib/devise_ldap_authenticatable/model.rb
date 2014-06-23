@@ -65,7 +65,7 @@ module Devise
       end
 
       def ldap_get_param(param)
-        if ldap_entry && ldap_entry[param]
+        if ldap_entry && !ldap_entry[param].empty?
           value = ldap_entry.send(param)
         else
           nil
