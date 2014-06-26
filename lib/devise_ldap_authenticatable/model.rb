@@ -48,6 +48,10 @@ module Devise
         Devise::LDAP::Adapter.valid_credentials?(login_with, password)
       end
 
+      def ldap_entry
+        @ldap_entry ||= Devise::LDAP::Adapter.get_ldap_entry(login_with)
+      end
+
       def ldap_groups
         Devise::LDAP::Adapter.get_groups(login_with)
       end
@@ -57,11 +61,15 @@ module Devise
       end
 
       def ldap_dn
-        Devise::LDAP::Adapter.get_dn(login_with)
+        ldap_entry ? ldap_entry.dn : nil
       end
 
-      def ldap_get_param(login_with, param)
-        Devise::LDAP::Adapter.get_ldap_param(login_with,param)
+      def ldap_get_param(param)
+        if ldap_entry && !ldap_entry[param].empty?
+          value = ldap_entry.send(param)
+        else
+          nil
+        end
       end
 
       #
