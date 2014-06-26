@@ -72,6 +72,10 @@ module Devise
       # def ldap_before_save
       # end
 
+      # Called after a successful LDAP authentication
+      def after_ldap_authentication
+      end
+
 
       module ClassMethods
         # Find a user for ldap authentication.
