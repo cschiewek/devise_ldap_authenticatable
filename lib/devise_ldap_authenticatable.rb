@@ -17,6 +17,8 @@ module Devise
   mattr_accessor :ldap_create_user
   @@ldap_create_user = false
   
+  # A path to YAML config file or a Proc that returns a
+  # configuration hash
   mattr_accessor :ldap_config
   # @@ldap_config = "#{Rails.root}/config/ldap.yml"
   
