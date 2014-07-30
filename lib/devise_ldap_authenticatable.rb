@@ -1,11 +1,11 @@
 # encoding: utf-8
 require 'devise'
-require 'net/ldap'
 
 require 'devise_ldap_authenticatable/exception'
 require 'devise_ldap_authenticatable/logger'
-require 'devise_ldap_authenticatable/ldap/adapter'
-require 'devise_ldap_authenticatable/ldap/connection'
+require 'devise_ldap_authenticatable/schema'
+require 'devise_ldap_authenticatable/ldap_adapter'
+require 'devise_ldap_authenticatable/routes'
 
 # Get ldap information from config/ldap.yml now
 module Devise
@@ -26,9 +26,6 @@ module Devise
   mattr_accessor :ldap_check_group_membership
   @@ldap_check_group_membership = false
   
-  mattr_accessor :ldap_check_group_membership_without_admin
-  @@ldap_check_group_membership_without_admin = false
-
   mattr_accessor :ldap_check_attributes
   @@ldap_check_role_attribute = false
   
@@ -36,10 +33,7 @@ module Devise
   @@ldap_use_admin_to_bind = false
   
   mattr_accessor :ldap_auth_username_builder
-  @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "userPrincipalName: VF032500@mfg.am.mds.honda.com" }
-
-  mattr_accessor :ldap_auth_password_builder
-  @@ldap_auth_password_builder = Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }
+  @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
