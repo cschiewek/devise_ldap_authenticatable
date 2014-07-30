@@ -32,7 +32,7 @@ module Devise
   @@ldap_use_admin_to_bind = false
   
   mattr_accessor :ldap_auth_username_builder
-  @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "userPrincipalName=VF032500@mfg.am.mds.honda.com" }
+  @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
