@@ -18,6 +18,8 @@ module Devise
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
+        @allow_unauthenticated_bind = ldap_config["allow_unauthenticated_bind"]
+
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
         @group_base = ldap_config["group_base"]
@@ -72,6 +74,7 @@ module Devise
       end
 
       def authenticate!
+        return false unless (@password.present? || @allow_unauthenticated_bind)
         @ldap.auth(dn, @password)
         @ldap.bind
       end
