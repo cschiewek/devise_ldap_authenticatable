@@ -41,7 +41,7 @@ Run the rails generator for `devise_ldap_authenticatable`
 
     rails generate devise_ldap_authenticatable:install [options]
 
-This will install the sample.yml, update the devise.rb initializer, and update your user model. There are some options you can pass to it:
+This will install the ldap.yml, update the devise.rb initializer, and update your user model. There are some options you can pass to it:
 
 Options:
 
