@@ -28,11 +28,19 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
-        @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
-
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
+
+        if params[:bind_user] == :admin
+          # bind as admin user from config
+          DeviseLdapAuthenticatable::Logger.send("Binding as admin")
+          @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"]
+        elsif params[:bind_user] == :user
+          # bind using authentication of the user
+          DeviseLdapAuthenticatable::Logger.send("Binding as user")
+          @ldap.auth ldap_config["ad_domain"] + '\\' + @login, @password
+        end
       end
 
       def delete_param(param)
@@ -227,7 +235,7 @@ module Devise
           operations = ops
         end
 
-        if ::Devise.ldap_use_admin_to_bind
+        if ::Devise.ldap_user_to_bind == :admin
           privileged_ldap = Connection.admin
         else
           authenticate!

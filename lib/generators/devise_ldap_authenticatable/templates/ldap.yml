@@ -28,6 +28,7 @@ development:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
+  ad_domain: 
   ssl: false
   # <<: *AUTHORIZATIONS
 
@@ -38,6 +39,7 @@ test:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
+  ad_domain: 
   ssl: simple_tls
   # <<: *AUTHORIZATIONS
 
@@ -48,5 +50,6 @@ production:
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
+  ad_domain: 
   ssl: start_tls
   # <<: *AUTHORIZATIONS

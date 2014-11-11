@@ -36,7 +36,7 @@ module DeviseLdapAuthenticatable
   # config.ldap_check_group_membership = false
   # config.ldap_check_group_membership_without_admin = false
   # config.ldap_check_attributes = false
-  # config.ldap_use_admin_to_bind = false
+  # config.ldap_user_to_bind = :none
   # config.ldap_ad_group_check = false
 
       eof

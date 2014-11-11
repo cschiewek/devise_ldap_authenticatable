@@ -34,8 +34,8 @@ module Devise
   mattr_accessor :ldap_check_attributes
   @@ldap_check_role_attribute = false
   
-  mattr_accessor :ldap_use_admin_to_bind
-  @@ldap_use_admin_to_bind = false
+  mattr_accessor :ldap_user_to_bind
+  @@ldap_user_to_bind = :none
   
   mattr_accessor :ldap_auth_username_builder
   @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
