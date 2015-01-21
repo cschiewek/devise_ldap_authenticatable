@@ -62,12 +62,10 @@ Querying LDAP
 -------------
 Given that `ldap_create_user` is set to true and you are authenticating with username, you can query an LDAP server for other attributes.
 
-in your user model:
+in your user model you have to simply define `ldap_before_save` method:
 
-    before_save :get_ldap_email
-
-    def get_ldap_email
-      self.email = Devise::LDAP::Adapter.get_ldap_param(self.username,"mail")
+    def ldap_before_save
+      self.email = Devise::LDAP::Adapter.get_ldap_param(self.username,"mail").first
     end
 
 Configuration
