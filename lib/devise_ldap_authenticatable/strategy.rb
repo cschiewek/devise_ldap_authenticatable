@@ -2,7 +2,7 @@ require 'devise/strategies/authenticatable'
 
 module Devise
   module Strategies
-    class LdapAuthenticatable < Autheneticatable
+    class LdapAuthenticatable < Authenticatable
 
       # Tests whether the returned resource exists in the database and the
       # credentials are valid.  If the resource is in the database and the credentials
