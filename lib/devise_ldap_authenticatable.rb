@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'devise'
+require 'net/ldap'
 
 require 'devise_ldap_authenticatable/exception'
 require 'devise_ldap_authenticatable/logger'
@@ -27,6 +28,9 @@ module Devise
   mattr_accessor :ldap_check_group_membership
   @@ldap_check_group_membership = false
   
+  mattr_accessor :ldap_check_group_membership_without_admin
+  @@ldap_check_group_membership_without_admin = false
+
   mattr_accessor :ldap_check_attributes
   @@ldap_check_role_attribute = false
   
@@ -35,6 +39,9 @@ module Devise
   
   mattr_accessor :ldap_auth_username_builder
   @@ldap_auth_username_builder = Proc.new() {|attribute, login, ldap| "#{attribute}=#{login},#{ldap.base}" }
+
+  mattr_accessor :ldap_auth_password_builder
+  @@ldap_auth_password_builder = Proc.new() {|new_password| Net::LDAP::Password.generate(:sha, new_password) }
 
   mattr_accessor :ldap_ad_group_check
   @@ldap_ad_group_check = false
