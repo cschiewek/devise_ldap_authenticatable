@@ -157,7 +157,9 @@ module Devise
         user = find_ldap_user(admin_ldap)
 
         @required_attributes.each do |key,val|
-          unless user[key].include? val
+          
+          matching_attributes = user[key] & Array.wrap(val)
+          unless (matching_attributes).any?
             DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
             return false
           end

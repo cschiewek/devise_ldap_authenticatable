@@ -6,7 +6,9 @@ authorizations: &AUTHORIZATIONS
   required_groups:
     - cn=admins,<%= "ou=groups,#{@base}" %>
   require_attribute:
-    objectClass: inetOrgPerson
+    objectClass: 
+      - inetOrgPerson
+      - organizationalPerson
     authorizationRole: blogAdmin
     
 test: &TEST
