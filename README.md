@@ -20,7 +20,7 @@ For a screencast with an example application, please visit: [http://random-rails
 Prerequisites
 -------------
  * devise ~> 3.0.0 (which requires rails ~> 4.0)
- * net-ldap ~> 0.3.1
+ * net-ldap ~> 0.6.0
 
 Note: Rails 3.x / Devise 2.x has been moved to the 0.7 branch.  All 0.7.x gems will support Rails 3, where as 0.8.x will support Rails 4.
 
