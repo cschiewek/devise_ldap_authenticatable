@@ -27,6 +27,8 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
 
+        @additional_ldap_filter=ldap_config["additional_ldap_filter"]
+
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
         @ldap.auth params[:login], params[:password] if ldap_config["admin_as_user"]
 
@@ -185,6 +187,11 @@ module Devise
         @login_ldap_entry ||= begin
           DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
           filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
+          if @additional_ldap_filter
+            DeviseLdapAuthenticatable::Logger.send("Adding Additional Filter #{@additional_ldap_filter}")
+            additional_filter = Net::LDAP::Filter.from_rfc2254(@additional_ldap_filter)
+            filter = filter & additional_filter
+          end
           ldap_entry = nil
           match_count = 0
           @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}

@@ -29,6 +29,7 @@ development:
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
   ssl: false
+  additional_ldap_filter: "(&(objectClass=user)(sAMAccountType=805306368)(memberof:1.2.840.113556.1.4.1941:=CN=SomeActiveDirectoryGroup,OU=Groupies,cn=admin,dc=test,dc=com))"
   # <<: *AUTHORIZATIONS
 
 test:
@@ -39,6 +40,7 @@ test:
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
   ssl: simple_tls
+  additional_ldap_filter: "(&(objectClass=user)(sAMAccountType=805306368)(memberof:1.2.840.113556.1.4.1941:=CN=SomeActiveDirectoryGroup,OU=Groupies,cn=admin,dc=test,dc=com))"
   # <<: *AUTHORIZATIONS
 
 production:
@@ -49,4 +51,5 @@ production:
   admin_user: cn=admin,dc=test,dc=com
   admin_password: admin_password
   ssl: start_tls
+  additional_ldap_filter: "(&(objectClass=user)(sAMAccountType=805306368)(memberof:1.2.840.113556.1.4.1941:=CN=SomeActiveDirectoryGroup,OU=Groupies,cn=admin,dc=test,dc=com))"
   # <<: *AUTHORIZATIONS
