@@ -84,6 +84,8 @@ In initializer  `config/initializers/devise.rb` :
   * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
 * `ldap_check_attributes` _(default: false)_
   * When set to true, the user trying to login will be checked to make sure they have all of the attributes in the ldap.yml file.
+* `ldap_check_attributes_presence` _(default: false)_
+  * When set to true, the user trying to login will be checked against all `require_attribute_presence` attributes in the ldap.yml file, either present _(attr: true)_,or not present _(attr: false)_.
 * `ldap_use_admin_to_bind` _(default: false)_
   * When set to true, the admin user will be used to bind to the LDAP server during authentication.
 * `ldap_check_group_membership_without_admin` _(default: false)_

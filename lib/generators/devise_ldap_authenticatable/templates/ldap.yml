@@ -18,6 +18,12 @@ authorizations: &AUTHORIZATIONS
   require_attribute:
     objectClass: inetOrgPerson
     authorizationRole: postsAdmin
+  ## Requires config.ldap_check_attributes_presence in devise.rb to be true
+  ## Can have multiple attributes set to true or false to check presence, all must match all to be authorized
+  require_attribute_presence:
+    mail: true
+    telephoneNumber: true
+    serviceAccount: false
 
 ## Environment
 

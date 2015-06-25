@@ -26,6 +26,7 @@ module Devise
         @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
+        @required_attributes_presence = ldap_config["require_attribute_presence"]
 
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
         @ldap.auth params[:login], params[:password] if ldap_config["admin_as_user"]
@@ -94,6 +95,9 @@ module Devise
         elsif !has_required_attribute?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute.")
           return false
+        elsif !has_required_attribute_presence?
+          DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute present.")
+          return false
         else
           return true
         end
@@ -159,6 +163,26 @@ module Devise
         @required_attributes.each do |key,val|
           unless user[key].include? val
             DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
+            return false
+          end
+        end
+
+        return true
+      end
+
+      def has_required_attribute_presence?
+        return true unless ::Devise.ldap_check_attributes_presence
+
+        admin_ldap = Connection.admin
+
+        user = find_ldap_user(admin_ldap)
+
+        @required_attributes_presence.each do |key,val|
+          if val && !user.attribute_names.include?(key.to_sym)
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} doesn't include attribute #{key}")
+            return false
+          elsif !val && user.attribute_names.include?(key.to_sym)
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} includes attribute #{key}")
             return false
           end
         end
