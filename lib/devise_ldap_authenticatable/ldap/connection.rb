@@ -156,9 +156,7 @@ module Devise
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes
 
-        admin_ldap = Connection.admin
-
-        user = find_ldap_user(admin_ldap)
+        user = search_for_login
 
         @required_attributes.each do |key,val|
           unless user[key].include? val
@@ -173,9 +171,7 @@ module Devise
       def has_required_attribute_presence?
         return true unless ::Devise.ldap_check_attributes_presence
 
-        admin_ldap = Connection.admin
-
-        user = find_ldap_user(admin_ldap)
+        user = search_for_login
 
         @required_attributes_presence.each do |key,val|
           if val && !user.attribute_names.include?(key.to_sym)
