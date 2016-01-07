@@ -187,7 +187,7 @@ module Devise
           filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
           ldap_entry = nil
           match_count = 0
-          @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
+          @ldap.search(:base => @ldap.base, :filter => filter) {|entry| ldap_entry = entry; match_count+=1}
           DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
           ldap_entry
         end
