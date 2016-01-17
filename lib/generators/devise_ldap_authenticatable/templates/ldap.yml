@@ -1,7 +1,7 @@
 ## Authorizations
 # Uncomment out the merging for each environment that you'd like to include.
 # You can also just copy and paste the tree (do not include the "authorizations") to each
-# environment if you need something different per enviornment.
+# environment if you need something different per environment. 
 authorizations: &AUTHORIZATIONS
   allow_unauthenticated_bind: false
   group_base: ou=groups,dc=test,dc=com
