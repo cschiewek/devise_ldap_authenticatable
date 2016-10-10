@@ -15,6 +15,16 @@ module Devise
         resource.authorized?
       end
 
+      def self.expired_credentials?(login, password_plaintext)
+        options = {:login => login,
+                   :password => password_plaintext,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :admin => ::Devise.ldap_use_admin_to_bind}
+
+        resource = Devise::LDAP::Connection.new(options)
+        resource.expired?
+      end
+
       def self.update_password(login, new_password)
         options = {:login => login,
                    :new_password => new_password,
