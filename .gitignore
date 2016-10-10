@@ -8,3 +8,4 @@ test/ldap/openldap-data/run/slapd.*
 test/rails_app/tmp
 pkg/*
 *.gem
+.idea
