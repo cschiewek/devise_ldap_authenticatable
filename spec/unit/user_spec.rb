@@ -229,6 +229,22 @@ describe 'Users' do
       end
     end
 
+    describe 'check password expiration' do
+      before do
+        allow_any_instance_of(Devise::LDAP::Connection).to receive(:authenticated?).and_return(false)
+      end
+
+      it 'should return false for a user that has a fresh password' do
+        allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(false)
+        assert_equal false, ::Devise::LDAP::Adapter.expired_credentials?('example.user@test.com','secret')
+      end
+
+      it 'should return true for a user that has an expired password' do
+        allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(true)
+        assert_equal true, ::Devise::LDAP::Adapter.expired_credentials?('example.user@test.com','secret')
+      end
+    end
+
   end
 
   describe 'use uid for login' do
