@@ -83,10 +83,26 @@ module Devise
         authenticate!
       end
 
+      def last_message_bad_credentials?
+        @ldap.get_operation_result.error_message.to_s.include? '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 52e, v1db1'
+      end
+
+      def last_message_expired_credentials?
+        @ldap.get_operation_result.error_message.to_s.include? '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 773, v1db1'
+      end
+
       def authorized?
         DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
         if !authenticated?
-          DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
+
+          if last_message_bad_credentials?
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because of invalid credentials.")
+          elsif last_message_expired_credentials?
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because expired credentials.")
+          else
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
+          end
+
           return false
         elsif !in_required_groups?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because not in required groups.")
@@ -96,6 +112,15 @@ module Devise
           return false
         else
           return true
+        end
+      end
+
+      def expired?
+        DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
+        if !authenticated? && last_message_expired_credentials?
+          return true
+        else
+          return false
         end
       end
 
