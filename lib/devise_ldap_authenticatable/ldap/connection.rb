@@ -84,11 +84,11 @@ module Devise
       end
 
       def last_message_bad_credentials?
-        @ldap.get_operation_result.error_message.to_s.include? '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 52e, v1db1'
+        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 52e'
       end
 
       def last_message_expired_credentials?
-        @ldap.get_operation_result.error_message.to_s.include? '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 773, v1db1'
+        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 773'
       end
 
       def authorized?

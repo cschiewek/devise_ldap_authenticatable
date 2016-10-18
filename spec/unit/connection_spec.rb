@@ -32,7 +32,7 @@ describe 'Connection' do
     end
 
     context do
-      let(:error) { '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 773, v1db1' }
+      let(:error) { 'DOESNT REALLY MATTER AcceptSecurityContext error, data 773 NOPE' }
       it 'is true when expired credential error is returned and not already authenticated' do
         expect(subject).to be true
       end
@@ -71,14 +71,14 @@ describe 'Connection' do
       before { expect(DeviseLdapAuthenticatable::Logger).to receive(:send).with(log_message) }
 
       context do
-        let(:error) { '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 52e, v1db1' }
+        let(:error) { 'COULD BE ANYTHING FROM ANYWHERE AcceptSecurityContext error, data 52e SOMETHING ELSE' }
         let(:log_message) { 'Not authorized because of invalid credentials.' }
         it 'is false when credential error is returned' do
           expect(subject).to be false
         end
       end
       context do
-        let(:error) { '80090308: LdapErr: DSID-0C0903A8, comment: AcceptSecurityContext error, data 773, v1db1' }
+        let(:error) { 'IMPORTANT SECRET MESSAAGES AcceptSecurityContext error, data 773 IMPORTANT THINGS' }
         let(:log_message) { 'Not authorized because expired credentials.' }
         it 'is false when expired error is returned' do
           expect(subject).to be false
