@@ -28,6 +28,7 @@ module Devise
         @required_groups = ldap_config["required_groups"]
         @group_membership_attribute = ldap_config.has_key?("group_membership_attribute") ? ldap_config["group_membership_attribute"] : "uniqueMember"
         @required_attributes = ldap_config["require_attribute"]
+        @required_attributes_presence = ldap_config["require_attribute_presence"]
 
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
 
@@ -95,6 +96,9 @@ module Devise
         elsif !has_required_attribute?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute.")
           return false
+        elsif !has_required_attribute_presence?
+          DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute present.")
+          return false
         else
           return true
         end
@@ -159,13 +163,29 @@ module Devise
       def has_required_attribute?
         return true unless ::Devise.ldap_check_attributes
 
-        admin_ldap = Connection.admin
-
-        user = find_ldap_user(admin_ldap)
+        user = search_for_login
 
         @required_attributes.each do |key,val|
           unless user[key].include? val
             DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
+            return false
+          end
+        end
+
+        return true
+      end
+
+      def has_required_attribute_presence?
+        return true unless ::Devise.ldap_check_attributes_presence
+
+        user = search_for_login
+
+        @required_attributes_presence.each do |key,val|
+          if val && !user.attribute_names.include?(key.to_sym)
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} doesn't include attribute #{key}")
+            return false
+          elsif !val && user.attribute_names.include?(key.to_sym)
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} includes attribute #{key}")
             return false
           end
         end

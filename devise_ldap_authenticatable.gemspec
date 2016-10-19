@@ -18,16 +18,16 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('devise', '>= 3.4.1')
-  s.add_dependency('net-ldap', '>= 0.6.0', '<= 0.11')
+  s.add_dependency 'devise', '>= 3.4.1'
+  s.add_dependency 'net-ldap', '~> 0.12'
 
-  s.add_development_dependency('rake', '>= 0.9')
-  s.add_development_dependency('rdoc', '>= 3')
-  s.add_development_dependency('rails', '>= 4.0')
-  s.add_development_dependency('sqlite3')
-  s.add_development_dependency('factory_girl_rails', '~> 1.0')
-  s.add_development_dependency('factory_girl', '~> 2.0')
-  s.add_development_dependency('rspec-rails')
+  s.add_development_dependency 'rake', '>= 0.9'
+  s.add_development_dependency 'rdoc', '>= 3'
+  s.add_development_dependency 'rails', '>= 4.0'
+  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'factory_girl_rails', '~> 1.0'
+  s.add_development_dependency 'factory_girl', '~> 2.0'
+  s.add_development_dependency 'rspec-rails'
 
   %w{database_cleaner capybara launchy}.each do |dep|
     s.add_development_dependency(dep)

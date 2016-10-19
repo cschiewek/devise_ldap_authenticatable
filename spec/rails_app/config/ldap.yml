@@ -7,7 +7,9 @@ authorizations: &AUTHORIZATIONS
   require_attribute:
     objectClass: inetOrgPerson
     authorizationRole: blogAdmin
-    
+  require_attribute_presence:
+    mail: true
+
 test: &TEST
   host: localhost
   port: 3389
@@ -17,6 +19,6 @@ test: &TEST
   admin_password: secret
   ssl: false
   <<: *AUTHORIZATIONS
-  
+
 development:
   <<: *TEST

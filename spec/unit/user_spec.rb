@@ -142,25 +142,25 @@ describe 'Users' do
         should_not_be_validated @user, "secret"
       end
     end
-    
+
     describe "check group membership" do
       before do
         @admin = Factory.create(:admin)
         @user = Factory.create(:user)
       end
-      
+
       it "should return true for admin being in the admins group" do
         assert_equal true, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
       end
-      
+
       it "should return false for admin being in the admins group using the 'foobar' group attribute" do
         assert_equal false, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com', 'foobar')
       end
-      
+
       it "should return true for user being in the users group" do
         assert_equal true, @user.in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
-      end   
-      
+      end
+
       it "should return false for user being in the admins group" do
         assert_equal false, @user.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
       end
@@ -214,6 +214,26 @@ describe 'Users' do
 
       it "should user should not be allowed in" do
         should_not_be_validated @user, "secret"
+      end
+    end
+
+    describe "use attribute presence for authorization" do
+      before do
+        @admin = Factory.create(:admin)
+        @user = Factory.create(:user)
+        ::Devise.ldap_check_attributes_presence = true
+      end
+
+      after do
+        ::Devise.ldap_check_attributes_presence = false
+      end
+
+      it "should admin should not be allowed in" do
+        should_not_be_validated @admin, "admin_secret"
+      end
+
+      it "should user should be allowed in" do
+        should_be_validated @user, "secret"
       end
     end
 
