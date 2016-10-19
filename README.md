@@ -115,7 +115,7 @@ Devise LDAP Authenticatable uses a running OpenLDAP server to do automated accep
 
 On OS X, this is available out of the box.
 
-On Ubuntu, you can install OpenLDAP with `sudo apt-get install slapd ldap-utils`. If slapd runs under AppArmor, add an exception like this to `/etc/apparmor.d/local/usr.sbin.slapd` to let slapd read our configs (reload using `sudo service apparmor reload` afterwardss).
+On Ubuntu, you can install OpenLDAP with `sudo apt-get install slapd ldap-utils`. If slapd runs under AppArmor, add an exception like this to `/etc/apparmor.d/local/usr.sbin.slapd` to let slapd read our configs (reload using `sudo service apparmor reload` afterwards).
 
     /path/to/devise_ldap_authenticatable/spec/ldap/** rw,
 
