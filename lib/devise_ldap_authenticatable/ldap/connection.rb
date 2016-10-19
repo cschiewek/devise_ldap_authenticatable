@@ -215,6 +215,10 @@ module Devise
           ldap_entry = nil
           match_count = 0
           @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
+          op_result= @ldap.get_operation_result
+          if op_result.code!=0 then
+            DeviseLdapAuthenticatable::Logger.send("LDAP Error #{op_result.code}: #{op_result.message}")
+          end
           DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
           ldap_entry
         end
