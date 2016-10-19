@@ -15,6 +15,16 @@ module Devise
         resource.authorized?
       end
 
+      def self.expired_valid_credentials?(login, password_plaintext)
+        options = {:login => login,
+                   :password => password_plaintext,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :admin => ::Devise.ldap_use_admin_to_bind}
+
+        resource = Devise::LDAP::Connection.new(options)
+        resource.expired_valid_credentials?
+      end
+
       def self.update_password(login, new_password)
         options = {:login => login,
                    :new_password => new_password,
@@ -34,7 +44,7 @@ module Devise
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                    :admin => ::Devise.ldap_use_admin_to_bind}
 
-        resource = Devise::LDAP::Connection.new(options)
+        Devise::LDAP::Connection.new(options)
       end
 
       def self.valid_login?(login)
@@ -54,18 +64,18 @@ module Devise
       end
 
       def self.set_ldap_param(login, param, new_value, password = nil)
-        options = { :login => login,
-                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                    :password => password }
+        options = {:login => login,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :password => password }
 
         resource = Devise::LDAP::Connection.new(options)
         resource.set_param(param, new_value)
       end
 
       def self.delete_ldap_param(login, param, password = nil)
-        options = { :login => login,
-                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
-                    :password => password }
+        options = {:login => login,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :password => password }
 
         resource = Devise::LDAP::Connection.new(options)
         resource.delete_param(param)
@@ -79,9 +89,6 @@ module Devise
       def self.get_ldap_entry(login)
         self.ldap_connect(login).search_for_login
       end
-
     end
-
   end
-
 end

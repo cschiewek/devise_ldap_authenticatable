@@ -16,7 +16,7 @@ describe 'Users' do
       reset_ldap_server!
     end
 
-    describe "look up and ldap user" do
+    describe "look up an ldap user" do
       it "should return true for a user that does exist in LDAP" do
         assert_equal true, ::Devise::LDAP::Adapter.valid_login?('example.user@test.com')
       end
@@ -48,7 +48,7 @@ describe 'Users' do
         should_be_validated @user, "secret"
         @user.password = "changed"
         @user.change_password!("secret")
-        should_be_validated @user, "changed", "password was not changed properly on the LDAP sevrer"
+        should_be_validated @user, "changed", "password was not changed properly on the LDAP server"
       end
 
       it "should not allow to change password if setting is false" do
@@ -249,6 +249,19 @@ describe 'Users' do
       end
     end
 
+    describe 'check password expiration' do
+      before { allow_any_instance_of(Devise::LDAP::Connection).to receive(:authenticated?).and_return(false) }
+
+      it 'should return false for a user that has a fresh password' do
+        allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(false)
+        assert_equal false, ::Devise::LDAP::Adapter.expired_valid_credentials?('example.user@test.com','secret')
+      end
+
+      it 'should return true for a user that has an expired password' do
+        allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(true)
+        assert_equal true, ::Devise::LDAP::Adapter.expired_valid_credentials?('example.user@test.com','secret')
+      end
+    end
   end
 
   describe "use uid for login" do

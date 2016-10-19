@@ -85,10 +85,25 @@ module Devise
         authenticate!
       end
 
+      def last_message_bad_credentials?
+        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 52e'
+      end
+
+      def last_message_expired_credentials?
+        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 773'
+      end
+
       def authorized?
         DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
         if !authenticated?
-          DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
+          if last_message_bad_credentials?
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because of invalid credentials.")
+          elsif last_message_expired_credentials?
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because of expired credentials.")
+          else
+            DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
+          end
+
           return false
         elsif !in_required_groups?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because not in required groups.")
@@ -102,6 +117,12 @@ module Devise
         else
           return true
         end
+      end
+
+      def expired_valid_credentials?
+        DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
+
+        !authenticated? && last_message_expired_credentials?
       end
 
       def change_password!
