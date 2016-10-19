@@ -111,9 +111,9 @@ Devise LDAP Authenticatable uses a running OpenLDAP server to do automated accep
 
 On OS X, this is available out of the box.
 
-On Ubuntu, you can install OpenLDAP with `sudo apt-get install slapd ldap-utils`. If slapd runs under AppArmor, add an exception like this to `/etc/apparmor.d/local/usr.sbin.slapd` to let slapd read our configs.
+On Ubuntu, you can install OpenLDAP with `sudo apt-get install slapd ldap-utils`. If slapd runs under AppArmor, add an exception like this to `/etc/apparmor.d/local/usr.sbin.slapd` to let slapd read our configs (reload using `sudo service apparmor reload` afterwardss).
 
-    /path/to/devise_ldap_authenticatable/spec/ldap/** rw,$
+    /path/to/devise_ldap_authenticatable/spec/ldap/** rw,
 
 To start hacking on `devise_ldap_authentication`, clone the github repository, start the test LDAP server, and run the rake test task:
 
@@ -124,7 +124,7 @@ To start hacking on `devise_ldap_authentication`, clone the github repository, s
     # in a separate console or backgrounded
     ./spec/ldap/run-server
 
-    bundle exec rake db:migrate # first time only
+    RAILS_ENV=test bundle exec rake db:migrate # first time only
     bundle exec rake spec
 
 References
