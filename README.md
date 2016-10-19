@@ -19,6 +19,8 @@ Prerequisites
 
 Note: Rails 3.x / Devise 2.x has been moved to the 0.7 branch.  All 0.7.x gems will support Rails 3, where as 0.8.x will support Rails 4.
 
+If you are transitioning from having Devise manage your users' passwords in the database to using LDAP auth, you may have to update your `users` table to make `encrypted_password` nullable, or else the LDAP user insert will fail.
+
 Usage
 -----
 In the Gemfile for your application:
