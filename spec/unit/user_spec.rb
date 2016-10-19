@@ -80,7 +80,7 @@ describe 'Users' do
         it "should create a user in the database" do
           @user = User.find_for_ldap_authentication(:email => "example.user@test.com", :password => "secret")
           assert_equal(User.all.size, 1)
-          User.all.collect(&:email).should include("example.user@test.com")
+          expect(User.all.collect(&:email)).to include("example.user@test.com")
           assert(@user.persisted?)
         end
 
@@ -116,7 +116,7 @@ describe 'Users' do
           ::Devise.case_insensitive_keys = [:email]
 
           @user = User.find_for_ldap_authentication(:email => "EXAMPLE.user@test.com", :password => "secret")
-          User.all.collect(&:email).should include("example.user@test.com")
+          expect(User.all.collect(&:email)).to include("example.user@test.com")
         end
       end
 
@@ -135,7 +135,7 @@ describe 'Users' do
       end
 
       it "should admin should have the proper groups set" do
-        @admin.ldap_groups.should include('cn=admins,ou=groups,dc=test,dc=com')
+        expect(@admin.ldap_groups).to include('cn=admins,ou=groups,dc=test,dc=com')
       end
 
       it "should user should not be allowed in" do
@@ -279,7 +279,7 @@ describe 'Users' do
       it "should create a user in the database" do
         @user = User.find_for_ldap_authentication(:uid => "example_user", :password => "secret")
         assert_equal(User.all.size, 1)
-        User.all.collect(&:uid).should include("example_user")
+        expect(User.all.collect(&:uid)).to include("example_user")
       end
 
       it "should call ldap_before_save hooks" do
