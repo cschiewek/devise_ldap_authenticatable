@@ -65,6 +65,11 @@ in your user model you have to simply define `ldap_before_save` method:
       self.email = Devise::LDAP::Adapter.get_ldap_param(self.username,"mail").first
     end
 
+Switch from Devise managed password
+-----------------------------------
+
+Need set the table USERS column ENCRYPTED_PASSWORD **nullable**, otherwise will cause user user failed to login/create.
+
 Configuration
 -------------
 In initializer  `config/initializers/devise.rb` :
