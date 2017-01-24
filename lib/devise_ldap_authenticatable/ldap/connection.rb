@@ -227,6 +227,18 @@ module Devise
         !search_for_login.nil?
       end
 
+      # More general version can search by ldap attr, for example by cn when called,
+      # but the login attribute can set to email/employeeid
+      def search_by_ldap_attr(ldap_attr, ldap_attr_value)
+        DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{ldap_attr}=#{ldap_attr_value}")
+        filter = Net::LDAP::Filter.eq(ldap_attr.to_s, ldap_attr_value.to_s)
+        ldap_entry = nil
+        match_count = 0
+        @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
+        DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
+        ldap_entry
+      end
+
       # Searches the LDAP for the login
       #
       # @return [Object] the LDAP entry found; nil if not found
