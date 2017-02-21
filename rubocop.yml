@@ -1,0 +1,20 @@
+AllCops:
+  Include:
+    - '**/Rakefile'
+    - config.ru
+  Exclude:
+    - db/schema.rb
+Metrics/LineLength:
+  Max: 140
+Metrics/AbcSize:
+  Max: 18
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+Style/FileName:
+  Enabled: false
+Style/Documentation:
+  Enabled: false

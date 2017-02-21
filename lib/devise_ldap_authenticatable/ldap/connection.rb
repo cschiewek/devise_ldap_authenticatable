@@ -23,9 +23,12 @@ module Devise
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
         @group_base = ldap_config["group_base"]
+        @mailbox_base = ldap_config["mailbox_base"]
         @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
         @required_groups = ldap_config["required_groups"]
         @required_attributes = ldap_config["require_attribute"]
+        @customer_auth = ldap_config["no_customer_auth"]
+        @email_auth_domain = ldap_config["email_auth_domain"]
 
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
         @ldap.auth params[:login], params[:password] if ldap_config["admin_as_user"]
@@ -35,12 +38,53 @@ module Devise
         @new_password = params[:new_password]
       end
 
+      def customer_auth?
+        @customer_auth == 'true'
+      end
+
+      def login_is_mail?
+        @login.include?('@')
+      end
+
+      def email_auth_domain
+        @email_auth_domain
+      end
+
       def delete_param(param)
         update_ldap [[:delete, param.to_sym, nil]]
       end
 
       def set_param(param, new_value)
+        puts "Update ldap atrribute #{param}"
         update_ldap( { param.to_sym => new_value } )
+      end
+
+      def create_user(param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{param[attr.to_sym]},#{@ldap.base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding user #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_user(username, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{username},#{@ldap.base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting user #{new_dn}")
+        ldap.delete(dn: new_dn)
+      end
+
+      def create_mailbox(param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{param[:mail]},#{@mailbox_base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding Mailbox #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_mailbox(param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{param[:mail]},#{@mailbox_base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting Mailbox #{new_dn}")
+        ldap.delete(dn: new_dn)
       end
 
       def dn
@@ -73,6 +117,24 @@ module Devise
         end
       end
 
+      def get_extended_propertie(attribute)
+        ldap_entry = search_for_login('+')
+
+        if ldap_entry
+          unless ldap_entry[attribute].empty?
+            value = ldap_entry.send(attribute)
+            DeviseLdapAuthenticatable::Logger.send("Requested extend propertie #{attribute} has value #{value}")
+            value
+          else
+            DeviseLdapAuthenticatable::Logger.send("Requested extend propertie #{attribute} does not exist")
+            value = nil
+          end
+        else
+          DeviseLdapAuthenticatable::Logger.send("Requested ldap entry does not exist")
+          value = nil
+        end
+      end
+
       def authenticate!
         return false unless (@password.present? || @allow_unauthenticated_bind)
         @ldap.auth(dn, @password)
@@ -87,20 +149,20 @@ module Devise
         DeviseLdapAuthenticatable::Logger.send("Authorizing user #{dn}")
         if !authenticated?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because not authenticated.")
-          return false
+          false
         elsif !in_required_groups?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because not in required groups.")
-          return false
+          false
         elsif !has_required_attribute?
           DeviseLdapAuthenticatable::Logger.send("Not authorized because does not have required attribute.")
-          return false
+          false
         else
-          return true
+          true
         end
       end
 
       def change_password!
-        update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
+        update_ldap(:userpassword => Net::LDAP::Password.generate(:ssha, @new_password))
       end
 
       def in_required_groups?
@@ -116,7 +178,7 @@ module Devise
             return false unless in_group?(group)
           end
         end
-        return true
+        true
       end
 
       def in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
@@ -146,7 +208,7 @@ module Devise
           DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name}")
         end
 
-        return in_group
+        in_group
       end
 
       def has_required_attribute?
@@ -162,16 +224,68 @@ module Devise
             return false
           end
         end
-
-        return true
+        true
       end
 
-      def user_groups
+      def user_groups(group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
         admin_ldap = Connection.admin
-
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        dn_hash = Hash[dn.split(',').collect { |x| x.split('=') }]
+        filter = Net::LDAP::Filter.eq(group_attribute, dn_hash['uid'])
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+      end
+
+      def all_groups
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all groups")
+        admin_ldap.search(base: @group_base)
+      end
+
+      def user_group_action(action, user_dn, group_name, group_attribute, user_attribute)
+        ldap = Connection.admin
+        new_dn = "#{group_attribute}=#{group_name},#{@group_base}"
+        DeviseLdapAuthenticatable::Logger.send("#{action.to_s} user #{user_dn} to #{new_dn}")
+        ops = [
+            [action.to_sym, user_attribute.to_sym, user_dn]
+        ]
+        ldap.modify(dn: new_dn, operations: ops)
+      end
+
+      def personal_mailbox(email, mailbox_attribute = LDAP::DEFAULT_MAIL_GROUP_UNIQUE_MEMBER_LIST_KEY)
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting personal mailbox for #{dn}")
+        filter = Net::LDAP::Filter.eq(mailbox_attribute, email)
+        admin_ldap.search(:filter => filter, :base => @mailbox_base)
+      end
+
+      def update_personal_mailbox_password(email, new_password, mailbox_attribute)
+        admin_ldap = Connection.admin
+        filter = Net::LDAP::Filter.eq(mailbox_attribute, email)
+        resource = admin_ldap.search(:filter => filter, :base => @mailbox_base).collect(&:dn)
+        if resource.present?
+          DeviseLdapAuthenticatable::Logger.send("Modifying Mailbox password for #{resource.first}")
+          admin_ldap.replace_attribute resource.first, :userpassword, new_password
+        end
+      end
+
+      def groups_for_user(user_value, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
+        filter = Net::LDAP::Filter.eq(group_attribute, user_value)
+        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+      end
+
+      def users
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all users")
+        admin_ldap.search()
+      end
+
+      def user(user_value, find_attribute = LDAP::DEFAULT_USER_UNIQUE_LIST_KEY)
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting user info")
+        filter = Net::LDAP::Filter.eq(find_attribute, user_value)
+        admin_ldap.search(:filter => filter, :base => dn)
       end
 
       def valid_login?
@@ -181,13 +295,17 @@ module Devise
       # Searches the LDAP for the login
       #
       # @return [Object] the LDAP entry found; nil if not found
-      def search_for_login
+      def search_for_login(attribute='')
         @login_ldap_entry ||= begin
           DeviseLdapAuthenticatable::Logger.send("LDAP search for login: #{@attribute}=#{@login}")
           filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
           ldap_entry = nil
           match_count = 0
-          @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
+          if attribute.empty?
+            @ldap.search(:filter => filter ) {|entry| ldap_entry = entry; match_count+=1}
+          else
+            @ldap.search(:filter => filter, :attributes => attribute ) {|entry| ldap_entry = entry; match_count+=1}
+          end
           DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
           ldap_entry
         end
@@ -231,6 +349,7 @@ module Devise
         DeviseLdapAuthenticatable::Logger.send("Modifying user #{dn}")
         privileged_ldap.modify(:dn => dn, :operations => operations)
       end
+
     end
   end
 end
