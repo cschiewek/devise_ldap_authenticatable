@@ -87,8 +87,11 @@ module Devise
         attributes.each do |key, value|
           attr[mapper.get_ldap_attribute(key.to_sym)] = value.to_s unless key.nil? || !value.present?
         end
+        attr.symbolize_keys!
+        mail = attr[attribute_list_key.to_sym]
+        attr.delete attribute_list_key.to_sym
         attr[:objectclass] = object_classes
-        resource.create_mailbox(attr.symbolize_keys!, attribute_list_key)
+        resource.create_mailbox(mail, attr, attribute_list_key)
       end
 
       def self.delete_mailbox(login, mail, attribute_list_key)
@@ -96,7 +99,7 @@ module Devise
                    ldap_auth_username_builder: ::Devise.ldap_auth_username_builder,
                    admin: ::Devise.ldap_use_admin_to_bind}
         resource = Devise::LDAP::Connection.new(options)
-        resource.delete_user(mail, attribute_list_key)
+        resource.delete_mailbox(mail, attribute_list_key)
       end
 
       def self.update_mailbox_password(login, email, new_password, mailbox_attribute = nil)

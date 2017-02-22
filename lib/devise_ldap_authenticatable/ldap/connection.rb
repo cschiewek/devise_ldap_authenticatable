@@ -73,16 +73,16 @@ module Devise
         ldap.delete(dn: new_dn)
       end
 
-      def create_mailbox(param, attr)
+      def create_mailbox(mail, param, attr)
         ldap = Connection.admin
-        new_dn = "#{attr}=#{param[:mail]},#{@mailbox_base}"
+        new_dn = "#{attr}=#{mail},#{@mailbox_base}"
         DeviseLdapAuthenticatable::Logger.send("Adding Mailbox #{new_dn}")
         ldap.add(dn: new_dn, attributes: param)
       end
 
-      def delete_mailbox(param, attr)
+      def delete_mailbox(mail, attr)
         ldap = Connection.admin
-        new_dn = "#{attr}=#{param[:mail]},#{@mailbox_base}"
+        new_dn = "#{attr}=#{mail},#{@mailbox_base}"
         DeviseLdapAuthenticatable::Logger.send("Deleting Mailbox #{new_dn}")
         ldap.delete(dn: new_dn)
       end
