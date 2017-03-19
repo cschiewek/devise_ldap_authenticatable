@@ -10,28 +10,31 @@ module Devise
           ldap_config = YAML.load(ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result)[Rails.env]
         end
         ldap_options = params
-        ldap_config["ssl"] = :simple_tls if ldap_config["ssl"] === true
-        ldap_options[:encryption] = ldap_config["ssl"].to_sym if ldap_config["ssl"]
+        ldap_config['ssl'] = :simple_tls if ldap_config['ssl'] === true
+        ldap_options[:encryption] = ldap_config['ssl'].to_sym if ldap_config['ssl']
 
         @ldap = Net::LDAP.new(ldap_options)
-        @ldap.host = ldap_config["host"]
-        @ldap.port = ldap_config["port"]
-        @ldap.base = ldap_config["base"]
-        @attribute = ldap_config["attribute"]
-        @allow_unauthenticated_bind = ldap_config["allow_unauthenticated_bind"]
+        @ldap.host = ldap_config['host']
+        @ldap.port = ldap_config['port']
+        @ldap.base = ldap_config['base']
+        @attribute = ldap_config['attribute']
+        @allow_unauthenticated_bind = ldap_config['allow_unauthenticated_bind']
 
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
-        @group_base = ldap_config["group_base"]
-        @mailbox_base = ldap_config["mailbox_base"]
-        @check_group_membership = ldap_config.has_key?("check_group_membership") ? ldap_config["check_group_membership"] : ::Devise.ldap_check_group_membership
-        @required_groups = ldap_config["required_groups"]
-        @required_attributes = ldap_config["require_attribute"]
-        @customer_auth = ldap_config["no_customer_auth"]
-        @email_auth_domain = ldap_config["email_auth_domain"]
+        @group_base = ldap_config['group_base']
+        @group_app_base = ldap_config['group_app_base']
+        @mailbox_base = ldap_config['mailbox_base']
+        @mail_alias_base = ldap_config['mail_alias_base']
+        @mail_domain_base = ldap_config['mail_domain_base']
+        @check_group_membership = ldap_config.has_key?('check_group_membership') ? ldap_config['check_group_membership'] : ::Devise.ldap_check_group_membership
+        @required_groups = ldap_config['required_groups']
+        @required_attributes = ldap_config['require_attribute']
+        @customer_auth = ldap_config['no_customer_auth']
+        @email_auth_domain = ldap_config['email_auth_domain']
 
-        @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
-        @ldap.auth params[:login], params[:password] if ldap_config["admin_as_user"]
+        @ldap.auth ldap_config['admin_user'], ldap_config['admin_password'] if params[:admin]
+        @ldap.auth params[:login], params[:password] if ldap_config['admin_as_user']
 
         @login = params[:login]
         @password = params[:password]
@@ -73,6 +76,34 @@ module Devise
         ldap.delete(dn: new_dn)
       end
 
+      def create_group(group, param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{group},#{@group_base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding Group #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_group(group, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{group},#{@group_base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting Group #{new_dn}")
+        ldap.delete(dn: new_dn)
+      end
+
+      def create_app_group(group, param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{group},#{@group_app_base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding Application Group #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_app_group(group, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{group},#{@group_app_base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting Application Group #{new_dn}")
+        ldap.delete(dn: new_dn)
+      end
+
       def create_mailbox(mail, param, attr)
         ldap = Connection.admin
         new_dn = "#{attr}=#{mail},#{@mailbox_base}"
@@ -84,6 +115,44 @@ module Devise
         ldap = Connection.admin
         new_dn = "#{attr}=#{mail},#{@mailbox_base}"
         DeviseLdapAuthenticatable::Logger.send("Deleting Mailbox #{new_dn}")
+        ldap.delete(dn: new_dn)
+      end
+
+      def create_mail_alias(mail_alias, param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{mail_alias},#{@mail_alias_base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding Mail Alias #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_mail_alias(mail_alias, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{mail_alias},#{@mail_alias_base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting Mail Alias #{new_dn}")
+        ldap.delete(dn: new_dn)
+      end
+
+      def update_mail_alias(mail_alias, routing_address, attr)
+        admin_ldap = Connection.admin
+        filter = Net::LDAP::Filter.eq(attr, mail_alias)
+        resource = admin_ldap.search(filter: filter, base: @mail_alias_base).collect(&:dn)
+        if resource.present?
+          DeviseLdapAuthenticatable::Logger.send("Modifying Mail Alias routing addresses for #{resource.first}")
+          admin_ldap.replace_attribute resource.first, :mailroutingaddress, routing_address
+        end
+      end
+
+      def create_mail_domain(domain, param, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{domain},#{@mail_domain_base}"
+        DeviseLdapAuthenticatable::Logger.send("Adding Mail Domain #{new_dn}")
+        ldap.add(dn: new_dn, attributes: param)
+      end
+
+      def delete_mail_domain(domain, attr)
+        ldap = Connection.admin
+        new_dn = "#{attr}=#{domain},#{@mail_domain_base}"
+        DeviseLdapAuthenticatable::Logger.send("Deleting Mail Domain #{new_dn}")
         ldap.delete(dn: new_dn)
       end
 
@@ -235,15 +304,35 @@ module Devise
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 
-      def all_groups
-        admin_ldap = Connection.admin
-        DeviseLdapAuthenticatable::Logger.send("Getting all groups")
-        admin_ldap.search(base: @group_base)
+      def all_app_groups
+        all_groups(@group_app_base)
       end
 
-      def user_group_action(action, user_dn, group_name, group_attribute, user_attribute)
+      def all_groups(base = @group_base)
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all groups")
+        admin_ldap.search(base: base)
+      end
+
+      def all_mail_aliases
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all mail aliases")
+        admin_ldap.search(base: @mail_alias_base)
+      end
+
+      def all_mail_domains
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all mail domains")
+        admin_ldap.search(base: @mail_domain_base)
+      end
+
+      def user_app_group_action(action, user_dn, group_name, group_attribute, user_attribute)
+        user_group_action(action, user_dn, group_name, group_attribute, user_attribute, @group_app_base)
+      end
+
+      def user_group_action(action, user_dn, group_name, group_attribute, user_attribute, base = @group_base)
         ldap = Connection.admin
-        new_dn = "#{group_attribute}=#{group_name},#{@group_base}"
+        new_dn = "#{group_attribute}=#{group_name},#{base}"
         DeviseLdapAuthenticatable::Logger.send("#{action.to_s} user #{user_dn} to #{new_dn}")
         ops = [
             [action.to_sym, user_attribute.to_sym, user_dn]
@@ -268,11 +357,19 @@ module Devise
         end
       end
 
+      def app_groups_for_user(user_value, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+        search_for_user(user_value, group_attribute, @group_app_base)
+      end
+
       def groups_for_user(user_value, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
+        search_for_user(user_value, group_attribute)
+      end
+
+      def search_for_user(user_value, group_attribute, base = @group_base)
         admin_ldap = Connection.admin
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq(group_attribute, user_value)
-        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+        admin_ldap.search(filter: filter, base: base).collect(&:dn)
       end
 
       def users
