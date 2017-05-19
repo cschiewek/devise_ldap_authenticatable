@@ -14,8 +14,9 @@ module Devise
 
         return fail(:invalid) unless resource
 
+
         if resource.persisted?
-          if validate(resource) { resource.valid_ldap_authentication?(password) }
+          if resource.valid_ldap_authentication?(password)
             remember_me(resource)
             resource.after_ldap_authentication
             success!(resource)
