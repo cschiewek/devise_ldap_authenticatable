@@ -1,3 +1,3 @@
 module DeviseLdapAuthenticatable
-  VERSION = '0.9.3'.freeze
+  VERSION = '0.11.0'.freeze
 end

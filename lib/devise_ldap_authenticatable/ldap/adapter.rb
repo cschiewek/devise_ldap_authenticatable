@@ -14,8 +14,9 @@ module Devise
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                    :admin => ::Devise.ldap_use_admin_to_bind}
         resource = Devise::LDAP::Connection.new(options)
+
         if !resource.customer_auth? && resource.login_is_mail?
-          return true unless login.include?("@#{resource.email_auth_domain}")
+          return false unless login.include?("@#{resource.email_auth_domain}")
         end
         resource.authorized?
       end
