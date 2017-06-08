@@ -126,7 +126,7 @@ module Devise
       end
 
       def change_password!
-        update_ldap(:userPassword => ::Devise.ldap_auth_password_builder.call(@new_password))
+        update_ldap(userPassword: @new_password)
       end
 
       def in_required_groups?
