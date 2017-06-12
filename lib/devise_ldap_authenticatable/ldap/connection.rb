@@ -129,6 +129,10 @@ module Devise
         update_ldap(userPassword: @new_password)
       end
 
+      def unlock_account!
+        update_ldap(nsaccountlock: false)
+      end
+
       def in_required_groups?
         return true unless @check_group_membership || @check_group_membership_without_admin
 

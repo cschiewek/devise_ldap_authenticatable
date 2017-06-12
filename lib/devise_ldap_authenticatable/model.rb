@@ -29,11 +29,15 @@ module Devise
       end
 
       def reset_password(new_password, new_password_confirmation)
-        if new_password == new_password_confirmation && ::Devise.ldap_update_password
-          Devise::LDAP::Adapter.update_password(login_with, new_password)
+        if new_password.present? && ::Devise.ldap_update_password
+          self.password = new_password
+          self.password_confirmation = new_password_confirmation
+
+          Devise::LDAP::Adapter.update_password(login_with, new_password) && Devise::LDAP::Adapter.unlock_account(login_with) && save if valid?
+        else
+          errors.add(:password)
+          false
         end
-        clear_reset_password_token if valid?
-        save
       end
 
       def password=(new_password)
