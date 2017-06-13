@@ -18,7 +18,7 @@ module Devise
       end
 
       def login_with
-        @login_with ||= Devise.mappings.find {|k,v| v.class_name == self.class.name}.last.to.authentication_keys.first
+        @login_with ||= Devise.mappings.find {|k,v| v.class_name == self.class.name}.last.to.authentication_keys.flatten.first
         self[@login_with]
       end
 
@@ -27,19 +27,23 @@ module Devise
 
         Devise::LDAP::Adapter.update_own_password(login_with, @password, current_password)
       end
-      
-      def reset_password!(new_password, new_password_confirmation)
-        if new_password == new_password_confirmation && ::Devise.ldap_update_password
-          Devise::LDAP::Adapter.update_password(login_with, new_password)
+
+      def reset_password(new_password, new_password_confirmation)
+        if new_password.present? && ::Devise.ldap_update_password
+          self.password = new_password
+          self.password_confirmation = new_password_confirmation
+
+          Devise::LDAP::Adapter.update_password(login_with, new_password) && Devise::LDAP::Adapter.unlock_account(login_with) && save if valid?
+        else
+          errors.add(:password)
+          false
         end
-        clear_reset_password_token if valid?
-        save
       end
 
       def password=(new_password)
         @password = new_password
         if defined?(password_digest) && @password.present? && respond_to?(:encrypted_password=)
-          self.encrypted_password = password_digest(@password) 
+          self.encrypted_password = password_digest(@password)
         end
       end
 
@@ -88,7 +92,7 @@ module Devise
       module ClassMethods
         # Find a user for ldap authentication.
         def find_for_ldap_authentication(attributes={})
-          auth_key = self.authentication_keys.first
+          auth_key = self.authentication_keys.flatten.first
           return nil unless attributes[auth_key].present?
 
           auth_key_value = (self.case_insensitive_keys || []).include?(auth_key) ? attributes[auth_key].downcase : attributes[auth_key]
