@@ -14,7 +14,6 @@ module Devise
 
         return fail(:invalid) unless resource
 
-
         if resource.persisted?
           if resource.valid_ldap_authentication?(password)
             remember_me(resource)
@@ -27,7 +26,16 @@ module Devise
 
         if resource.new_record?
           if validate(resource) { resource.valid_ldap_authentication?(password) }
-            return fail(:not_found_in_database) # Valid credentials
+            if ::Devise.ldap_create_user
+              resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
+              resource.save
+
+              remember_me(resource)
+              resource.after_ldap_authentication
+              success!(resource)
+            else
+              return fail(:not_found_in_database) # Valid credentials
+            end
           else
             return fail(:invalid) # Invalid credentials
           end
