@@ -55,7 +55,7 @@ module Devise
         resource.delete_user(username, attribute_list_key)
       end
 
-      def self.update_attributes(login, user, attribute_mappings = nil)
+      def self.update_attributes(login, user, attribute_mappings = nil, object_classes = nil)
         options = {:login => login,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                    :admin => ::Devise.ldap_use_admin_to_bind}
@@ -65,6 +65,8 @@ module Devise
         attributes.each do |key, value|
           resource.set_param(mapper.get_ldap_attribute(key.to_sym), value) unless key.nil?
         end
+        binding.pry
+        resource.set_param(:objectclass, object_classes) unless object_classes.nil?
       end
 
       def self.update_password(login, new_password)
