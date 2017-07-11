@@ -32,6 +32,7 @@ module Devise
         @required_attributes = ldap_config['require_attribute']
         @customer_auth = ldap_config['no_customer_auth']
         @email_auth_domain = ldap_config['email_auth_domain']
+        @samba_domain = ldap_config['samba_domain']
 
         @ldap.auth ldap_config['admin_user'], ldap_config['admin_password'] if params[:admin]
         @ldap.auth params[:login], params[:password] if ldap_config['admin_as_user']
@@ -231,6 +232,7 @@ module Devise
       end
 
       def change_password!
+        binding.pry
         update_ldap(:userpassword => Net::LDAP::Password.generate(:ssha, @new_password))
       end
 
@@ -406,6 +408,23 @@ module Devise
           DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
           ldap_entry
         end
+      end
+
+      def get_samba_sid
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting SAMBA SID for #{@samba_domain}")
+        filter = Net::LDAP::Filter.pres('sambaSID')
+        result = admin_ldap.search(filter: filter, base: @samba_domain)
+        result.first[:sambasid].first unless result.nil?
+      end
+
+      def set_samba_user_password(sid, password)
+        new_pasword = OpenSSL::Digest::MD4.hexdigest(Iconv.iconv('UCS-2', 'UTF-8', password).join).upcase
+        DeviseLdapAuthenticatable::Logger.send("Setting SambaNTPassword for #{dn}")
+        update_ldap( { sambasid: sid,
+                       sambaactflags: '[U]',
+                       sambantntpassword: new_pasword,
+                       sambapwdlastset: DateTime.now.to_time.to_i } )
       end
 
       private

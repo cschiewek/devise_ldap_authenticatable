@@ -336,6 +336,22 @@ module Devise
         self.ldap_connect(login).search_for_login
       end
 
+      def self.get_samba_sid(login)
+        self.ldap_connect(login).get_samba_sid
+      end
+
+      def self.set_samba_sid(login, sid)
+        options = {:login => login,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :admin => ::Devise.ldap_use_admin_to_bind}
+        resource = Devise::LDAP::Connection.new(options)
+        resource.set_param('sambaSID', sid)
+      end
+
+      def self.generate_samba_nt_password(password)
+        OpenSSL::Digest::MD4.hexdigest(Iconv.iconv('UCS-2', 'UTF-8', password).join).upcase
+      end
+
     end
 
   end

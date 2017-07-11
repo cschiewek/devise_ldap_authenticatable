@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email = 'curtis.schiewek@gmail.com'
   s.homepage = 'https://github.com/cschiewek/devise_ldap_authenticatable'
   s.description = s.summary
-  s.authors = ['Curtis Schiewek', 'Daniel McNevin', 'Steven Xu']
+  s.authors = ['Curtis Schiewek', 'Daniel McNevin', 'Steven Xu', 'Pieter Martens']
   s.license = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
