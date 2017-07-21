@@ -65,7 +65,6 @@ module Devise
         attributes.each do |key, value|
           resource.set_param(mapper.get_ldap_attribute(key.to_sym), value) unless key.nil?
         end
-        binding.pry
         resource.set_param(:objectclass, object_classes) unless object_classes.nil?
       end
 
@@ -296,6 +295,10 @@ module Devise
 
       def self.get_users(login)
         self.ldap_connect(login).users
+      end
+
+      def self.get_dns_records(login)
+        self.ldap_connect(login).all_dns_records
       end
 
       def self.in_ldap_group?(login, group_name, group_attribute = nil)

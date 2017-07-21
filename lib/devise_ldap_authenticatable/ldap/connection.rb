@@ -27,6 +27,7 @@ module Devise
         @mailbox_base = ldap_config['mailbox_base']
         @mail_alias_base = ldap_config['mail_alias_base']
         @mail_domain_base = ldap_config['mail_domain_base']
+        @dns_domain_base = ldap_config['dns_domain_base']
         @check_group_membership = ldap_config.has_key?('check_group_membership') ? ldap_config['check_group_membership'] : ::Devise.ldap_check_group_membership
         @required_groups = ldap_config['required_groups']
         @required_attributes = ldap_config['require_attribute']
@@ -425,6 +426,12 @@ module Devise
                        sambaactflags: '[U]',
                        sambantntpassword: new_pasword,
                        sambapwdlastset: DateTime.now.to_time.to_i } )
+      end
+
+      def all_dns_records
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting all mail domains")
+        admin_ldap.search(base: @dns_domain_base)
       end
 
       private
