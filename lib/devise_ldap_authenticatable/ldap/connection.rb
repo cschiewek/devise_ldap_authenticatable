@@ -139,7 +139,7 @@ module Devise
           if group.is_a?(Array)
             return false unless in_group?(group[1], group[0])
           else
-            return false unless in_group?(group)
+            return false unless in_group?(group, @group_membership_attribute)
           end
         end
         return true
