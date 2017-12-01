@@ -10,7 +10,7 @@ If you are building applications for use within your organization which require 
 
 Devise LDAP Authenticatable works in replacement of Database Authenticatable. This devise plugin has not been tested with DatabaseAuthenticatable enabled at the same time. This is meant as a drop in replacement for DatabaseAuthenticatable allowing for a semi single sign on approach.
 
-For a screencast with an example application, please visit: [http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html](http://random-rails.blogspot.com/2010/07/ldap-authentication-with-devise.html)
+For a screencast with an example application, please visit: [http://corrupt.net/2010/07/05/LDAP-Authentication-With-Devise/](http://corrupt.net/2010/07/05/LDAP-Authentication-With-Devise/)
 
 Prerequisites
 -------------
