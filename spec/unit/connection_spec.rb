@@ -12,6 +12,24 @@ describe 'Connection' do
     expect(connection.ldap.base).to eq('ou=testbase,dc=test,dc=com')
   end
 
+  it 'allows encryption options to be set in ldap_config' do
+    ::Devise.ldap_config = Proc.new() {{
+      'host' => 'localhost',
+      'port' => 3389,
+      'base' => 'ou=testbase,dc=test,dc=com',
+      'attribute' => 'cn',
+      'encryption' => {
+        :method => :simple_tls,
+        :tls_options => OpenSSL::SSL::SSLContext::DEFAULT_PARAMS
+      }
+    }}
+    connection = Devise::LDAP::Connection.new()
+    expect(connection.ldap.instance_variable_get(:@encryption)).to eq({
+      :method => :simple_tls,
+      :tls_options => OpenSSL::SSL::SSLContext::DEFAULT_PARAMS
+    })
+  end
+
   class TestOpResult
     attr_accessor :error_message
   end
