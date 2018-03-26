@@ -377,11 +377,17 @@ module Devise
 
       def users
         admin_ldap = Connection.admin
-        DeviseLdapAuthenticatable::Logger.send("Getting all users")
+        DeviseLdapAuthenticatable::Logger.send("Getting all user")
         admin_ldap.search()
       end
 
-      def user(user_value, find_attribute = LDAP::DEFAULT_USER_UNIQUE_LIST_KEY)
+      def user
+        admin_ldap = Connection.admin
+        DeviseLdapAuthenticatable::Logger.send("Getting user info")
+        admin_ldap.search(base: dn)
+      end
+
+      def user_value(user_value, find_attribute = LDAP::DEFAULT_USER_UNIQUE_LIST_KEY)
         admin_ldap = Connection.admin
         DeviseLdapAuthenticatable::Logger.send("Getting user info")
         filter = Net::LDAP::Filter.eq(find_attribute, user_value)

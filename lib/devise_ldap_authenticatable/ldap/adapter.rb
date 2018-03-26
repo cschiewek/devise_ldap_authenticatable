@@ -289,8 +289,12 @@ module Devise
         self.ldap_connect(login).personal_mailbox(email, mailbox_attribute)
       end
 
-      def self.get_user(login, user_value, find_attribute = nil)
-        self.ldap_connect(login).user(user_value, find_attribute)
+      def self.get_user_value(login, user_value, find_attribute = nil)
+        self.ldap_connect(login).user_value(user_value, find_attribute)
+      end
+
+      def self.get_user(login)
+        self.ldap_connect(login).user
       end
 
       def self.get_users(login)
