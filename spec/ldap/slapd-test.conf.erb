@@ -10,7 +10,7 @@ include		/etc/<%= ldapdir %>/schema/nis.schema
 
 ## Local definitions
 # include		/etc/<%= ldapdir %>/schema/local.schema
-include   <%= File.expand_path('local.schema', @conf_root) %>
+include   <%= File.expand_path('local.schema', @conf_root).gsub(' ', '\ ') %>
 
 # Allow LDAPv2 client connections.  This is NOT the default.
 allow bind_v2
@@ -19,8 +19,8 @@ allow bind_v2
 # service AND an understanding of referrals.
 #referral	ldap://root.openldap.org
 
-pidfile         <%= File.expand_path('openldap-data/run/slapd.pid', @conf_root) %>
-argsfile        <%= File.expand_path('openldap-data/run/slapd.args', @conf_root) %>
+pidfile         <%= File.expand_path('openldap-data/run/slapd.pid', @conf_root).gsub(' ', '\ ') %>
+argsfile        <%= File.expand_path('openldap-data/run/slapd.args', @conf_root).gsub(' ', '\ ') %>
 
 # Load dynamic backend modules:
 modulepath	/usr/lib/openldap
