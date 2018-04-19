@@ -99,7 +99,7 @@ These parameters will be added to `config/initializers/devise.rb` when you pass 
 
 Troubleshooting
 --------------
-**Using a "username" instead of an "email":** The field that is used for logins is the first key that's configured in the `config/initializers/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise. Also, this [documentation](https://github.com/plataformatec/devise/wiki/How-To%3a-Allow-users-to-sign-in-using-their-username-or-email-address) from Devise can very helpful.
+**Using a "username" instead of an "email":** The field that is used for logins is the first key that's configured in the `config/initializers/devise.rb` file under `config.authentication_keys`, which by default is email. For help changing this, please see the [Railscast](http://railscasts.com/episodes/210-customizing-devise) that goes through how to customize Devise. Also, this [documentation](https://github.com/plataformatec/devise/wiki/How-To%3a-Allow-users-to-sign-in-using-their-username-or-email-address) from Devise can be very helpful.
 
 **SSL certificate invalid:** If you're using a test LDAP server running a self-signed SSL certificate, make sure the appropriate root certificate is installed on your system. Alternately, you may temporarily disable certificate checking for SSL by modifying your system LDAP configuration (e.g., `/etc/openldap/ldap.conf` or `/etc/ldap/ldap.conf`) to read `TLS_REQCERT never`.
 
