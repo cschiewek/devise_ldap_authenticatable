@@ -233,7 +233,6 @@ module Devise
       end
 
       def change_password!
-        binding.pry
         update_ldap(:userpassword => Net::LDAP::Password.generate(:ssha, @new_password))
       end
 
