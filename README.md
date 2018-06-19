@@ -1,7 +1,8 @@
 Devise LDAP Authenticatable
 ===========================
-[![Gem Version](https://badge.fury.io/rb/devise_ldap_authenticatable.png)](http://badge.fury.io/rb/devise_ldap_authenticatable)
-[![Code Climate](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable.png)](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable)
+
+[![Gem Version](https://badge.fury.io/rb/devise_ldap_authenticatable.svg)](http://badge.fury.io/rb/devise_ldap_authenticatable)
+[![Code Climate](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable.svg)](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable)
 
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
