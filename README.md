@@ -1,8 +1,8 @@
 Devise LDAP Authenticatable
 ===========================
+
 [![Gem Version](https://badge.fury.io/rb/devise_ldap_authenticatable.svg)](http://badge.fury.io/rb/devise_ldap_authenticatable)
 [![Code Climate](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable.svg)](https://codeclimate.com/github/cschiewek/devise_ldap_authenticatable)
-[![Dependency Status](https://gemnasium.com/cschiewek/devise_ldap_authenticatable.svg)](https://gemnasium.com/cschiewek/devise_ldap_authenticatable)
 
 Devise LDAP Authenticatable is a LDAP based authentication strategy for the [Devise](http://github.com/plataformatec/devise) authentication framework.
 
@@ -25,12 +25,14 @@ Usage
 -----
 In the Gemfile for your application:
 
-    gem "devise_ldap_authenticatable"
-
+```ruby
+gem "devise_ldap_authenticatable"
+```
 To get the latest version, pull directly from github instead of the gem:
 
-    gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git"
-
+```ruby
+gem "devise_ldap_authenticatable", :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git"
+```
 
 Setup
 -----
@@ -61,9 +63,11 @@ Given that `ldap_create_user` is set to true and you are authenticating with use
 
 in your user model you have to simply define `ldap_before_save` method:
 
-    def ldap_before_save
-      self.email = Devise::LDAP::Adapter.get_ldap_param(self.username,"mail").first
-    end
+```ruby
+def ldap_before_save
+  self.email = Devise::LDAP::Adapter.get_ldap_param(self.username,"mail").first
+end
+```
 
 Configuration
 -------------
