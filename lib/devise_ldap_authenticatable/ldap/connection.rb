@@ -217,10 +217,16 @@ module Devise
       end
 
       def user_groups
-        admin_ldap = Connection.admin
+        if ::Devise.ldap_use_admin_to_bind
+          admin_ldap = Connection.admin
+        else
+          admin_ldap = @ldap
+        end
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq(@group_membership_attribute, dn)
-        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+        filter_pattern = ldap_param_value(@attribute)&.first
+        DeviseLdapAuthenticatable::Logger.send("Getting groups for filter patern #{filter_pattern}")
+        filter = Net::LDAP::Filter.eq(@group_membership_attribute, filter_pattern)
+        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:cn).flatten
       end
 
       def valid_login?
