@@ -57,6 +57,18 @@ module Devise
         end
       end
 
+      def uid
+        @uid ||= begin
+          DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
+          ldap_entry = search_for_login
+          if ldap_entry.nil?
+            @ldap_auth_username_builder.call(@attribute,@login,@ldap)
+          else
+            ldap_entry.uid&.first
+          end
+        end
+      end
+
       def ldap_param_value(param)
         ldap_entry = search_for_login
 
@@ -156,7 +168,10 @@ module Devise
 
         unless ::Devise.ldap_ad_group_check
           group_checking_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            if entry[group_attribute].include? dn
+            if entry[group_attribute].include? uid
+              in_group = true
+              DeviseLdapAuthenticatable::Logger.send("User #{uid} IS included in group: #{group_name}")
+            elsif entry[group_attribute].include? dn
               in_group = true
               DeviseLdapAuthenticatable::Logger.send("User #{dn} IS included in group: #{group_name}")
             end
