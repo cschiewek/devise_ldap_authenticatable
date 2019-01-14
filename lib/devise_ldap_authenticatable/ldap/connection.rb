@@ -147,14 +147,15 @@ module Devise
         ## FIXME set errors here, the ldap.yml isn't set properly.
         return false if @required_groups.nil?
 
+        # make sure in any one of group
         for group in @required_groups
           if group.is_a?(Array)
-            return false unless in_group?(group[1], group[0])
+            return true if in_group?(group[1], group[0])
           else
-            return false unless in_group?(group)
+            return true if in_group?(group)
           end
         end
-        return true
+        return false
       end
 
       def in_group?(group_name, group_attribute = LDAP::DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY)
