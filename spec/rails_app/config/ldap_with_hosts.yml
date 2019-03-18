@@ -11,7 +11,9 @@ authorizations: &AUTHORIZATIONS
     mail: true
 
 test: &TEST
-  hosts: [0.0.0.0, "localhost"]
+  hosts:
+    - "0.0.0.0": 33899 #Should fail, is incorrect port!
+    - "localhost": 3389
   port: 3389
   attribute: uid
   base: ou=people,dc=test,dc=com

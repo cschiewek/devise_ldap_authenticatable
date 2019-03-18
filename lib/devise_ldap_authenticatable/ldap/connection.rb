@@ -15,7 +15,21 @@ module Devise
 
         @ldap = Net::LDAP.new(ldap_options)
         if ldap_config["hosts"].present?
-          @ldap.hosts = hosts_transform(ldap_config["hosts"], ldap_config["port"])
+          hosts = nil
+          unless ldap_config["hosts"].is_a?(Array)
+            DeviseLdapAuthenticatable::Logger.send("Given hosts configuration is not correct, check the example ldap.yml from the generator")
+            return
+          end
+
+          if ldap_config["hosts"].all? { |host| host.is_a?(Hash) }
+            hosts = ldap_config["hosts"].flat_map(&:to_a)
+          elsif ldap_config["hosts"].all? { |host| host.is_a?(Array) }
+            hosts = ldap_config["hosts"]
+          else
+            DeviseLdapAuthenticatable::Logger.send("Given hosts configuration is not correct, check the example ldap.yml from the generator")
+          end
+
+          @ldap.hosts = hosts
           @ldap.host = nil
         else
           @ldap.host = ldap_config["host"]
@@ -41,12 +55,6 @@ module Devise
         @login = params[:login]
         @password = params[:password]
         @new_password = params[:new_password]
-      end
-
-      def hosts_transform(hosts_array, port)
-        hosts_array.map do |host|
-          [host, port]
-        end
       end
 
       def delete_param(param)

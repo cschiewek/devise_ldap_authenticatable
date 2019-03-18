@@ -29,7 +29,9 @@ authorizations: &AUTHORIZATIONS
 
 development:
   host: localhost
-  #hosts: [localhost, another_host]
+  # hosts:
+  #   - "hostname": 389
+  #   - "another_hostname": 389
   port: 389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -40,7 +42,9 @@ development:
 
 test:
   host: localhost
-  #hosts: [localhost, another_host]
+  # hosts:
+  #   - "hostname": 3389
+  #   - "another_hostname": 3389
   port: 3389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -51,7 +55,9 @@ test:
 
 production:
   host: localhost
-  #hosts: [localhost, another_host]
+  # hosts:
+  #   - "hostname": 636
+  #   - "another_hostname": 636
   port: 636
   attribute: cn
   base: ou=people,dc=test,dc=com
