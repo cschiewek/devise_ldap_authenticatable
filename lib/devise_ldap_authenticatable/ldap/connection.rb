@@ -14,7 +14,13 @@ module Devise
         ldap_options[:encryption] = ldap_config["ssl"].to_sym if ldap_config["ssl"]
 
         @ldap = Net::LDAP.new(ldap_options)
-        @ldap.host = ldap_config["host"]
+        if ldap_config["hosts"].present?
+          @ldap.hosts = hosts_transform(ldap_config["hosts"], ldap_config["port"])
+          @ldap.host = nil
+        else
+          @ldap.host = ldap_config["host"]
+        end
+
         @ldap.port = ldap_config["port"]
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
@@ -37,12 +43,18 @@ module Devise
         @new_password = params[:new_password]
       end
 
+      def hosts_transform(hosts_array, port)
+        hosts_array.map do |host|
+          [host, port]
+        end
+      end
+
       def delete_param(param)
         update_ldap [[:delete, param.to_sym, nil]]
       end
 
       def set_param(param, new_value)
-        update_ldap( { param.to_sym => new_value } )
+        update_ldap({param.to_sym => new_value})
       end
 
       def dn
@@ -50,7 +62,7 @@ module Devise
           DeviseLdapAuthenticatable::Logger.send("LDAP dn lookup: #{@attribute}=#{@login}")
           ldap_entry = search_for_login
           if ldap_entry.nil?
-            @ldap_auth_username_builder.call(@attribute,@login,@ldap)
+            @ldap_auth_username_builder.call(@attribute, @login, @ldap)
           else
             ldap_entry.dn
           end
@@ -86,11 +98,11 @@ module Devise
       end
 
       def last_message_bad_credentials?
-        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 52e'
+        @ldap.get_operation_result.error_message.to_s.include? "AcceptSecurityContext error, data 52e"
       end
 
       def last_message_expired_credentials?
-        @ldap.get_operation_result.error_message.to_s.include? 'AcceptSecurityContext error, data 773'
+        @ldap.get_operation_result.error_message.to_s.include? "AcceptSecurityContext error, data 773"
       end
 
       def authorized?
@@ -187,7 +199,7 @@ module Devise
         admin_ldap = Connection.admin
         user = find_ldap_user(admin_ldap)
 
-        @required_attributes.each do |key,val|
+        @required_attributes.each do |key, val|
           matching_attributes = user[key] & Array(val)
           unless (matching_attributes).any?
             DeviseLdapAuthenticatable::Logger.send("User #{dn} did not match attribute #{key}:#{val}")
@@ -203,7 +215,7 @@ module Devise
 
         user = search_for_login
 
-        @required_attributes_presence.each do |key,val|
+        @required_attributes_presence.each do |key, val|
           if val && !user.attribute_names.include?(key.to_sym)
             DeviseLdapAuthenticatable::Logger.send("User #{dn} doesn't include attribute #{key}")
             return false
@@ -236,9 +248,9 @@ module Devise
           filter = Net::LDAP::Filter.eq(@attribute.to_s, @login.to_s)
           ldap_entry = nil
           match_count = 0
-          @ldap.search(:filter => filter) {|entry| ldap_entry = entry; match_count+=1}
-          op_result= @ldap.get_operation_result
-          if op_result.code!=0 then
+          @ldap.search(:filter => filter) { |entry| ldap_entry = entry; match_count += 1 }
+          op_result = @ldap.get_operation_result
+          if op_result.code != 0
             DeviseLdapAuthenticatable::Logger.send("LDAP Error #{op_result.code}: #{op_result.message}")
           end
           DeviseLdapAuthenticatable::Logger.send("LDAP search yielded #{match_count} matches")
@@ -267,8 +279,8 @@ module Devise
       def update_ldap(ops)
         operations = []
         if ops.is_a? Hash
-          ops.each do |key,value|
-            operations << [:replace,key,value]
+          ops.each do |key, value|
+            operations << [:replace, key, value]
           end
         elsif ops.is_a? Array
           operations = ops

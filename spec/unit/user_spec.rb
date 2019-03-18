@@ -1,13 +1,12 @@
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require File.expand_path("../spec_helper", File.dirname(__FILE__))
 
-describe 'Users' do
-
+describe "Users" do
   def should_be_validated(user, password, message = "Password is invalid")
     assert(user.valid_ldap_authentication?(password), message)
   end
 
   def should_not_be_validated(user, password, message = "Password is not properly set")
-     assert(!user.valid_ldap_authentication?(password), message)
+    assert(!user.valid_ldap_authentication?(password), message)
   end
 
   describe "With default settings" do
@@ -18,11 +17,11 @@ describe 'Users' do
 
     describe "look up an ldap user" do
       it "should return true for a user that does exist in LDAP" do
-        assert_equal true, ::Devise::LDAP::Adapter.valid_login?('example.user@test.com')
+        assert_equal true, ::Devise::LDAP::Adapter.valid_login?("example.user@test.com")
       end
 
       it "should return false for a user that doesn't exist in LDAP" do
-        assert_equal false, ::Devise::LDAP::Adapter.valid_login?('barneystinson')
+        assert_equal false, ::Devise::LDAP::Adapter.valid_login?("barneystinson")
       end
     end
 
@@ -61,7 +60,6 @@ describe 'Users' do
     end
 
     describe "create new local user if user is in LDAP" do
-
       before do
         assert(User.all.blank?, "There shouldn't be any users in the database")
       end
@@ -119,7 +117,6 @@ describe 'Users' do
           expect(User.all.collect(&:email)).to include("example.user@test.com")
         end
       end
-
     end
 
     describe "use groups for authorization" do
@@ -135,7 +132,7 @@ describe 'Users' do
       end
 
       it "should admin should have the proper groups set" do
-        expect(@admin.ldap_groups).to include('cn=admins,ou=groups,dc=test,dc=com')
+        expect(@admin.ldap_groups).to include("cn=admins,ou=groups,dc=test,dc=com")
       end
 
       it "should user should not be allowed in" do
@@ -150,23 +147,23 @@ describe 'Users' do
       end
 
       it "should return true for admin being in the admins group" do
-        assert_equal true, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
+        assert_equal true, @admin.in_ldap_group?("cn=admins,ou=groups,dc=test,dc=com")
       end
 
       it "should return false for admin being in the admins group using the 'foobar' group attribute" do
-        assert_equal false, @admin.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com', 'foobar')
+        assert_equal false, @admin.in_ldap_group?("cn=admins,ou=groups,dc=test,dc=com", "foobar")
       end
 
       it "should return true for user being in the users group" do
-        assert_equal true, @user.in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
+        assert_equal true, @user.in_ldap_group?("cn=users,ou=groups,dc=test,dc=com")
       end
 
       it "should return false for user being in the admins group" do
-        assert_equal false, @user.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?("cn=admins,ou=groups,dc=test,dc=com")
       end
 
       it "should return false for a user being in a nonexistent group" do
-        assert_equal false, @user.in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?("cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com")
       end
     end
 
@@ -181,15 +178,15 @@ describe 'Users' do
       end
 
       it "should return true for user being in the users group" do
-        assert_equal true, @user.in_ldap_group?('cn=users,ou=groups,dc=test,dc=com')
+        assert_equal true, @user.in_ldap_group?("cn=users,ou=groups,dc=test,dc=com")
       end
 
       it "should return false for user being in the admins group" do
-        assert_equal false, @user.in_ldap_group?('cn=admins,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?("cn=admins,ou=groups,dc=test,dc=com")
       end
 
       it "should return false for a user being in a nonexistent group" do
-        assert_equal false, @user.in_ldap_group?('cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com')
+        assert_equal false, @user.in_ldap_group?("cn=thisgroupdoesnotexist,ou=groups,dc=test,dc=com")
       end
 
       # TODO: add a test that confirms the user's own binding is used rather
@@ -249,17 +246,38 @@ describe 'Users' do
       end
     end
 
-    describe 'check password expiration' do
+    describe "check password expiration" do
       before { allow_any_instance_of(Devise::LDAP::Connection).to receive(:authenticated?).and_return(false) }
 
-      it 'should return false for a user that has a fresh password' do
+      it "should return false for a user that has a fresh password" do
         allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(false)
-        assert_equal false, ::Devise::LDAP::Adapter.expired_valid_credentials?('example.user@test.com','secret')
+        assert_equal false, ::Devise::LDAP::Adapter.expired_valid_credentials?("example.user@test.com", "secret")
       end
 
-      it 'should return true for a user that has an expired password' do
+      it "should return true for a user that has an expired password" do
         allow_any_instance_of(Devise::LDAP::Connection).to receive(:last_message_expired_credentials?).and_return(true)
-        assert_equal true, ::Devise::LDAP::Adapter.expired_valid_credentials?('example.user@test.com','secret')
+        assert_equal true, ::Devise::LDAP::Adapter.expired_valid_credentials?("example.user@test.com", "secret")
+      end
+    end
+  end
+
+  describe "With multiple hosts settings" do
+    before do
+      default_devise_settings!
+      reset_ldap_server!
+      ::Devise.ldap_config = "#{Rails.root}/config/ldap_with_hosts.yml"
+      ::Devise.authentication_keys = [:uid]
+    end
+
+    describe "description" do
+      before do
+        @admin = Factory.create(:admin)
+        @user = Factory.create(:user, :uid => "example_user")
+      end
+
+      it "should be able to authenticate using uid" do
+        should_be_validated @user, "secret"
+        should_not_be_validated @admin, "admin_secret"
       end
     end
   end
@@ -298,11 +316,11 @@ describe 'Users' do
       it "should call ldap_before_save hooks" do
         User.class_eval do
           def ldap_before_save
-            @foobar = 'foobar'
+            @foobar = "foobar"
           end
         end
         user = User.find_for_ldap_authentication(:uid => "example_user", :password => "secret")
-        assert_equal 'foobar', user.instance_variable_get(:"@foobar")
+        assert_equal "foobar", user.instance_variable_get(:"@foobar")
         User.class_eval do
           undef ldap_before_save
         end
@@ -338,7 +356,7 @@ describe 'Users' do
     before do
       default_devise_settings!
       reset_ldap_server!
-      ::Devise.ldap_config = Rails.root.join 'config', 'ldap_with_boolean_ssl.yml'
+      ::Devise.ldap_config = Rails.root.join "config", "ldap_with_boolean_ssl.yml"
     end
 
     it "should not fail if config file has ssl: true" do
@@ -360,5 +378,4 @@ describe 'Users' do
       should_be_validated @other, "other_secret"
     end
   end
-
 end

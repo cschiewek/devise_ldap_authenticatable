@@ -29,6 +29,7 @@ authorizations: &AUTHORIZATIONS
 
 development:
   host: localhost
+  #hosts: [localhost, another_host]
   port: 389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -39,6 +40,7 @@ development:
 
 test:
   host: localhost
+  #hosts: [localhost, another_host]
   port: 3389
   attribute: cn
   base: ou=people,dc=test,dc=com
@@ -49,6 +51,7 @@ test:
 
 production:
   host: localhost
+  #hosts: [localhost, another_host]
   port: 636
   attribute: cn
   base: ou=people,dc=test,dc=com

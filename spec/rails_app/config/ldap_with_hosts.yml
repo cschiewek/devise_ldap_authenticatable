@@ -1,0 +1,24 @@
+authorizations: &AUTHORIZATIONS
+  ## Authorization
+  group_base: ou=groups,dc=test,dc=com
+  required_groups:
+    - cn=admins,ou=groups,dc=test,dc=com
+    - ["authorizationRole", "cn=users,ou=groups,dc=test,dc=com"]
+  require_attribute:
+    objectClass: inetOrgPerson
+    authorizationRole: blogAdmin
+  require_attribute_presence:
+    mail: true
+
+test: &TEST
+  hosts: [0.0.0.0, "localhost"]
+  port: 3389
+  attribute: uid
+  base: ou=people,dc=test,dc=com
+  admin_user: cn=admin,dc=test,dc=com
+  admin_password: secret
+  ssl: false
+  <<: *AUTHORIZATIONS
+
+development:
+  <<: *TEST
