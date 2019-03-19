@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+v.0.8.7
+----
+
+Added the option to have multiple hosts (for fallback) in the YAML config
+
+
 v0.8
 ----
 
