@@ -10,8 +10,15 @@ module Devise
           ldap_config = YAML.load(ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result)[Rails.env]
         end
         ldap_options = params
-        ldap_config["ssl"] = :simple_tls if ldap_config["ssl"] === true
-        ldap_options[:encryption] = ldap_config["ssl"].to_sym if ldap_config["ssl"]
+
+        if ldap_config.has_key?('encryption')
+          ldap_options[:encryption] = ldap_config['encryption'].with_indifferent_access
+        elsif ldap_config["ssl"] === true
+          ldap_options[:encryption] = {
+            method: :simple_tls,
+            tls_options: OpenSSL::SSL::SSLContext::DEFAULT_PARAMS
+          }
+        end
 
         @ldap = Net::LDAP.new(ldap_options)
         @ldap.host = ldap_config["host"]
