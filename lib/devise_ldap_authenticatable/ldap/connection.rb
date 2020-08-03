@@ -14,7 +14,14 @@ module Devise
         # Allow `ssl: true` shorthand in YAML, but enable more control with `encryption`
         ldap_config["ssl"] = :simple_tls if ldap_config["ssl"] === true
         ldap_options[:encryption] = ldap_config["ssl"].to_sym if ldap_config["ssl"]
-        ldap_options[:encryption] = ldap_config["encryption"] if ldap_config["encryption"]
+
+        if ldap_config["encryption"]
+          ldap_options[:encryption] = ldap_config["encryption"].deep_symbolize_keys
+          ldap_options[:encryption][:method] = ldap_options[:encryption][:method].to_sym if ldap_options[:encryption][:method]
+          if ldap_options[:encryption][:tls_options]
+            ldap_options[:encryption][:tls_options][:verify_mode] = OpenSSL::SSL::VERIFY_NONE if ldap_options[:encryption][:tls_options][:verify_mode] = "OpenSSL::SSL::VERIFY_NONE"
+          end
+        end
 
         @ldap = Net::LDAP.new(ldap_options)
         @ldap.host = ldap_config["host"]
