@@ -51,8 +51,8 @@ module Devise
         self.ldap_connect(login).valid_login?
       end
 
-      def self.get_groups(login)
-        self.ldap_connect(login).user_groups
+      def self.get_groups(login, attr = :dn)
+        self.ldap_connect(login).user_groups(attr)
       end
 
       def self.in_ldap_group?(login, group_name, group_attribute = nil)

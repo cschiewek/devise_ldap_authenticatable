@@ -12,7 +12,7 @@ authorizations: &AUTHORIZATIONS
     - cn=admins,ou=groups,dc=test,dc=com
     - cn=users,ou=groups,dc=test,dc=com
     # If an array is given, the first element will be the attribute to check against, the second the group name
-    - ["moreMembers", "cn=users,ou=groups,dc=test,dc=com"]
+    - ["memberUid", "cn=users,ou=groups,dc=test,dc=com"]
   ## Requires config.ldap_check_attributes in devise.rb to be true
   ## Can have multiple attributes and values, must match all to be authorized
   require_attribute:
@@ -20,10 +20,13 @@ authorizations: &AUTHORIZATIONS
     authorizationRole: postsAdmin
   ## Requires config.ldap_check_attributes_presence in devise.rb to be true
   ## Can have multiple attributes set to true or false to check presence, all must match all to be authorized
+  ## Change the attributes value to lowercase
   require_attribute_presence:
     mail: true
-    telephoneNumber: true
-    serviceAccount: false
+    telephonenumber: true
+    serviceaccount: false
+  ## If you want to get the user groups, you can check according to the new membership
+  group_membership_attribute: memberUid
 
 ## Environment
 
