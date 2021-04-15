@@ -159,7 +159,7 @@ module Devise
 
         unless ::Devise.ldap_ad_group_check
           group_checking_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            if entry[group_attribute].include? dn
+            if entry[group_attribute].include? @login
               in_group = true
               DeviseLdapAuthenticatable::Logger.send("User #{dn} IS included in group: #{group_name}")
             end
@@ -219,11 +219,11 @@ module Devise
         return true
       end
 
-      def user_groups
+      def user_groups(attr = :dn)
         admin_ldap = Connection.admin
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq(@group_membership_attribute, dn)
-        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+        filter = Net::LDAP::Filter.eq(@group_membership_attribute, @login)
+        admin_ldap.search(:filter => filter, :base => @group_base).collect(&attr.to_sym)
       end
 
       def valid_login?
