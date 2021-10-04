@@ -13,6 +13,8 @@ authorizations: &AUTHORIZATIONS
     - cn=users,ou=groups,dc=test,dc=com
     # If an array is given, the first element will be the attribute to check against, the second the group name
     - ["moreMembers", "cn=users,ou=groups,dc=test,dc=com"]
+    # If multiple group names are given, verification will be satisfied if at least one of them matches the check
+    - ["moreMembers", "cn=mods,ou=groups,dc=test,dc=com", "cn=admins,ou=groups,dc=test,dc=com"]
   ## Requires config.ldap_check_attributes in devise.rb to be true
   ## Can have multiple attributes and values, must match all to be authorized
   require_attribute:
