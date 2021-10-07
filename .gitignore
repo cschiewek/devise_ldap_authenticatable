@@ -9,3 +9,4 @@ test/rails_app/tmp
 pkg/*
 *.gem
 .vscode
+spec/rails_app/tmp
