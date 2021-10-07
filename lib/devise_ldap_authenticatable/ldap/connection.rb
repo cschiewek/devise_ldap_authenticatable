@@ -140,7 +140,6 @@ module Devise
 
         for group in @required_groups
           if group.is_a?(Array)
-            return false unless in_group?(group[1], group[0])
             return false unless group[1..-1].select(&:present?).any? { |g| in_group?(g, group[0]) }
           else
             return false unless in_group?(group)
