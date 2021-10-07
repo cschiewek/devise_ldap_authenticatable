@@ -70,6 +70,82 @@ describe 'Connection' do
     end
   end
 
+  describe '#in_required_groups?' do
+    before do
+      conn = double(Net::LDAP).as_null_object
+      allow(Net::LDAP).to receive(:new).and_return(conn)
+    end
+
+    let(:check_group_membership) { true }
+    let(:required_groups) { %w[group1 group2] }
+
+    let(:connection) do
+      Devise::LDAP::Connection.new.tap do |c|
+        allow(c).to receive(:dn).and_return('any dn')
+        c.instance_variable_set(:@required_groups, required_groups)
+        c.instance_variable_set(:@check_group_membership, check_group_membership)
+      end
+    end
+
+    context 'required_groups is given as array of strings' do
+      it 'returns true if member of all the listed group' do
+        allow(connection).to receive(:in_group?).with('group1').and_return(true)
+        allow(connection).to receive(:in_group?).with('group2').and_return(false)
+        expect(connection.in_required_groups?).to be(false)
+
+        allow(connection).to receive(:in_group?).with('group1').and_return(true)
+        allow(connection).to receive(:in_group?).with('group2').and_return(true)
+        expect(connection.in_required_groups?).to be(true)
+      end
+    end
+
+    context 'required_groups is given as array of arrays' do
+      let(:required_groups) do
+        [
+          %w[member group1 group2]
+        ]
+      end
+
+      it 'returns true if member of any required group' do
+        allow(connection).to receive(:in_group?).with('group1', 'member').and_return(false)
+        allow(connection).to receive(:in_group?).with('group2', 'member').and_return(true)
+        expect(connection.in_required_groups?).to be(true)
+
+        allow(connection).to receive(:in_group?).with('group1', 'member').and_return(true)
+        allow(connection).to receive(:in_group?).with('group2', 'member').and_return(false)
+        expect(connection.in_required_groups?).to be(true)
+
+        allow(connection).to receive(:in_group?).with('group1', 'member').and_return(false)
+        allow(connection).to receive(:in_group?).with('group2', 'member').and_return(false)
+        expect(connection.in_required_groups?).to be(false)
+      end
+    end
+
+    context 'with check_group_membership false' do
+      let(:check_group_membership) { false }
+
+      it 'returns always true' do
+        expect(connection.in_required_groups?).to be(true)
+      end
+    end
+
+    context 'with nil required_groups' do
+      let(:required_groups) { nil }
+
+      it 'returns always false' do
+        expect(connection.in_required_groups?).to be(false)
+      end
+    end
+
+    context 'with no required_groups' do
+      let(:required_groups) { [] }
+
+      it 'returns always true' do
+        expect(connection.in_required_groups?).to be(true)
+      end
+    end
+  end
+
   describe '#authorized?' do
     let(:conn) { double(Net::LDAP).as_null_object }
     let(:error) { }
