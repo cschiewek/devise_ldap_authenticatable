@@ -43,6 +43,10 @@ module Devise
         end
       end
 
+      def valid_password?(password)
+        valid_ldap_authentication?(password)
+      end
+
       # Checks if a resource is valid upon authentication.
       def valid_ldap_authentication?(password)
         Devise::LDAP::Adapter.valid_credentials?(login_with, password)
