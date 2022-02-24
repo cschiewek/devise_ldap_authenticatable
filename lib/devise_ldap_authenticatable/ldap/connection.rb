@@ -7,7 +7,12 @@ module Devise
         if ::Devise.ldap_config.is_a?(Proc)
           ldap_config = ::Devise.ldap_config.call
         else
-          ldap_config = YAML.load(ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result)[Rails.env]
+          source = ERB.new(File.read(::Devise.ldap_config || "#{Rails.root}/config/ldap.yml")).result
+          begin
+            ldap_config = YAML.load(source, aliases: true)[Rails.env]
+          rescue ArgumentError
+            ldap_config = YAML.load(source)[Rails.env]
+          end
         end
         ldap_options = params
 
